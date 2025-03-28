@@ -2,11 +2,11 @@
 Title: DiSHACLed Dataset and Data Service Discovery
 Shortname: DiSHACLed-Discovery
 Level: 1
-Status: w3c/CG-DRAFT
+Status: LD
 Markup Shorthands: markdown yes
-URL: https://w3id.org/tree/specification/discovery
-Repository: https://github.com/treecg/specification
-Editor: Julián Rojas, https://julianrojas.org-
+URL: https://dishacled.github.io/discovery-specification/
+Repository: https://github.com/DiSHACLed/discovery-specification/
+Editor: Julián Rojas, https://julianrojas.org/
 Abstract:
     This specification defines how a client selects a specific dataset and/or data service, based on a given SHACL/SPARQL input.
 </pre>
