@@ -26,9 +26,9 @@ assignees: ''
    - If possible, provide links to the catalog(s).
 
 **6. Data/Service Requirements:**
-   - What specific data or data services are being sought?
-   - What are the required characteristics of the data/services (e.g., format, temporal coverage, spatial extent, keywords, theme)?
-   - Are there any specific constraints (e.g., license, access restrictions)?
+   - What kind of data or data services are being sought?
+   - What are the required characteristics of the data/services (e.g., temporal coverage, spatial extent, theme)?
+   - Do any related SHACL shapes exist already?
 
 **7. Discovery Criteria/Filters:**
    - What criteria or filters should be used to automatically discover the required datasets/services?
