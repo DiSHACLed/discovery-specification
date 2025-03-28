@@ -1,0 +1,40 @@
+<pre class='metadata'>
+Title: DiSHACLed Dataset and Data Service Discovery
+Shortname: DiSHACLed-Discovery
+Level: 1
+Status: w3c/CG-DRAFT
+Markup Shorthands: markdown yes
+URL: https://w3id.org/tree/specification/discovery
+Repository: https://github.com/treecg/specification
+Editor: Julián Rojas, https://julianrojas.org-
+Abstract:
+    This specification defines how a client selects a specific dataset and/or data service, based on a given SHACL/SPARQL input.
+</pre>
+
+# Definitions # {#overview}
+
+# Use Cases # {#use-cases}
+
+# Initializing a client with a url # {#starting-from}
+
+TODO
+
+## Selecting a dataset via shapes ## {#dataset-shapes}
+
+TODO
+
+## Selecting a data service via shapes ## {#data-service-shapes}
+
+TODO
+
+## Selecting a dataset via queries ## {#dataset-queries}
+
+TODO
+
+## Selecting a data service via queries ## {#data-service-queries}
+
+TODO
+
+## Extending DCAT(-AP) ## {#dcat-catalog}
+
+
