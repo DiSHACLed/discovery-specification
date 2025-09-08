@@ -8,14 +8,48 @@ URL: https://dishacled.github.io/discovery-specification/
 Repository: https://github.com/DiSHACLed/discovery-specification/
 Editor: Julián Rojas, https://julianrojas.org/
 Abstract:
-    This specification defines how a client selects a specific dataset and/or data service, based on a given SHACL/SPARQL input.
+    This specification defines how a client can select a (set of) specific dataset(s) and/or data service(s) from a DCAT-AP data catalog, based on a given SHACL/SPARQL input.
 </pre>
 
 # Definitions # {#overview}
 
-# Use Cases # {#use-cases}
+This specification reuses terminology from:
+- [DCAT](https://www.w3.org/TR/vocab-dcat-3/)
+- [DCAT-AP](https://semiceu.github.io/DCAT-AP/releases/)
+- [SHACL](https://www.w3.org/TR/shacl/)
+- [SPARQL 1.1](https://www.w3.org/TR/sparql11-query/)
 
-# Initializing a client with a url # {#starting-from}
+**Dataset** and **Data Service** are as defined in DCAT.  
+**Shape** refers to a SHACL NodeShape that formally describes constraints over RDF data.  
+**Discovery** refers to the process of identifying relevant datasets or services in a DCAT-based catalog given an input description (shape or query).
+
+# Extending DCAT(-AP) for shape-based discovery # {#dcat-catalog}
+
+This section defines how DCAT(-AP) resources can be extended to include references to data shapes that describe their content.  
+The extensions are designed to be minimal and compatible with existing DCAT-AP profiles.  
+
+## Linking DCAT Resources to data shapes ## {#linking-to-shapes}
+
+Here we enumerate different approaches to link a data shape to a DCAT Resource:
+
+- dct:conformsTo
+- sh:shapesGraph
+- dcat:qualifiedRelation
+- dcat:endpointDescription
+
+## Describing DCAT Datasets ## {#describe-dataset}
+
+TODO
+
+## Describing DCAT Data Services {#describe-data-service}
+
+TODO
+
+# Discovery logical flow # {#logical-flow}
+
+This section describes the logical steps that a client follows to perform a discovery process.
+
+## Initializing a client with a url ## {#starting-from}
 
 TODO
 
@@ -35,6 +69,6 @@ TODO
 
 TODO
 
-## Extending DCAT(-AP) ## {#dcat-catalog}
+# Algorithm specification # {#algorithm}
 
-
+TODO
