@@ -7,9 +7,31 @@ Markup Shorthands: markdown yes
 URL: https://dishacled.github.io/discovery-specification/
 Repository: https://github.com/DiSHACLed/discovery-specification/
 Editor: Julián Rojas, https://julianrojas.org/
-Abstract:
-    This specification defines how a client can select a (set of) specific dataset(s) and/or data service(s) from a DCAT-AP data catalog, based on a given SHACL/SPARQL input.
+Abstract: This specification defines an algorithm and the logical processes for a client application to discover a (set of) dataset(s) and/or data service(s) from one or more DCAT-AP data catalogs, based on a given input SHACL shape or SPARQL query.
 </pre>
+
+# Introduction # {#introduction}
+
+The DCAT Application Profile for data portals ([[!DCAT-AP]]) is the [official standard in Europe](https://interoperable-europe.ec.europa.eu/collection/semic-support-centre/solution/dcat-application-profile-data-portals-europe) 
+for describing datasets and data services in catalogues on the Web. 
+It provides a common model that enables interoperability across data portals, making it easier to publish and share metadata consistently. 
+This interoperability has been instrumental in improving the visibility and accessibility of open data across domains and EU member states.
+
+However, the current design and usage of DCAT-AP are primarily oriented towards human-driven discovery. 
+Catalogues are typically accessed through graphical interfaces where users browse, filter, and search datasets based on keywords or metadata attributes. 
+While this supports transparency and accessibility for a wide audience, it limits the potential for automated, machine-based discovery and integration of datasets. 
+In practice, many use cases—such as federated analytics, cross-domain applications, or dynamic data integration pipelines—require more than keyword search: 
+they need support for automated identification of datasets and services that match specific structural and semantic requirements.
+
+This specification, created as part of the VLAIO DiSHACLed icon project, aims to address this gap by defining a data model extension for [[!DCAT-AP]] 
+and an algorithm for automated discovery of datasets and data services over DCAT-AP catalogues, based on formal input constraints expressed as either:
+
+- a [[!SHACL]] shape, describing the expected structure and semantics of the data, or
+- a [[!SPARQL-QUERY]], representing the information needs directly.
+
+By enabling discovery through such formal specifications, the proposed approach allows clients to automatically determine the relevance of available resources, 
+thereby supporting machine-to-machine interoperability. This contributes to realising the full potential of DCAT-AP as not only a tool for publishing metadata for humans 
+but also as a foundation for automated data ecosystems.
 
 # Definitions # {#overview}
 
