@@ -6,66 +6,139 @@ Status: LD
 Markup Shorthands: markdown yes
 URL: https://dishacled.github.io/discovery-specification/
 Repository: https://github.com/DiSHACLed/discovery-specification/
-Editor: Julián Rojas, https://julianrojas.org/
-Abstract: This specification defines an algorithm and the logical processes for a client application to discover a (set of) dataset(s) and/or data service(s) from one or more DCAT-AP data catalogs, based on a given input SHACL shape or SPARQL query.
+Editor: Julián Rojas, Ghent University - imec http://idlab.ugent.be/, julianandres.roajsmelendez@ugent.be
+Abstract: This specification defines an algorithm and the logical processes for a client application to discover a (set of) RDF dataset(s) and/or data service(s) from one or more DCAT-AP data catalogs, based on a given input SHACL shape or SPARQL query.
 </pre>
 
 # Introduction # {#introduction}
 
-The DCAT Application Profile for data portals ([[!DCAT-AP]]) is the [official standard in Europe](https://interoperable-europe.ec.europa.eu/collection/semic-support-centre/solution/dcat-application-profile-data-portals-europe) 
+The DCAT Application Profile for data portals (DCAT-AP) [[!DCAT-AP]] is the [official standard in Europe](https://interoperable-europe.ec.europa.eu/collection/semic-support-centre/solution/dcat-application-profile-data-portals-europe) 
 for describing datasets and data services in catalogues on the Web. 
 It provides a common model that enables interoperability across data portals, making it easier to publish and share metadata consistently. 
 This interoperability has been instrumental in improving the visibility and accessibility of open data across domains and EU member states.
 
 However, the current design and usage of DCAT-AP are primarily oriented towards human-driven discovery. 
-Catalogues are typically accessed through graphical interfaces where users browse, filter, and search datasets based on keywords or metadata attributes. 
-While this supports transparency and accessibility for a wide audience, it limits the potential for automated, machine-based discovery and integration of datasets. 
+Catalogues are typically accessed through graphical interfaces where users browse, filter, and search for resources based on keywords or metadata attributes. 
+While this supports transparency and accessibility for a wide audience, it limits the potential for automated, machine-based discovery and integration of datasets and data services. 
 In practice, many use cases—such as federated analytics, cross-domain applications, or dynamic data integration pipelines—require more than keyword search: 
 they need support for automated identification of datasets and services that match specific structural and semantic requirements.
 
-This specification, created as part of the VLAIO DiSHACLed icon project, aims to address this gap by defining a data model extension for [[!DCAT-AP]] 
-and an algorithm for automated discovery of datasets and data services over DCAT-AP catalogues, based on formal input constraints expressed as either:
+This specification, aims to address this gap by defining a (i) data model extension for DCAT-AP that allows describing sematically
+what is contained within RDF [[!RDF11-CONCEPTS]] datasets and expected/produced by RDF data services; 
+and an (ii) algorithm for automated discovery and selection of RDF datasets and RDF data services over DCAT-AP catalogues, 
+based on formal input constraints expressed as either:
 
 - a [[!SHACL]] shape, describing the expected structure and semantics of the data, or
 - a [[!SPARQL-QUERY]], representing the information needs directly.
 
-By enabling discovery through such formal specifications, the proposed approach allows clients to automatically determine the relevance of available resources, 
-thereby supporting machine-to-machine interoperability. This contributes to realising the full potential of DCAT-AP as not only a tool for publishing metadata for humans 
+By enabling discovery through such formal specifications, the proposed approach allows clients 
+to automatically determine the relevance of available resources, thereby supporting machine-to-machine interoperability. 
+This contributes to realising the full potential of DCAT-AP not only as a tool for publishing metadata for humans 
 but also as a foundation for automated data ecosystems.
 
-# Definitions # {#overview}
+## Document Conventions ## {#conventions}
 
-This specification reuses terminology from:
-- [DCAT](https://www.w3.org/TR/vocab-dcat-3/)
-- [DCAT-AP](https://semiceu.github.io/DCAT-AP/releases/)
-- [SHACL](https://www.w3.org/TR/shacl/)
-- [SPARQL 1.1](https://www.w3.org/TR/sparql11-query/)
+Within this document, the following namespace prefix bindings are used:
 
-**Dataset** and **Data Service** are as defined in DCAT.  
-**Shape** refers to a SHACL NodeShape that formally describes constraints over RDF data.  
-**Discovery** refers to the process of identifying relevant datasets or services in a DCAT-based catalog given an input description (shape or query).
+<table class='def'>
+    <tbody>
+        <tr>
+            <th><strong>Prefix</strong></th>
+            <th><strong>Namespace IRI</strong></th>
+            <th><strong>Description</strong></th>
+        </tr>
+        <tr>
+            <td>dcat:</td>
+            <td><a href='http://www.w3.org/ns/dcat#'>http://www.w3.org/ns/dcat#</a></td>
+            <td>[[!VOCAB-DCAT-3]]</td>
+        </tr>
+        <tr>
+            <td>dcterms:</td>
+            <td>http://purl.org/dc/terms/</td>
+            <td>[[!DCTERMS]]</td>
+        </tr>
+        <tr>
+            <td>rdf:</td>
+            <td>http://www.w3.org/1999/02/22-rdf-syntax-ns#</td>
+            <td>[[!RDF11-SCHEMA]]</td>
+        </tr>
+        <tr>
+            <td>rdfs:</td>
+            <td>http://www.w3.org/2000/01/rdf-schema#</td>
+            <td>[[!RDF11-SCHEMA]]</td>
+        </tr>
+        <tr>
+            <td>sh:</td>
+            <td>http://www.w3.org/ns/shacl#</td>
+            <td>[[!SHACL]]</td>
+        </tr>
+        <tr>
+            <td>xsd:</td>
+            <td>http://www.w3.org/2001/XMLSchema#</td>
+            <td>[[!XMLSCHEMA11-2]]</td>
+        </tr>
+    </tbody>
+</table>
 
-# Extending DCAT(-AP) for shape-based discovery # {#dcat-catalog}
+## Terminology ## {#terminology}
 
-This section defines how DCAT(-AP) resources can be extended to include references to data shapes that describe their content.  
-The extensions are designed to be minimal and compatible with existing DCAT-AP profiles.  
+- **Dataset** refers to the definition given in [[!VOCAB-DCAT-3]] for `dcat:Dataset`.
+- **Distribution** refers to the definition given in [[!VOCAB-DCAT-3]] for `dcat:Distribution`.
+- **Data Service** refers to the definitions given in [[!VOCAB-DCAT-3]] for `dcat:DataService`.
+- **Resource** refers to the generic term encompassing datasets, Distributions and data services, defined in [[!VOCAB-DCAT-3]] as `dcat:Resource`
+- **Catalog** refers to a [[!VOCAB-DCAT-3]] resource of type `dcat:Catalog`.
+- **Shape** refers to a [[!SHACL]] `sh:NodeShape` that formally describes constraints over RDF data.
+- **Discovery** refers to the process specified in [[#logical-flow]] for identifying relevant RDF Resources over one or more Catalogs.
+- **Client** refers to a client application that implements the [[#algorithm]] and supports the [[#logical-flow]]. 
 
-## Linking DCAT Resources to data shapes ## {#linking-to-shapes}
+# Describing DCAT(-AP) resource content with shapes # {#dcat-shapes}
 
-Here we enumerate different approaches to link a data shape to a DCAT Resource:
+This section defines a set of alternative ways in which DCAT(-AP) resources referring to RDF datasets/data services,
+can be extended to include references to data Shapes that semantically describe their content.  
+The extensions are designed to be minimal and compatible with existing DCAT-AP profiles.
 
-- dct:conformsTo
-- sh:shapesGraph
-- dcat:qualifiedRelation
-- dcat:endpointDescription
+Note: The [[#logical-flow]] and related [[#algorithm]] are designed to support all the following data model extensions.
+In the presence of more than one alternative, a discovery client will not prioritise any of them and should treat them as a logical OR relation.     
 
-## Describing DCAT Datasets ## {#describe-dataset}
+## Reusing `dcterms:conformsTo` ## {#conforms-to}
+
+In this approach we establish the use of the existing property `dcterms:conformsTo` [[!DCTERMS]], 
+as described by [[!VOCAB-DCAT-3]] and [[!DCAT-AP]], to link an RDF resource, defined as part of a Catalog,
+to a Shape that describes its content.
+
+In [[!VOCAB-DCAT-3]], the use of `dcterms:conformsTo` is informally suggested for linking a resource to a relevant standard,
+that specifies its model, **schema**, ontology, application profile, among others.
+SHACL shapes may be considered as a type of schema, as they define the structure and constraints that RDF instance data must adhere to.
+
+No further clarifications are provided in [[!DCAT-AP]] regarding the expected use of `dcterms:conformsTo`,
+beyond the informal suggestion to link to relevant standards, understood as instances of `dcterms:Standard`.
+
+**Figure 1** shows how any kind of RDF resource may be linked to a related shape via `dcterms:conformsTo`
+and examples 1-3 show corresponding RDF representations. 
+
+<figure>
+    <figcaption>
+        DCAT Resources linked to a SHACL shape via `dcterms:conformsTo`. 
+    </figcaption>
+    <object type="image/svg+xml" data="img/figure-1.svg" width=80%></object>
+</figure>
+
+<div class='example' highlight='turtle'>
+RDF representation of a dataset linked to a shape via `dcterms:conformsTo`
+```turtle
+ex:myDataset a dcat:Dataset;
+   dcterms:conformsTo ex:myShape.
+```
+</div>
+
+## Reusing `dcat:qualifiedRelation` ## {#qualified-relation}
 
 TODO
 
-## Describing DCAT Data Services {#describe-data-service}
+## Reusing `sh:shapesGraph` ## {#shapes-graph}
 
 TODO
+
 
 # Discovery logical flow # {#logical-flow}
 
