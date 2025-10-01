@@ -181,6 +181,7 @@ ex:myShape a sh:NodeShape;
 RDF representation of a `dcat:DataService` linked to a shape via `dcterms:conformsTo`  
 ```turtle
 ex:myService a dcat:DataService;
+    dcat:servesDataset ex:myDataset;
     dcat:endpointURL <https://example.org/my-data/service>
     dcterms:title "My data service";
     dcterms:conformsTo ex:myShape.
@@ -224,13 +225,79 @@ No further guidelines nor usage notes are given for `dcat:qualifiedRelation` and
     <object type='image/svg+xml' data='img/figure-2.svg' width='600'></object>
 </figure>
 
-For the discovery process, this specification does not mandate a specific role concept value via `dcat:hadRole`. 
-A discovery client must assess all existing qualified relations, in search for an associated shape (see [[#logical-flow]]).
+In practice for the discovery process, a client needs to traverse the property path `dcat:qualifiedRelation/dcterms:relation`,
+in search for an associated shape. This specification does not mandate a specific role concept value via `dcat:hadRole`. 
+A discovery client must assess all existing qualified relations (see [[#logical-flow]]).
 
 Note: [[!VOCAB-DCAT-3]] suggests the use of coded term lists such as [[IANA-RELATIONS]], or [[ISO-19115-1]],
 to specify a `dcat:Relationship` role via the `dcat:hadRole` property.
 However, none of the recommended vocabularies defines a specific role type that conveys a relationship between a resource and an associated shape. 
-A semantically close role type is the `describedby` relation defined by [[IANA-RELATIONS]].
+A semantically similar role type is the `describedby` relation defined by [[IANA-RELATIONS]], 
+but we opt for a lenient position since no established standard exists for this.
+
+**Examples 4** and **5** show corresponding RDF representations for a dataset and data service, respectively linked to their shapes via `dcat:qualifiedRelation`.
+According to [[!VOCAB-DCAT-3]], the domain of `dcat:qualifiedRelation` is `dcat:Resource`, which excludes `dcat:Distribution` instances.
+
+<div class='example' highlight='turtle'>
+RDF representation of a `dcat:Dataset` linked to a shape via `dcat:qualifiedRelation/dcterms:relation`
+```turtle
+ex:myDataset a dcat:Dataset;
+    dcterms:title "My Dataset";
+    dcat:qualifiedRelation [
+        a dcat:Relationship;
+        dcat:hadRole <http://www.iana.org/assignments/relation/describedby>; # this is optional
+        dcterms:relation ex:myShape
+    ].
+
+ex:myShape a sh:NodeShape;
+    sh:targetClass ex:MyClass;
+    sh:property [
+        sh:path ex:myProperty;
+        sh:datatype xsd:string;
+        sh:minCount 1;
+    ].
+```
+</div>
+
+<div class='example' highlight='turtle'>
+RDF representation of a `dcat:DataService` linked to a shape via `dcat:qualifiedRelation/dcterms:relation`
+```turtle
+ex:myService a dcat:DataService;
+    dcat:endpointURL <https://example.org/my-data/service>
+    dcterms:title "My data service";
+    dcat:qualifiedRelation [
+        a dcat:Relationship;
+        dcat:hadRole ex:InputDataShape; # this is optional
+        dcterms:relation ex:myShape
+    ], [
+        a dcat:Relationship;
+        dcat:hadRole ex:OIutputDataShape; # this is optional
+        dcterms:relation ex:myOtherShape
+    ].
+
+ex:myShape a sh:NodeShape;
+    sh:targetClass ex:MyClass;
+    sh:property [
+        sh:path ex:myProperty;
+        sh:datatype xsd:string;
+        sh:minCount 1;
+    ].
+
+ex:myOtherShape a sh:NodeShape;
+    sh:targetClass ex:MyOtherClass;
+    sh:property [
+        sh:path ex:myOtherProperty;
+        sh:datatype xsd:integer;
+        sh:minCount 1;
+    ].
+```
+</div>
+
+Note: the qualified relation pattern allows for a more granular description of the type or relation
+that a given shape has with towards a resource. For example, as it is shown in **Example 5**,
+where the qualified relations describe the shapes of both input and output data of a data service.
+However, this does not impact the discovery process as both relations shall be assessed to find relevant matches
+with respect to the given discovery constraints.
 
 ## Reusing `sh:shapesGraph` ## {#shapes-graph}
 
