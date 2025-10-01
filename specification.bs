@@ -10,8 +10,22 @@ Editor: Julián Rojas, Ghent University - imec http://idlab.ugent.be/, julianand
 Abstract: This specification defines an algorithm and the logical processes for a client application to discover a (set of) RDF dataset(s) and/or data service(s) from one or more DCAT-AP data catalogs, based on a given input SHACL shape or SPARQL query.
 </pre>
 
-# Introduction # {#introduction}
+<pre class='biblio'>
+{
+    "LDPATTERNS": {
+    "authors": [
+      "Leigh Dodds",
+      "Ian Davis"
+    ],
+    "href": "http://patterns.dataincubator.org/book/",
+    "title": "Linked Data Patterns: A pattern catalogue for modelling, publishing, and consuming Linked Data",
+    "date": "May 2012"
+  }
+}
+</pre>
 
+# Introduction # {#introduction}
+LINKEDDATAPATTERNS
 The DCAT Application Profile for data portals (DCAT-AP) [[!DCAT-AP]] is the [official standard in Europe](https://interoperable-europe.ec.europa.eu/collection/semic-support-centre/solution/dcat-application-profile-data-portals-europe) 
 for describing datasets and data services in catalogues on the Web. 
 It provides a common model that enables interoperability across data portals, making it easier to publish and share metadata consistently. 
@@ -103,8 +117,8 @@ In the presence of more than one alternative, a discovery client will not priori
 ## Relating to shapes via `dcterms:conformsTo` ## {#conforms-to}
 
 In this approach we establish the use of the existing property `dcterms:conformsTo` [[!DCTERMS]], 
-as described by [[!VOCAB-DCAT-3]] and [[!DCAT-AP]], to link an RDF resource, defined as part of a Catalog,
-to a Shape that describes its content.
+as described by [[!VOCAB-DCAT-3]] and [[!DCAT-AP]], to link an RDF resource defined as part of a catalog,
+to a shape that describes its content.
 
 In [[!VOCAB-DCAT-3]], the use of `dcterms:conformsTo` is informally suggested for linking a resource to a relevant standard,
 that specifies its model, **schema**, ontology, application profile, among others.
@@ -189,7 +203,34 @@ given its inclusive nature based on a logical OR operation.
 
 ## Relating to shapes via `dcat:qualifiedRelation` ## {#qualified-relation}
 
-TODO
+In this approach we establish the use of the property `dctat:qualifiedRelation` as described by [[!VOCAB-DCAT-3]] and [[!DCAT-AP]], 
+to indirectly link, following an n-ary/qualified relationship pattern [[SWBP-N-ARYRELATIONS]] [[LDPATTERNS]], an RDF resource defined as part of a catalog, 
+to a shape that describes its content.
+
+In [[!VOCAB-DCAT-3]], the use of `dcat:qualifiedRelation` is informally specified as a way to define sematically richer relations
+among resources. This is accomplished with the introduction of the `dcat:Relationship` class, on which specific roles can set,
+to further describe the nature of the relationship between a resource and another asset.
+For specifying types of roles, the use of controlled vocabularies is encouraged, which is reflected by the exsiting subclass relation
+between the `dcat:Role` class and `skos:Concept`.
+
+No further guidelines nor usage notes are given for `dcat:qualifiedRelation` and `dcat:Relationship` in [[!DCAT-AP]].
+
+**Figure 2** shows how a shape can be linked to any type of resource using the `dcat:qualifiedRelation` property.
+
+<figure>
+    <figcaption>
+        DCAT Resources linked to a SHACL shape via `dcat:qualifiedRelation`. 
+    </figcaption>
+    <object type='image/svg+xml' data='img/figure-2.svg' width='600'></object>
+</figure>
+
+For the discovery process, this specification does not mandate a specific role concept value via `dcat:hadRole`. 
+A discovery client must assess all existing qualified relations, in search for an associated shape (see [[#logical-flow]]).
+
+Note: [[!VOCAB-DCAT-3]] suggests the use of coded term lists such as [[IANA-RELATIONS]], or [[ISO-19115-1]],
+to specify a `dcat:Relationship` role via the `dcat:hadRole` property.
+However, none of the recommended vocabularies defines a specific role type that conveys a relationship between a resource and an associated shape. 
+A semantically close role type is the `describedby` relation defined by [[IANA-RELATIONS]].
 
 ## Reusing `sh:shapesGraph` ## {#shapes-graph}
 
