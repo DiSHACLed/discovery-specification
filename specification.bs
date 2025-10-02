@@ -402,14 +402,6 @@ ex:myService a dcat:DataService;
     dcterms:title "My data service";
     sh:shapesGraph ex:myShapesGraph.
 
-ex:myShape a sh:NodeShape;
-    sh:targetClass ex:MyClass;
-    sh:property [
-        sh:path ex:myProperty;
-        sh:datatype xsd:string;
-        sh:minCount 1;
-    ].
-
 ex:myShapesGraph {
     ex:myShape a sh:NodeShape;
         sh:targetClass ex:MyClass;
@@ -432,7 +424,7 @@ ex:myShapesGraph {
 
 # Discovery logical flow # {#logical-flow}
 
-This section describes the logical steps that a client follows to perform a discovery process.
+This section describes the logical steps that a client needs to follow to perform a discovery process.
 
 ## Initializing a client with a url ## {#starting-from}
 
