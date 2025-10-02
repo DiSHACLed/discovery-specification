@@ -23,6 +23,21 @@ Abstract: This specification defines an algorithm and the logical processes for 
   }
 }
 </pre>
+<pre class='biblio'>
+{
+    "WEB-API-DISC": {
+    "authors": [
+        "Frank Michiel",
+        "Catherine Faron-Zucker",
+        "Olivier Corby",
+        "Fabien Gandon"
+    ],
+    "href": "https://doi.org/10.1145/3308560.3317073",
+    "title": "Enabling Automatic Discovery and Querying of Web APIs at Web Scale using Linked Data Standards",
+    "date": "May 2019"
+  }
+}
+</pre>
 
 # Introduction # {#introduction}
 LINKEDDATAPATTERNS
@@ -133,13 +148,13 @@ beyond the informal suggestion to link to relevant standards, understood as inst
     <figcaption>
         DCAT Resources linked to a SHACL shape via `dcterms:conformsTo`. 
     </figcaption>
-    <object type='image/svg+xml' data='img/figure-1.svg' width='600'></object>
+    <object type='image/svg+xml' data='img/figure-1.svg' width='700'></object>
 </figure>
 
 Next, examples 1-3 show corresponding RDF representations for a dataset, distribution, and data service, respectively linked to their shapes.
 
 <div class='example' highlight='turtle'>
-RDF representation of a `dcat:Dataset` linked to a shape via `dcterms:conformsTo`
+RDF representation in Turtle format of a `dcat:Dataset` linked to a shape via `dcterms:conformsTo`
 ```turtle
 ex:myDataset a dcat:Dataset;
     dcterms:title "My Dataset";
@@ -156,7 +171,7 @@ ex:myShape a sh:NodeShape;
 </div>
 
 <div class='example' highlight='turtle'>
-RDF representation of a `dcat:Distribution` linked to a shape via `dcterms:conformsTo`
+RDF representation in Turtle format of a `dcat:Distribution` linked to a shape via `dcterms:conformsTo`
 ```turtle
 ex:myDataset a dcat:Dataset;
     dcterms:title "My Dataset";
@@ -178,13 +193,13 @@ ex:myShape a sh:NodeShape;
 </div>
 
 <div class='example' highlight='turtle'>
-RDF representation of a `dcat:DataService` linked to a shape via `dcterms:conformsTo`  
+RDF representation in Turtle format of a `dcat:DataService` linked to a shape via `dcterms:conformsTo`  
 ```turtle
 ex:myService a dcat:DataService;
     dcat:servesDataset ex:myDataset;
     dcat:endpointURL <https://example.org/my-data/service>
     dcterms:title "My data service";
-    dcterms:conformsTo ex:myShape.
+    dcterms:conformsTo ex:myShape, ex:myOtherShape.
 
 ex:myShape a sh:NodeShape;
     sh:targetClass ex:MyClass;
@@ -193,23 +208,31 @@ ex:myShape a sh:NodeShape;
         sh:datatype xsd:string;
         sh:minCount 1;
     ].
+
+ex:myOtherShape a sh:NodeShape;
+    sh:targetClass ex:MyOtherClass;
+    sh:property [
+        sh:path ex:myOtherProperty;
+        sh:datatype xsd:integer;
+        sh:minCount 1;
+    ].
 ```
 </div>
 
 Note: A related shape to a data service could be referring to the constraints of either the input or output data (or both) of such service.
 Via the `dcterms:conformsTo` property, no distintion can be made about the role of a related shape 
-(see [[#qualified-relation]] for an alternative where is possible). 
+(see [[#qualified-relation]] for an alternative where it is possible). 
 However, linking multiple shapes to a data service should not entail any conflicts for the discovery process, 
 given its inclusive nature based on a logical OR operation. 
 
 ## Relating to shapes via `dcat:qualifiedRelation` ## {#qualified-relation}
 
-In this approach we establish the use of the property `dctat:qualifiedRelation` as described by [[!VOCAB-DCAT-3]] and [[!DCAT-AP]], 
-to indirectly link, following an n-ary/qualified relationship pattern [[SWBP-N-ARYRELATIONS]] [[LDPATTERNS]], an RDF resource defined as part of a catalog, 
-to a shape that describes its content.
+In this approach we establish the use of the property `dcat:qualifiedRelation` as described by [[!VOCAB-DCAT-3]] and [[!DCAT-AP]], 
+to indirectly link an RDF resource defined as part of a catalog, to a shape that describes its content.
+This approach follows an n-ary [[SWBP-N-ARYRELATIONS]] or qualified [[LDPATTERNS]] data modelling pattern.
 
-In [[!VOCAB-DCAT-3]], the use of `dcat:qualifiedRelation` is informally specified as a way to define sematically richer relations
-among resources. This is accomplished with the introduction of the `dcat:Relationship` class, on which specific roles can set,
+In [[!VOCAB-DCAT-3]], the use of `dcat:qualifiedRelation` is informally specified as a way to define semantically richer relations
+among resources. This is accomplished with the introduction of the `dcat:Relationship` class, on which specific roles can be set,
 to further describe the nature of the relationship between a resource and another asset.
 For specifying types of roles, the use of controlled vocabularies is encouraged, which is reflected by the exsiting subclass relation
 between the `dcat:Role` class and `skos:Concept`.
@@ -222,7 +245,7 @@ No further guidelines nor usage notes are given for `dcat:qualifiedRelation` and
     <figcaption>
         DCAT Resources linked to a SHACL shape via `dcat:qualifiedRelation`. 
     </figcaption>
-    <object type='image/svg+xml' data='img/figure-2.svg' width='600'></object>
+    <object type='image/svg+xml' data='img/figure-2.svg' width='700'></object>
 </figure>
 
 In practice for the discovery process, a client needs to traverse the property path `dcat:qualifiedRelation/dcterms:relation`,
@@ -239,7 +262,7 @@ but we opt for a lenient position since no established standard exists for this.
 According to [[!VOCAB-DCAT-3]], the domain of `dcat:qualifiedRelation` is `dcat:Resource`, which excludes `dcat:Distribution` instances.
 
 <div class='example' highlight='turtle'>
-RDF representation of a `dcat:Dataset` linked to a shape via `dcat:qualifiedRelation/dcterms:relation`
+RDF representation in Turtle format of a `dcat:Dataset` linked to a shape via `dcat:qualifiedRelation/dcterms:relation`
 ```turtle
 ex:myDataset a dcat:Dataset;
     dcterms:title "My Dataset";
@@ -260,7 +283,7 @@ ex:myShape a sh:NodeShape;
 </div>
 
 <div class='example' highlight='turtle'>
-RDF representation of a `dcat:DataService` linked to a shape via `dcat:qualifiedRelation/dcterms:relation`
+RDF representation in Turtle format of a `dcat:DataService` linked to a shape via `dcat:qualifiedRelation/dcterms:relation`
 ```turtle
 ex:myService a dcat:DataService;
     dcat:endpointURL <https://example.org/my-data/service>
@@ -271,7 +294,7 @@ ex:myService a dcat:DataService;
         dcterms:relation ex:myShape
     ], [
         a dcat:Relationship;
-        dcat:hadRole ex:OIutputDataShape; # this is optional
+        dcat:hadRole ex:OutputDataShape; # this is optional
         dcterms:relation ex:myOtherShape
     ].
 
@@ -293,16 +316,119 @@ ex:myOtherShape a sh:NodeShape;
 ```
 </div>
 
-Note: the qualified relation pattern allows for a more granular description of the type or relation
-that a given shape has with towards a resource. For example, as it is shown in **Example 5**,
-where the qualified relations describe the shapes of both input and output data of a data service.
-However, this does not impact the discovery process as both relations shall be assessed to find relevant matches
+Note: The qualified relation pattern allows for a more granular description of the type or relation
+that a given shape has with a resource. For example, as it is shown in **Example 5**,
+where the qualified relations describe the shapes of both input and output data of a data service independently.
+This has no impact on the discovery process as both relations shall be assessed to find relevant matches
 with respect to the given discovery constraints.
 
-## Reusing `sh:shapesGraph` ## {#shapes-graph}
+## Relating to shapes via `sh:shapesGraph` ## {#shapes-graph}
 
-TODO
+In this approach we establish the use of the property `sh:shapesGraph`, as defined  by [[!SHACL]],
+to link an RDF resource defined as part of a catalog, to a shape that describes its content.
 
+The `sh:shapesGraph` property is used in [[!SHACL]] to indicate a graph where the validation shapes are defined.
+From the perspective of DCAT, the use of `sh:shapesGraph` constitutes a model extension 
+that is not currently contemplated by [[!VOCAB-DCAT-3]] nor [[!DCAT-AP]].
+
+Note: An example of such an extenstion can be observed in the work of Frank Michiel et al. [[WEB-API-DISC]],
+where they propose the use of `sh:shapesGraph` to link a `dcat:Distribution` to a graph containing its shape definitions.
+
+**Figure 3** shows how any kind of RDF resource that has been declared in a catalog, may be linked to a related shape via `sh:shapesGraph`.
+
+<figure>
+    <figcaption>
+        DCAT Resources linked to a SHACL shape via `sh:shapesGraph`. 
+    </figcaption>
+    <object type='image/svg+xml' data='img/figure-3.svg' width='700'></object>
+</figure>
+
+An associated shapes graph linked via `sh:shapesGraph` may contain one or more shape definitions, 
+but these must be related only to the resource that links to them. 
+This is necessary to avoid false positives during the discovery process.
+
+**Examples 6-9** show corresponding RDF representations for a dataset, distribution, and data service, 
+respectively linked to their shapes via `sh:shapesGraph`.
+
+<div class='example' highlight='turtle'>
+RDF representation in TriG format of a `dcat:Dataset` linked to a shape via `sh:shapesGraph`
+```turtle
+ex:myDataset a dcat:Dataset;
+    dcterms:title "My Dataset";
+    sh:shapesGraph ex:myShapesGraph.
+
+ex:myShapesGraph {
+    ex:myShape a sh:NodeShape;
+        sh:targetClass ex:MyClass;
+        sh:property [
+            sh:path ex:myProperty;
+            sh:datatype xsd:string;
+            sh:minCount 1;
+        ].
+}
+```
+</div>
+
+<div class='example' highlight='turtle'>
+RDF representation in TriG format of a `dcat:Distribution` linked to a shape via `sh:shapesGraph`
+```turtle
+ex:myDataset a dcat:Dataset;
+    dcterms:title "My Dataset";
+    dcat:distribution ex:myDistribution.
+    
+ex:myDistribution a dcat:Distribution;
+    dcat:downloadURL <https://example.org/dataset.ttl>;
+    dcat:mediaType <https://www.iana.org/assignments/media-types/text/turtle>
+    sh:shapesGraph ex:myShapesGraph.
+
+ex:myShapesGraph {
+    ex:myShape a sh:NodeShape;
+        sh:targetClass ex:MyClass;
+        sh:property [
+            sh:path ex:myProperty;
+            sh:datatype xsd:string;
+            sh:minCount 1;
+        ].
+}
+```
+</div>
+
+<div class='example' highlight='turtle'>
+RDF representation in TriG format of a `dcat:DataService` linked to a shape via `sh:shapesGraph`  
+```turtle
+ex:myService a dcat:DataService;
+    dcat:servesDataset ex:myDataset;
+    dcat:endpointURL <https://example.org/my-data/service>
+    dcterms:title "My data service";
+    sh:shapesGraph ex:myShapesGraph.
+
+ex:myShape a sh:NodeShape;
+    sh:targetClass ex:MyClass;
+    sh:property [
+        sh:path ex:myProperty;
+        sh:datatype xsd:string;
+        sh:minCount 1;
+    ].
+
+ex:myShapesGraph {
+    ex:myShape a sh:NodeShape;
+        sh:targetClass ex:MyClass;
+        sh:property [
+            sh:path ex:myProperty;
+            sh:datatype xsd:string;
+            sh:minCount 1;
+        ].
+
+    ex:myOtherShape a sh:NodeShape;
+        sh:targetClass ex:MyOtherClass;
+        sh:property [
+            sh:path ex:myOtherProperty;
+            sh:datatype xsd:integer;
+            sh:minCount 1;
+        ].
+}
+```
+</div>
 
 # Discovery logical flow # {#logical-flow}
 
