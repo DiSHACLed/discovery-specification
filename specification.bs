@@ -40,7 +40,7 @@ Abstract: This specification defines an algorithm and the logical processes for 
 </pre>
 
 # Introduction # {#introduction}
-LINKEDDATAPATTERNS
+
 The DCAT Application Profile for data portals (DCAT-AP) [[!DCAT-AP]] is the [official standard in Europe](https://interoperable-europe.ec.europa.eu/collection/semic-support-centre/solution/dcat-application-profile-data-portals-europe) 
 for describing datasets and data services in catalogues on the Web. 
 It provides a common model that enables interoperability across data portals, making it easier to publish and share metadata consistently. 
@@ -100,6 +100,11 @@ Within this document, the following namespace prefix bindings are used:
             <td>sh:</td>
             <td>http://www.w3.org/ns/shacl#</td>
             <td>[[!SHACL]]</td>
+        </tr>
+        <tr>
+            <td>skos:</td>
+            <td>http://www.w3.org/2004/02/skos/core#</td>
+            <td>[[SKOS-REFERENCE]]</td>
         </tr>
         <tr>
             <td>xsd:</td>
@@ -425,26 +430,53 @@ ex:myShapesGraph {
 # Discovery logical flow # {#logical-flow}
 
 This section describes the logical steps that a client needs to follow to perform a discovery process.
+An ovewrview of the logical flow is shown in **Figure 4**.
 
-## Initializing a client with a url ## {#starting-from}
+<figure>
+    <figcaption>
+        Overview of a discovery process's logical sequence. 
+    </figcaption>
+    <object type='image/svg+xml' data='img/figure-4.svg' width='800'></object>
+</figure>
 
-TODO
+In the next subsections a detailed description of each step is provided.
 
-## Selecting a dataset via shapes ## {#dataset-shapes}
+## Discovery request ## {#starting-from}
 
-TODO
+This is the initial step (labeled as 1️⃣ in **Figure 4**). A client starts a discovery process when it receives as input:
+1. a set of one or more **catalog URLs** ([IRI](https://www.rfc-editor.org/rfc/rfc3987#section-2)); and
+2. a set of formal constraints, expressed either as an **input** **SHACL shape** (in any RDF serialization ([string](https://infra.spec.whatwg.org/#javascript-string))) 
+    or a **SPARQL query** ([string](https://infra.spec.whatwg.org/#javascript-string)).
 
-## Selecting a data service via shapes ## {#data-service-shapes}
+## Catalog retrieval ## {#catalog-retrieval}
 
-TODO
+This step (labeled as 2️⃣ in **Figure 4**) involves retrieving the RDF representation of each catalog provided as input.
+A client must perform an HTTP GET request to each catalog URL,
+which must be dereferenceable to any RDF serialization (e.g. [[TURTLE]], [[RDF11-XML]], [[JSON-LD]], etc.).
 
-## Selecting a dataset via queries ## {#dataset-queries}
+Note: Even though in **Figure 4** the catalog retrieval step is shown as a sequential process,
+a client may choose to perform the retrieval of multiple catalogs in parallel,
+to optimise the overall performance of the discovery process.
 
-TODO
+## Extracting associated shapes ## {#extract-shapes}
 
-## Selecting a data service via queries ## {#data-service-queries}
+This step (labeled as 3️⃣ in **Figure 4**) involves parsing the RDF representation of each retrieved catalog,
+to extract all the shapes associated with RDF resources declared in the catalog.
+A client must identify all resources of type `dcat:Resource` (including its subclasses `dcat:Dataset`, `dcat:Distribution`, and `dcat:DataService`),
+and for each resource, extract any associated shape(s) using the three approaches defined in section [[#dcat-shapes]].
+Given the mutually inclusive relation of these approaches, a client must consider all of them when extracting shapes.
+That is, for every resource a client must:
+1. follow the property path `dcterms:conformsTo` and assess the existence of `sh:NodeShape` instances ([[#conforms-to]]).
+2. follow the property path `dcat:qualifiedRelation/dcterms:relation` and assess the existence of `sh:NodeShape` instances ([[#qualified-relation]]).
+3. follow the property path `sh:shapesGraph` and assess the existence of `sh:NodeShape` instances within the referenced graph ([[#shapes-graph]]).
 
-TODO
+## Determine resource relevance## {#resource-relevance}
+
+This step (labeled as 4️⃣ in **Figure 4**) involves determining the relevance of each resource,
+for which one or more shapes were extracted, according to the given **input shape/query** expressing the client's formal constraints.
+
+A client must evaluate each resource's shapes against the **input shape/query** constraints, 
+by applying the query-shape subsumtion algorithm described in section [[#algorithm]].
 
 # Algorithm specification # {#algorithm}
 
