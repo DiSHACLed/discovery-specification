@@ -39,6 +39,22 @@ Abstract: This specification defines an algorithm and the logical processes for 
 }
 </pre>
 
+<style>
+  .assertion {
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 20px 0;
+    background-color: #f9f9f9;
+  }
+  .assertion .marker {
+    font-weight: bold;
+    color: #9c9898ff;
+    display: block;
+    margin-bottom: 8px;
+  }
+</style>
+
 # Introduction # {#introduction}
 
 The DCAT Application Profile for data portals (DCAT-AP) [[!DCAT-AP]] is the [official standard in Europe](https://interoperable-europe.ec.europa.eu/collection/semic-support-centre/solution/dcat-application-profile-data-portals-europe) 
@@ -444,14 +460,15 @@ In the next subsections a detailed description of each step is provided.
 ## Discovery request ## {#starting-from}
 
 This is the initial step (labeled as 1️⃣ in **Figure 4**). A client starts a discovery process when it receives as input:
-1. a set of one or more **catalog URLs** ([IRI](https://www.rfc-editor.org/rfc/rfc3987#section-2)); and
-2. a set of formal constraints, expressed either as an **input** **SHACL shape** (in any RDF serialization ([string](https://infra.spec.whatwg.org/#javascript-string))) 
-    or a **SPARQL query** ([string](https://infra.spec.whatwg.org/#javascript-string)).
+1. a set of one or more <dfn>catalog URL</dfn>s ([IRI](https://www.rfc-editor.org/rfc/rfc3987#section-2)),
+    which must point to a dereferenceable RDF representation of a catalog; and
+2. a set of formal constraints, expressed either as an <dfn>input SHACL shape</dfn> (in any RDF serialization ([string](https://infra.spec.whatwg.org/#javascript-string))) 
+    or an <dfn>input SPARQL query</dfn> ([string](https://infra.spec.whatwg.org/#javascript-string)).
 
 ## Catalog retrieval ## {#catalog-retrieval}
 
 This step (labeled as 2️⃣ in **Figure 4**) involves retrieving the RDF representation of each catalog provided as input.
-A client must perform an HTTP GET request to each catalog URL,
+A client must perform an HTTP GET request to each [=catalog URL=],
 which must be dereferenceable to any RDF serialization (e.g. [[TURTLE]], [[RDF11-XML]], [[JSON-LD]], etc.).
 
 Note: Even though in **Figure 4** the catalog retrieval step is shown as a sequential process,
@@ -462,21 +479,88 @@ to optimise the overall performance of the discovery process.
 
 This step (labeled as 3️⃣ in **Figure 4**) involves parsing the RDF representation of each retrieved catalog,
 to extract all the shapes associated with RDF resources declared in the catalog.
-A client must identify all resources of type `dcat:Resource` (including its subclasses `dcat:Dataset`, `dcat:Distribution`, and `dcat:DataService`),
+A client must identify all resources of type `dcat:Dataset`, `dcat:Distribution`, and `dcat:DataService`,
 and for each resource, extract any associated shape(s) using the three approaches defined in section [[#dcat-shapes]].
 Given the mutually inclusive relation of these approaches, a client must consider all of them when extracting shapes.
 That is, for every resource a client must:
 1. follow the property path `dcterms:conformsTo` and assess the existence of `sh:NodeShape` instances ([[#conforms-to]]).
-2. follow the property path `dcat:qualifiedRelation/dcterms:relation` and assess the existence of `sh:NodeShape` instances ([[#qualified-relation]]).
-3. follow the property path `sh:shapesGraph` and assess the existence of `sh:NodeShape` instances within the referenced graph ([[#shapes-graph]]).
+    The following SPARQL query expresses an equivalent operation to extract the relevant quads from a catalog instance.
+    <div class='assertion'>
+        <span class='marker'>EQUIVALENT SPARQL QUERY</span>
+        ```sparql
+        PREFIX sh: <http://www.w3.org/ns/shacl#>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
 
-## Determine resource relevance## {#resource-relevance}
+        SELECT ?shape WHERE {
+            VALUES ?type { dcat:Dataset dcat:Distribution dcat:DataService }
+            
+            ?resource a ?type.
+                dcterms:conformsTo ?shape.
+            
+            ?shape a sh:NodeShape.
+        }
+        ```
+    </div>
+2. follow the property path `dcat:qualifiedRelation/dcterms:relation` and assess the existence of `sh:NodeShape` instances ([[#qualified-relation]]).
+    The following SPARQL query expresses an equivalent operation to extract the relevant quads from a catalog instance.
+    <div class='assertion'>
+        <span class='marker'>EQUIVALENT SPARQL QUERY</span>
+        ```sparql
+        PREFIX sh: <http://www.w3.org/ns/shacl#>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        PREFIX dcat: <http://www.w3.org/ns/dcat#>
+
+        SELECT ?shape WHERE {
+            VALUES ?type { dcat:Dataset dcat:DataService }
+            
+            ?resource a ?type.
+                dcat:qualifiedRelation [
+                    dcterms:relation ?shape
+                ].
+            
+            ?shape a sh:NodeShape.
+        }
+        ```
+    </div>
+3. follow the property path `sh:shapesGraph` and assess the existence of `sh:NodeShape` instances within the referenced graph ([[#shapes-graph]]).
+    The following SPARQL query expresses an equivalent operation to extract the relevant quads from a catalog instance.
+    <div class='assertion'>
+        <span class='marker'>EQUIVALENT SPARQL QUERY</span>
+        ```sparql
+        PREFIX sh: <http://www.w3.org/ns/shacl#>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        PREFIX dcat: <http://www.w3.org/ns/dcat#>
+        
+        SELECT ?shape WHERE {
+            VALUES ?type { dcat:Dataset dcat:Distribution dcat:DataService }
+            
+            ?resource a ?type.
+                sh:shapesGraph ?shapesGraph.
+            
+            GRAPH ?shapesGraph {
+                ?shape a sh:NodeShape.
+            }
+        }
+        ```
+    </div>
+
+The equivalent SPARQL queries listed above, make the assumption that all RDF quads for both resources and associated shapes,
+are locally available as part of a catalog RDF document. However, it may be the case that a related shape is linked as a remote resource.
+In such case, **a client must also dereference the shape's [IRI](https://www.rfc-editor.org/rfc/rfc3987#section-2)** to retrieve its RDF representation.
+
+## Determining resource relevance ## {#resource-relevance}
 
 This step (labeled as 4️⃣ in **Figure 4**) involves determining the relevance of each resource,
-for which one or more shapes were extracted, according to the given **input shape/query** expressing the client's formal constraints.
+for which one or more shapes were extracted, according to the given [=input SHACL shape=] or [=input SPARQL query=] 
+expressing the client's formal constraints.
 
-A client must evaluate each resource's shapes against the **input shape/query** constraints, 
-by applying the query-shape subsumtion algorithm described in section [[#algorithm]].
+A client must evaluate each resource's shape against the [=input SHACL shape=] or [=input SPARQL query=] constraints,
+by applying the <dfn>query-shape subsumption algorithm</dfn> described in section [[#algorithm]].
+
+## Presenting results ## {#return-results}
+
+In this last step, (labeled as 5️⃣ in **Figure 4**) the client collects and returns the set of resource identifiers ([IRI](https://www.rfc-editor.org/rfc/rfc3987#section-2)),
+which were deemed as relevant with respect to the input constrainst ([=input SHACL shape=] or [=input SPARQL query=]).
 
 # Algorithm specification # {#algorithm}
 
