@@ -38,6 +38,20 @@ Abstract: This specification defines an algorithm and the logical processes for 
   }
 }
 </pre>
+<pre class='biblio'>
+{
+    "STAR-PATTERNS": {
+    "authors": [
+        "Farah Karim",
+        "Maria-Esther Vidal",
+        "Sören Auer"
+    ],
+    "href": "http://dx.doi.org/10.1007/s10844-020-00595-9",
+    "title": "Compacting frequent star patterns in RDF graphs",
+    "date": "April 2020"
+  }
+}
+</pre>
 
 <style>
   .assertion {
@@ -631,13 +645,37 @@ First, a set of preliminary concepts are defined, followed by a description of t
 
 The algorithm operation is specified upon the following concepts:
 
-- <dfn>triple pattern</dfn>: a triple pattern <math><mi>tp</mi></math> is a tuple 
-    <math>
-        <mtext>(</mtext> 
-        <msub><mi>s</mi><mn>tp</mn></msub>
-        <mtext>,</mtext> 
-        <msub><mi>p</mi><mn>tp</mn></msub>
-        <mtext>,</mtext> 
-        <msub><mi>o</mi><mn>tp</mn></msub> 
-        <mtext>)</mtext>
-    </math>
+- <dfn>triple pattern</dfn>: a triple pattern <math><mi>tp</mi></math> is a tuple <math><mtext>( </mtext><msub><mi>s</mi><mn>tp</mn></msub><mtext>, </mtext><msub><mi>p</mi><mn>tp</mn></msub><mtext>, </mtext><msub><mi>o</mi><mn>tp</mn></msub><mtext> )</mtext></math> 
+    where: 
+    - <math><msub><mi>s</mi><mn>tp</mn></msub></math> is the set of all subjects (name nodes <math><mi>I</mi></math>, blank nodes <math><mi>B</mi></math> and variables <math><mi>V</mi></math>), 
+    - <math><msub><mi>p</mi><mn>tp</mn></msub></math> is the set of all predicates (named nodes <math><mi>I</mi></math> and variables <math><mi>V</mi></math>) and 
+    - <math><msub><mi>o</mi><mn>tp</mn></msub></math> is the set of all objects (named nodes <math><mi>I</mi></math>, blank nodes <math><mi>B</mi></math>, literals <math><mi>L</mi></math> and variables <math><mi>V</mi></math>).
+- <dfn>star pattern</dfn> [[STAR-PATTERNS]]: given a SPARQL query <math><mi>Q</mi></math>, a star pattern <math><msub><mi>Q</mi><mn>sp</mn></msub></math> is a set of [=triple patterns=] <math><mi>tp</mi></math> of <math><mi>Q</mi></math>, 
+    all sharing the same subject.
+    <div class=example>
+    Example of a [=star pattern=] defined as part of a SPARQL query.
+    ```sparql
+    SELECT * WHERE {
+        ?subject a ex:Entity;  #---
+            ex:pred1 ?obj1;    #  | start pattern 
+            ex:pred2 ?obj2.    #---
+    }
+    ```
+    </div>
+- <dfn>graph star pattern</dfn>: given a SPARQL query <math><mi>Q</mi></math>, a graph star pattern <math><msub><mi>Q</mi><mn>gsp</mn></msub></math> 
+    is the union of a root [=star pattern=] <math><msub><mi>Q</mi><mn>spr</mn></msub></math> and all the star patterns having as a subject,
+    an object of a [=triple pattern=] belonging to <math><msub><mi>Q</mi><mn>spr</mn></msub></math>.
+    <div class=example>
+    Example of a [=star pattern=] defined as part of a SPARQL query.
+    ```sparql
+    SELECT * WHERE {
+        ?subject a ex:Entity;  #----------------------
+            ex:pred1 ?obj1;    #  | start pattern    |
+            ex:pred2 ?obj2.    #---                  |
+                               #                     | graph star pattern
+        ?obj1 ?p1 ?o1.         #                     |
+                               #                     |
+        ?obj2 ?p2 ?o2.         # ---------------------
+    }
+    ```
+    </div>
