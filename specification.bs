@@ -631,4 +631,13 @@ First, a set of preliminary concepts are defined, followed by a description of t
 
 The algorithm operation is specified upon the following concepts:
 
-- <dfn>triple pattern</dfn>: a triple pattern <math>tp</math> is a tuple <math>( <msub><mi>s</mi><mn>tp</mn></msub>, <msub><mi>p</mi><mn>tp</mn></msub>, <msub><mi>o</mi><mn>tp</mn></msub> )</math>
+- <dfn>triple pattern</dfn>: a triple pattern <math><mi>tp</mi></math> is a tuple 
+    <math>
+        <mtext>(</mtext> 
+        <msub><mi>s</mi><mn>tp</mn></msub>
+        <mtext>,</mtext> 
+        <msub><mi>p</mi><mn>tp</mn></msub>
+        <mtext>,</mtext> 
+        <msub><mi>o</mi><mn>tp</mn></msub> 
+        <mtext>)</mtext>
+    </math>
