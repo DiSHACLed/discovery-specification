@@ -1490,8 +1490,47 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 3f621ba99, updated Mon Jul 28 15:38:36 2025 -0700" name="generator">
   <link href="https://dishacled.github.io/discovery-specification/" rel="canonical">
-  <meta content="8de72e5c910b97f784aafd1825dc679f91cb639e" name="revision">
+  <meta content="8f0915993e2e49f9ca12fe110555f1044c2735df" name="revision">
   <meta content="dark light" name="color-scheme">
+<style>
+  .assertion {
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 20px 0;
+    background-color: #f9f9f9;
+  }
+  .assertion .marker {
+    font-weight: bold;
+    color: #9c9898ff;
+    display: block;
+    margin-bottom: 8px;
+  }
+</style>
+<style>
+    .example-tabs { 
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        background: #f9f9f9;
+        padding: 1em; 
+        margin-bottom: 2em;
+    }
+    .tab-buttons { 
+        margin-bottom: 1em; 
+    }
+    .tab-btn { 
+        padding: 0.5em 1em; 
+        margin-right: 0.5em; 
+        cursor: pointer; 
+        border: none; 
+        background: #f5f5f5; 
+    }
+    .tab-btn.active { 
+        background: #e0e0e0; 
+        font-weight: bold; 
+    }
+</style>
+  <link href="https://fred-wang.github.io/MathFonts/LatinModern/mathfonts.css" rel="stylesheet">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
     color: var(--a-normal-text);
@@ -1812,6 +1851,130 @@ figcaption:not(.no-marker)::before {
     content: "Figure " counter(figure) " ";
 }
 </style>
+<style>/* Boilerplate: style-dfn-panel */
+:root {
+    --dfnpanel-bg: #ddd;
+    --dfnpanel-text: var(--text);
+    --dfnpanel-target-bg: #ffc;
+    --dfnpanel-target-outline: orange;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dfnpanel-bg: #222;
+        --dfnpanel-text: var(--text);
+        --dfnpanel-target-bg: #333;
+        --dfnpanel-target-outline: silver;
+    }
+}
+.dfn-panel {
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.75em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--dfnpanel-bg);
+    color: var(--dfnpanel-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+.dfn-panel:not(.on) { display: none; }
+.dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
+.dfn-panel > b { display: block; }
+.dfn-panel a { color: var(--dfnpanel-text); }
+.dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
+.dfn-panel a:focus {
+    outline: 5px auto Highlight;
+    outline: 5px auto -webkit-focus-ring-color;
+}
+.dfn-panel > b + b { margin-top: 0.25em; }
+.dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
+.dfn-panel li a {
+    max-width: calc(300px - 1.5em - 1em);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dfn-panel.activated {
+    display: inline-block;
+    position: fixed;
+    left: 8px;
+    bottom: 2em;
+    margin: 0 auto;
+    max-width: calc(100vw - 1.5em - .4em - .5em);
+    max-height: 30vh;
+    transition: left 1s ease-out, bottom 1s ease-out;
+}
+
+.dfn-panel .link-item:hover {
+    text-decoration: underline;
+}
+.dfn-panel .link-item .copy-icon {
+    opacity: 0;
+}
+.dfn-panel .link-item:hover .copy-icon,
+.dfn-panel .link-item .copy-icon:focus {
+    opacity: 1;
+}
+
+.dfn-panel .copy-icon {
+    display: inline-block;
+    margin-right: 0.5em;
+    width: 0.85em;
+    height: 1em;
+    border-radius: 3px;
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.dfn-panel .copy-icon .icon {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.dfn-panel .copy-icon .icon::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    background-color: #ccc;
+    opacity: 0.25;
+    transform: translate(3px, -3px);
+}
+
+.dfn-panel .copy-icon:active .icon::before {
+    opacity: 1;
+}
+
+.dfn-paneled[role="button"] { cursor: help; }
+
+.highlighted {
+    animation: target-fade 3s;
+}
+
+@keyframes target-fade {
+    from {
+        background-color: var(--dfnpanel-target-bg);
+        outline: 5px solid var(--dfnpanel-target-outline);
+    }
+    to {
+        color: var(--a-normal-text);
+        background-color: transparent;
+        outline: transparent;
+    }
+}
+</style>
 <style>/* Boilerplate: style-issues */
 a[href].issue-return {
     float: right;
@@ -1830,6 +1993,39 @@ a[href].issue-return {
 [data-md] > :last-child {
     margin-bottom: 0;
 }
+</style>
+<style>/* Boilerplate: style-ref-hints */
+:root {
+    --ref-hint-bg: #ddd;
+    --ref-hint-text: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ref-hint-bg: #222;
+        --ref-hint-text: var(--text);
+    }
+}
+
+.ref-hint {
+    display: inline-block;
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.5em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--ref-hint-bg);
+    color: var(--ref-hint-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+
+.ref-hint * { margin: 0; padding: 0; text-indent: 0; }
+
+.ref-hint ul { padding: 0 0 0 1em; list-style: none; }
 </style>
 <style>/* Boilerplate: style-selflinks */
 :root {
@@ -1890,12 +2086,133 @@ a.self-link::before            { content: "¶"; }
 .heading > a.self-link::before { content: "§"; }
 dfn > a.self-link::before      { content: "#"; }
 </style>
+<style>/* Boilerplate: style-syntax-highlighting */
+code.highlight { padding: .1em; border-radius: .3em; }
+pre.highlight, pre > code.highlight { display: block; padding: 1em; margin: .5em 0; overflow: auto; border-radius: 0; }
+
+.highlight:not(.idl) { background: rgba(0, 0, 0, .03); }
+c-[a] { color: #990055 } /* Keyword.Declaration */
+c-[b] { color: #990055 } /* Keyword.Type */
+c-[c] { color: #708090 } /* Comment */
+c-[d] { color: #708090 } /* Comment.Multiline */
+c-[e] { color: #0077aa } /* Name.Attribute */
+c-[f] { color: #669900 } /* Name.Tag */
+c-[g] { color: #222222 } /* Name.Variable */
+c-[k] { color: #990055 } /* Keyword */
+c-[l] { color: #000000 } /* Literal */
+c-[m] { color: #000000 } /* Literal.Number */
+c-[n] { color: #0077aa } /* Name */
+c-[o] { color: #999999 } /* Operator */
+c-[p] { color: #999999 } /* Punctuation */
+c-[s] { color: #a67f59 } /* Literal.String */
+c-[t] { color: #a67f59 } /* Literal.String.Single */
+c-[u] { color: #a67f59 } /* Literal.String.Double */
+c-[cp] { color: #708090 } /* Comment.Preproc */
+c-[c1] { color: #708090 } /* Comment.Single */
+c-[cs] { color: #708090 } /* Comment.Special */
+c-[kc] { color: #990055 } /* Keyword.Constant */
+c-[kn] { color: #990055 } /* Keyword.Namespace */
+c-[kp] { color: #990055 } /* Keyword.Pseudo */
+c-[kr] { color: #990055 } /* Keyword.Reserved */
+c-[ld] { color: #000000 } /* Literal.Date */
+c-[nc] { color: #0077aa } /* Name.Class */
+c-[no] { color: #0077aa } /* Name.Constant */
+c-[nd] { color: #0077aa } /* Name.Decorator */
+c-[ni] { color: #0077aa } /* Name.Entity */
+c-[ne] { color: #0077aa } /* Name.Exception */
+c-[nf] { color: #0077aa } /* Name.Function */
+c-[nl] { color: #0077aa } /* Name.Label */
+c-[nn] { color: #0077aa } /* Name.Namespace */
+c-[py] { color: #0077aa } /* Name.Property */
+c-[ow] { color: #999999 } /* Operator.Word */
+c-[mb] { color: #000000 } /* Literal.Number.Bin */
+c-[mf] { color: #000000 } /* Literal.Number.Float */
+c-[mh] { color: #000000 } /* Literal.Number.Hex */
+c-[mi] { color: #000000 } /* Literal.Number.Integer */
+c-[mo] { color: #000000 } /* Literal.Number.Oct */
+c-[sb] { color: #a67f59 } /* Literal.String.Backtick */
+c-[sc] { color: #a67f59 } /* Literal.String.Char */
+c-[sd] { color: #a67f59 } /* Literal.String.Doc */
+c-[se] { color: #a67f59 } /* Literal.String.Escape */
+c-[sh] { color: #a67f59 } /* Literal.String.Heredoc */
+c-[si] { color: #a67f59 } /* Literal.String.Interpol */
+c-[sx] { color: #a67f59 } /* Literal.String.Other */
+c-[sr] { color: #a67f59 } /* Literal.String.Regex */
+c-[ss] { color: #a67f59 } /* Literal.String.Symbol */
+c-[vc] { color: #0077aa } /* Name.Variable.Class */
+c-[vg] { color: #0077aa } /* Name.Variable.Global */
+c-[vi] { color: #0077aa } /* Name.Variable.Instance */
+c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
+
+@media (prefers-color-scheme: dark) {
+    .highlight:not(.idl) { background: rgba(255, 255, 255, .05); }
+
+    c-[a] { color: #d33682 } /* Keyword.Declaration */
+    c-[b] { color: #d33682 } /* Keyword.Type */
+    c-[c] { color: #2aa198 } /* Comment */
+    c-[d] { color: #2aa198 } /* Comment.Multiline */
+    c-[e] { color: #268bd2 } /* Name.Attribute */
+    c-[f] { color: #b58900 } /* Name.Tag */
+    c-[g] { color: #cb4b16 } /* Name.Variable */
+    c-[k] { color: #d33682 } /* Keyword */
+    c-[l] { color: #657b83 } /* Literal */
+    c-[m] { color: #657b83 } /* Literal.Number */
+    c-[n] { color: #268bd2 } /* Name */
+    c-[o] { color: #657b83 } /* Operator */
+    c-[p] { color: #657b83 } /* Punctuation */
+    c-[s] { color: #6c71c4 } /* Literal.String */
+    c-[t] { color: #6c71c4 } /* Literal.String.Single */
+    c-[u] { color: #6c71c4 } /* Literal.String.Double */
+    c-[ch] { color: #2aa198 } /* Comment.Hashbang */
+    c-[cp] { color: #2aa198 } /* Comment.Preproc */
+    c-[cpf] { color: #2aa198 } /* Comment.PreprocFile */
+    c-[c1] { color: #2aa198 } /* Comment.Single */
+    c-[cs] { color: #2aa198 } /* Comment.Special */
+    c-[kc] { color: #d33682 } /* Keyword.Constant */
+    c-[kn] { color: #d33682 } /* Keyword.Namespace */
+    c-[kp] { color: #d33682 } /* Keyword.Pseudo */
+    c-[kr] { color: #d33682 } /* Keyword.Reserved */
+    c-[ld] { color: #657b83 } /* Literal.Date */
+    c-[nc] { color: #268bd2 } /* Name.Class */
+    c-[no] { color: #268bd2 } /* Name.Constant */
+    c-[nd] { color: #268bd2 } /* Name.Decorator */
+    c-[ni] { color: #268bd2 } /* Name.Entity */
+    c-[ne] { color: #268bd2 } /* Name.Exception */
+    c-[nf] { color: #268bd2 } /* Name.Function */
+    c-[nl] { color: #268bd2 } /* Name.Label */
+    c-[nn] { color: #268bd2 } /* Name.Namespace */
+    c-[py] { color: #268bd2 } /* Name.Property */
+    c-[ow] { color: #657b83 } /* Operator.Word */
+    c-[mb] { color: #657b83 } /* Literal.Number.Bin */
+    c-[mf] { color: #657b83 } /* Literal.Number.Float */
+    c-[mh] { color: #657b83 } /* Literal.Number.Hex */
+    c-[mi] { color: #657b83 } /* Literal.Number.Integer */
+    c-[mo] { color: #657b83 } /* Literal.Number.Oct */
+    c-[sa] { color: #6c71c4 } /* Literal.String.Affix */
+    c-[sb] { color: #6c71c4 } /* Literal.String.Backtick */
+    c-[sc] { color: #6c71c4 } /* Literal.String.Char */
+    c-[dl] { color: #6c71c4 } /* Literal.String.Delimiter */
+    c-[sd] { color: #6c71c4 } /* Literal.String.Doc */
+    c-[se] { color: #6c71c4 } /* Literal.String.Escape */
+    c-[sh] { color: #6c71c4 } /* Literal.String.Heredoc */
+    c-[si] { color: #6c71c4 } /* Literal.String.Interpol */
+    c-[sx] { color: #6c71c4 } /* Literal.String.Other */
+    c-[sr] { color: #6c71c4 } /* Literal.String.Regex */
+    c-[ss] { color: #6c71c4 } /* Literal.String.Symbol */
+    c-[fm] { color: #268bd2 } /* Name.Function.Magic */
+    c-[vc] { color: #cb4b16 } /* Name.Variable.Class */
+    c-[vg] { color: #cb4b16 } /* Name.Variable.Global */
+    c-[vi] { color: #cb4b16 } /* Name.Variable.Instance */
+    c-[vm] { color: #cb4b16 } /* Name.Variable.Magic */
+    c-[il] { color: #657b83 } /* Literal.Number.Integer.Long */
+}
+</style>
  <body class="h-entry">
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">DiSHACLed Dataset and Data Service Discovery</h1>
    <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Living Document,
-    <time class="dt-updated" datetime="2025-09-18">18 September 2025</time></span></h2>
+    <time class="dt-updated" datetime="2025-10-13">13 October 2025</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1903,14 +2220,14 @@ dfn > a.self-link::before      { content: "#"; }
      <dt>Issue Tracking:
      <dd><a href="https://github.com/DiSHACLed/discovery-specification/issues/">GitHub</a>
      <dt class="editor">Editor:
-     <dd class="editor p-author h-card vcard"><a class="p-name fn u-url url" href="https://julianrojas.org/">Julián Rojas</a>
+     <dd class="editor p-author h-card vcard"><a class="p-name fn u-email email" href="mailto:julianandres.roajsmelendez@ugent.be">Julián Rojas</a> (<a class="p-org org" href="http://idlab.ugent.be/">Ghent University - imec</a>)
     </dl>
    </div>
    <div data-fill-with="warning"></div>
    <p class="copyright" data-fill-with="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" height="15" src="https://licensebuttons.net/p/zero/1.0/80x15.png" width="80"></a>
 To the extent possible under law, the editors have waived all copyright
 and related or neighboring rights to this work.
-In addition, as of 18 September 2025,
+In addition, as of 13 October 2025,
 the editors have made this specification available under the
 <a href="https://www.openwebfoundation.org/the-agreements/the-owf-1-0-agreements-granted-claims/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at https://www.openwebfoundation.org/the-agreements/the-owf-1-0-agreements-granted-claims/owfa-1-0.
@@ -1920,88 +2237,746 @@ Parts of this work may be from another specification document.  If so, those par
   </div>
   <div class="p-summary" data-fill-with="abstract">
    <h2 class="no-num no-toc no-ref heading settled" id="abstract"><span class="content">Abstract</span></h2>
-   <p>This specification defines how a client can select a (set of) specific dataset(s) and/or data service(s) from a DCAT-AP data catalog, based on a given SHACL/SPARQL input.</p>
+   <p>This specification defines an algorithm and the logical processes for a client application to discover a (set of) RDF dataset(s) and/or data service(s) from one or more DCAT-AP data catalogs, based on a given input SHACL shape or SPARQL query.</p>
   </div>
   <div data-fill-with="at-risk"></div>
   <nav data-fill-with="table-of-contents" id="toc">
    <h2 class="no-num no-toc no-ref" id="contents">Table of Contents</h2>
    <ol class="toc" role="directory">
-    <li><a href="#overview"><span class="secno">1</span> <span class="content">Definitions</span></a>
     <li>
-     <a href="#dcat-catalog"><span class="secno">2</span> <span class="content">Extending DCAT(-AP) for shape-based discovery</span></a>
+     <a href="#introduction"><span class="secno">1</span> <span class="content">Introduction</span></a>
      <ol class="toc">
-      <li><a href="#linking-to-shapes"><span class="secno">2.1</span> <span class="content">Linking DCAT Resources to data shapes</span></a>
-      <li><a href="#describe-dataset"><span class="secno">2.2</span> <span class="content">Describing DCAT Datasets</span></a>
-      <li><a href="#describe-data-service"><span class="secno">2.3</span> <span class="content">Describing DCAT Data Services {#describe-data-service}</span></a>
+      <li><a href="#conventions"><span class="secno">1.1</span> <span class="content">Document Conventions</span></a>
+      <li><a href="#terminology"><span class="secno">1.2</span> <span class="content">Terminology</span></a>
+     </ol>
+    <li>
+     <a href="#dcat-shapes"><span class="secno">2</span> <span class="content">Describing DCAT(-AP) resource content with shapes</span></a>
+     <ol class="toc">
+      <li><a href="#conforms-to"><span class="secno">2.1</span> <span class="content">Relating to shapes via <code>dcterms:conformsTo</code></span></a>
+      <li><a href="#qualified-relation"><span class="secno">2.2</span> <span class="content">Relating to shapes via <code>dcat:qualifiedRelation</code></span></a>
+      <li><a href="#shapes-graph"><span class="secno">2.3</span> <span class="content">Relating to shapes via <code>sh:shapesGraph</code></span></a>
      </ol>
     <li>
      <a href="#logical-flow"><span class="secno">3</span> <span class="content">Discovery logical flow</span></a>
      <ol class="toc">
-      <li><a href="#starting-from"><span class="secno">3.1</span> <span class="content">Initializing a client with a url</span></a>
-      <li><a href="#dataset-shapes"><span class="secno">3.2</span> <span class="content">Selecting a dataset via shapes</span></a>
-      <li><a href="#data-service-shapes"><span class="secno">3.3</span> <span class="content">Selecting a data service via shapes</span></a>
-      <li><a href="#dataset-queries"><span class="secno">3.4</span> <span class="content">Selecting a dataset via queries</span></a>
-      <li><a href="#data-service-queries"><span class="secno">3.5</span> <span class="content">Selecting a data service via queries</span></a>
+      <li><a href="#starting-from"><span class="secno">3.1</span> <span class="content">Discovery request</span></a>
+      <li><a href="#catalog-retrieval"><span class="secno">3.2</span> <span class="content">Catalog retrieval</span></a>
+      <li><a href="#extract-shapes"><span class="secno">3.3</span> <span class="content">Extracting associated shapes</span></a>
+      <li><a href="#resource-relevance"><span class="secno">3.4</span> <span class="content">Determining resource relevance</span></a>
+      <li><a href="#return-results"><span class="secno">3.5</span> <span class="content">Presenting results</span></a>
      </ol>
-    <li><a href="#algorithm"><span class="secno">4</span> <span class="content">Algorithm specification</span></a>
+    <li>
+     <a href="#algorithm"><span class="secno">4</span> <span class="content">Algorithm specification</span></a>
+     <ol class="toc">
+      <li><a href="#algorithm-preliminaries"><span class="secno">4.1</span> <span class="content">Preliminaries</span></a>
+     </ol>
     <li><a href="#conformance"><span class="secno"></span> <span class="content">
     Conformance</span></a>
+    <li>
+     <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
+     <ol class="toc">
+      <li><a href="#index-defined-here"><span class="secno"></span> <span class="content">Terms defined by this specification</span></a>
+     </ol>
     <li>
      <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
      <ol class="toc">
       <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
+      <li><a href="#informative"><span class="secno"></span> <span class="content">Informative References</span></a>
      </ol>
    </ol>
   </nav>
   <main>
-   <h2 class="heading settled" data-level="1" id="overview"><span class="secno">1. </span><span class="content">Definitions</span><a class="self-link" href="#overview"></a></h2>
-   <p>This specification reuses terminology from:</p>
+<script>
+    function showExample(ex, idx) {
+        const wrapper = document.querySelector(`#example-${ex}`);
+        const examples = wrapper.querySelectorAll(".tab-content");
+        const buttons = wrapper.querySelectorAll(".tab-btn");
+
+        Object.keys(examples).forEach((k, i) => examples[k].style.display = i === idx ? "" : "none");
+        Object.keys(buttons).forEach((k, i) => buttons[k].classList.toggle('active', i === idx));
+    }
+</script>
+   <h2 class="heading settled" data-level="1" id="introduction"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#introduction"></a></h2>
+   <p>The DCAT Application Profile for data portals (DCAT-AP) <a data-link-type="biblio" href="#biblio-dcat-ap" title="DCAT Application Profile for data portals in Europe">[DCAT-AP]</a> is the <a href="https://interoperable-europe.ec.europa.eu/collection/semic-support-centre/solution/dcat-application-profile-data-portals-europe">official standard in Europe</a>
+for describing datasets and data services in catalogues on the Web. 
+It provides a common model that enables interoperability across data portals, making it easier to publish and share metadata consistently. 
+This interoperability has been instrumental in improving the visibility and accessibility of open data across domains and EU member states.</p>
+   <p>However, the current design and usage of DCAT-AP are primarily oriented towards human-driven discovery.
+Catalogues are typically accessed through graphical interfaces where users browse, filter, and search for resources based on keywords or metadata attributes. 
+While this supports transparency and accessibility for a wide audience, it limits the potential for automated, machine-based discovery and integration of datasets and data services. 
+In practice, many use cases—such as federated analytics, cross-domain applications, or dynamic data integration pipelines—require more than keyword search: 
+they need support for automated identification of datasets and services that match specific structural and semantic requirements.</p>
+   <p>This specification, aims to address this gap by defining a (i) data model extension for DCAT-AP that allows describing sematically
+what is contained within RDF <a data-link-type="biblio" href="#biblio-rdf11-concepts" title="RDF 1.1 Concepts and Abstract Syntax">[RDF11-CONCEPTS]</a> datasets and expected/produced by RDF data services; 
+and an (ii) algorithm for automated discovery and selection of RDF datasets and RDF data services over DCAT-AP catalogues, 
+based on formal input constraints expressed as either:</p>
    <ul>
     <li data-md>
-     <p><a href="https://www.w3.org/TR/vocab-dcat-3/">DCAT</a></p>
+     <p>a <a data-link-type="biblio" href="#biblio-shacl" title="Shapes Constraint Language (SHACL)">[SHACL]</a> shape, describing the expected structure and semantics of the data, or</p>
     <li data-md>
-     <p><a href="https://semiceu.github.io/DCAT-AP/releases/">DCAT-AP</a></p>
-    <li data-md>
-     <p><a href="https://www.w3.org/TR/shacl/">SHACL</a></p>
-    <li data-md>
-     <p><a href="https://www.w3.org/TR/sparql11-query/">SPARQL 1.1</a></p>
+     <p>a <a data-link-type="biblio" href="#biblio-sparql-query" title="SPARQL Query Language for RDF">[SPARQL-QUERY]</a>, representing the information needs directly.</p>
    </ul>
-   <p><strong>Dataset</strong> and <strong>Data Service</strong> are as defined in DCAT.
-<strong>Shape</strong> refers to a SHACL NodeShape that formally describes constraints over RDF data.  
-<strong>Discovery</strong> refers to the process of identifying relevant datasets or services in a DCAT-based catalog given an input description (shape or query).</p>
-   <h2 class="heading settled" data-level="2" id="dcat-catalog"><span class="secno">2. </span><span class="content">Extending DCAT(-AP) for shape-based discovery</span><a class="self-link" href="#dcat-catalog"></a></h2>
-   <p>This section defines how DCAT(-AP) resources can be extended to include references to data shapes that describe their content.
+   <p>By enabling discovery through such formal specifications, the proposed approach allows clients
+to automatically determine the relevance of available resources, thereby supporting machine-to-machine interoperability. 
+This contributes to realising the full potential of DCAT-AP not only as a tool for publishing metadata for humans 
+but also as a foundation for automated data ecosystems.</p>
+   <h3 class="heading settled" data-level="1.1" id="conventions"><span class="secno">1.1. </span><span class="content">Document Conventions</span><a class="self-link" href="#conventions"></a></h3>
+   <p>Within this document, the following namespace prefix bindings are used:</p>
+   <table class="def">
+    <tbody>
+     <tr>
+      <th><strong>Prefix</strong>
+      <th><strong>Namespace IRI</strong>
+      <th><strong>Description</strong>
+     <tr>
+      <td>dcat:
+      <td><a href="http://www.w3.org/ns/dcat#">http://www.w3.org/ns/dcat#</a>
+      <td><a data-link-type="biblio" href="#biblio-vocab-dcat-3" title="Data Catalog Vocabulary (DCAT) - Version 3">[VOCAB-DCAT-3]</a>
+     <tr>
+      <td>dcterms:
+      <td>http://purl.org/dc/terms/
+      <td><a data-link-type="biblio" href="#biblio-dcterms" title="DCMI Metadata Terms">[DCTERMS]</a>
+     <tr>
+      <td>rdf:
+      <td>http://www.w3.org/1999/02/22-rdf-syntax-ns#
+      <td><a data-link-type="biblio" href="#biblio-rdf11-schema" title="RDF Schema 1.1">[RDF11-SCHEMA]</a>
+     <tr>
+      <td>rdfs:
+      <td>http://www.w3.org/2000/01/rdf-schema#
+      <td><a data-link-type="biblio" href="#biblio-rdf11-schema" title="RDF Schema 1.1">[RDF11-SCHEMA]</a>
+     <tr>
+      <td>sh:
+      <td>http://www.w3.org/ns/shacl#
+      <td><a data-link-type="biblio" href="#biblio-shacl" title="Shapes Constraint Language (SHACL)">[SHACL]</a>
+     <tr>
+      <td>skos:
+      <td>http://www.w3.org/2004/02/skos/core#
+      <td><a data-link-type="biblio" href="#biblio-skos-reference" title="SKOS Simple Knowledge Organization System Reference">[SKOS-REFERENCE]</a>
+     <tr>
+      <td>xsd:
+      <td>http://www.w3.org/2001/XMLSchema#
+      <td><a data-link-type="biblio" href="#biblio-xmlschema11-2" title="W3C XML Schema Definition Language (XSD) 1.1 Part 2: Datatypes">[XMLSCHEMA11-2]</a>
+   </table>
+   <h3 class="heading settled" data-level="1.2" id="terminology"><span class="secno">1.2. </span><span class="content">Terminology</span><a class="self-link" href="#terminology"></a></h3>
+   <ul>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="dataset">Dataset</dfn> refers to the definition given in <a data-link-type="biblio" href="#biblio-vocab-dcat-3" title="Data Catalog Vocabulary (DCAT) - Version 3">[VOCAB-DCAT-3]</a> for <code>dcat:Dataset</code>.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="distribution">Distribution</dfn> refers to the definition given in <a data-link-type="biblio" href="#biblio-vocab-dcat-3" title="Data Catalog Vocabulary (DCAT) - Version 3">[VOCAB-DCAT-3]</a> for <code>dcat:Distribution</code>.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="data-service">Data Service</dfn> refers to the definitions given in <a data-link-type="biblio" href="#biblio-vocab-dcat-3" title="Data Catalog Vocabulary (DCAT) - Version 3">[VOCAB-DCAT-3]</a> for <code>dcat:DataService</code>.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="resource">Resource</dfn> refers to the generic term encompassing <a data-link-type="dfn" href="#dataset" id="ref-for-dataset">datasets</a>, <a data-link-type="dfn" href="#distribution" id="ref-for-distribution">distributions</a> and <a data-link-type="dfn" href="#data-service" id="ref-for-data-service">data services</a>, defined in <a data-link-type="biblio" href="#biblio-vocab-dcat-3" title="Data Catalog Vocabulary (DCAT) - Version 3">[VOCAB-DCAT-3]</a> as <code>dcat:Resource</code></p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="catalog">Catalog</dfn> refers to a <a data-link-type="biblio" href="#biblio-vocab-dcat-3" title="Data Catalog Vocabulary (DCAT) - Version 3">[VOCAB-DCAT-3]</a> resource of type <code>dcat:Catalog</code>.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="shape">Shape</dfn> refers to a <a data-link-type="biblio" href="#biblio-shacl" title="Shapes Constraint Language (SHACL)">[SHACL]</a> <code>sh:NodeShape</code> that formally describes constraints over RDF data.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="discovery">Discovery</dfn> refers to the process specified in <a href="#logical-flow">§ 3 Discovery logical flow</a> for identifying relevant RDF <a data-link-type="dfn" href="#resource" id="ref-for-resource">resources</a> over one or more <a data-link-type="dfn" href="#catalog" id="ref-for-catalog">catalogs</a>.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="client">Client</dfn> refers to a client application that implements the <a href="#algorithm">§ 4 Algorithm specification</a> and supports the <a href="#logical-flow">§ 3 Discovery logical flow</a>.</p>
+   </ul>
+   <h2 class="heading settled" data-level="2" id="dcat-shapes"><span class="secno">2. </span><span class="content">Describing DCAT(-AP) resource content with shapes</span><a class="self-link" href="#dcat-shapes"></a></h2>
+   <p>This section defines a set of alternative ways in which DCAT(-AP) <a data-link-type="dfn" href="#resource" id="ref-for-resource①">resources</a>,
+specifically referring to RDF <a data-link-type="dfn" href="#dataset" id="ref-for-dataset①">datasets</a> or <a data-link-type="dfn" href="#data-service" id="ref-for-data-service①">data services</a>,
+can be extended to include references to data <a data-link-type="dfn" href="#shape" id="ref-for-shape">shapes</a> that semantically describe their content.  
 The extensions are designed to be minimal and compatible with existing DCAT-AP profiles.</p>
-   <h3 class="heading settled" data-level="2.1" id="linking-to-shapes"><span class="secno">2.1. </span><span class="content">Linking DCAT Resources to data shapes</span><a class="self-link" href="#linking-to-shapes"></a></h3>
-   <p>Here we enumerate different approaches to link a data shape to a DCAT Resource:</p>
+   <p class="note" role="note"><span class="marker">Note:</span> The <a href="#logical-flow">§ 3 Discovery logical flow</a> and related <a href="#algorithm">§ 4 Algorithm specification</a> are designed to support all the following data model extensions.
+In the presence of more than one alternative, a <a data-link-type="dfn" href="#discovery" id="ref-for-discovery">discovery</a> <a data-link-type="dfn" href="#client" id="ref-for-client">client</a> will not prioritise any of them and should treat them as a logical OR relation.</p>
+   <h3 class="heading settled" data-level="2.1" id="conforms-to"><span class="secno">2.1. </span><span class="content">Relating to shapes via <code>dcterms:conformsTo</code></span><a class="self-link" href="#conforms-to"></a></h3>
+   <p>In this approach we establish the use of the existing property <code>dcterms:conformsTo</code> <a data-link-type="biblio" href="#biblio-dcterms" title="DCMI Metadata Terms">[DCTERMS]</a>,
+as described by <a data-link-type="biblio" href="#biblio-vocab-dcat-3" title="Data Catalog Vocabulary (DCAT) - Version 3">[VOCAB-DCAT-3]</a> and <a data-link-type="biblio" href="#biblio-dcat-ap" title="DCAT Application Profile for data portals in Europe">[DCAT-AP]</a>, to link an RDF <a data-link-type="dfn" href="#resource" id="ref-for-resource②">resource</a> defined as part of a <a data-link-type="dfn" href="#catalog" id="ref-for-catalog①">catalog</a>,
+to a <a data-link-type="dfn" href="#shape" id="ref-for-shape①">shape</a> that describes its content.</p>
+   <p>In <a data-link-type="biblio" href="#biblio-vocab-dcat-3" title="Data Catalog Vocabulary (DCAT) - Version 3">[VOCAB-DCAT-3]</a>, the use of <code>dcterms:conformsTo</code> is informally suggested for linking a resource to a relevant standard,
+that specifies its model, <strong>schema</strong>, ontology, application profile, among others.
+SHACL shapes may be considered as a type of schema, as they define the structure and constraints that RDF instance data must adhere to.</p>
+   <p>No further clarifications are provided in <a data-link-type="biblio" href="#biblio-dcat-ap" title="DCAT Application Profile for data portals in Europe">[DCAT-AP]</a> regarding the expected use of <code>dcterms:conformsTo</code>,
+beyond the informal suggestion to link to relevant standards, understood as instances of <code>dcterms:Standard</code>.</p>
+   <p><strong>Figure 1</strong> shows how any kind of RDF <a data-link-type="dfn" href="#resource" id="ref-for-resource③">resource</a> that has been declared in a <a data-link-type="dfn" href="#catalog" id="ref-for-catalog②">catalog</a>, may be linked to a related <a data-link-type="dfn" href="#shape" id="ref-for-shape②">shape</a> via <code>dcterms:conformsTo</code>.</p>
+   <figure>
+    <figcaption>
+        DCAT Resources linked to a SHACL shape via <code>dcterms:conformsTo</code>. 
+    </figcaption>
+    <object data="img/figure-1.svg" type="image/svg+xml" width="700"></object>
+   </figure>
+   <p><strong>Example 1</strong> shows corresponding RDF representations for a <a data-link-type="dfn" href="#dataset" id="ref-for-dataset②">dataset</a>, <a data-link-type="dfn" href="#distribution" id="ref-for-distribution①">distribution</a>, and <a data-link-type="dfn" href="#data-service" id="ref-for-data-service②">data service</a>, respectively linked to their <a data-link-type="dfn" href="#shape" id="ref-for-shape③">shapes</a>.</p>
+   <div class="example" id="example-1">
+    <a class="self-link" href="#example-1"></a>
+    
+    <div class="tab-buttons">
+     <button class="tab-btn active" onclick="showExample(1, 0)">Dataset Example</button>
+     <button class="tab-btn" onclick="showExample(1, 1)">Distribution Example</button>
+     <button class="tab-btn" onclick="showExample(1, 2)">Data Service Example</button>
+    </div>
+    <div class="tab-content">
+     
+    RDF representation in Turtle format of a <code>dcat:Dataset</code> linked to a <code>sh:NodeShape</code> via <code>dcterms:conformsTo</code>
+    
+<pre class="language-turtle highlight"><c- nn>ex</c-><c- p>:</c-><c- f>myDataset</c-> <c- b>a</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Dataset</c-><c- p>;</c->
+    <c- nn>dcterms</c-><c- p>:</c-><c- f>title</c-> <c- s>"My Dataset"</c-><c- p>;</c->
+    <c- nn>dcterms</c-><c- p>:</c-><c- f>conformsTo</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myShape</c-><c- p>.</c->
+
+<c- nn>ex</c-><c- p>:</c-><c- f>myShape</c-> <c- b>a</c-> <c- nn>sh</c-><c- p>:</c-><c- f>NodeShape</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>targetClass</c-> <c- nn>ex</c-><c- p>:</c-><c- f>MyClass</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>property</c-> <c- p>[</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>path</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myProperty</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>datatype</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>string</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>minCount</c-> <c- mi>1</c-><c- p>;</c->
+    <c- p>].</c->
+</pre>
+    </div>
+    <div class="tab-content" style="display:none;">
+     
+    RDF representation in Turtle format of a <code>dcat:Distribution</code> linked to a <code>sh:NodeShape</code> via <code>dcterms:conformsTo</code>
+    
+<pre class="language-turtle highlight"><c- nn>ex</c-><c- p>:</c-><c- f>myDataset</c-> <c- b>a</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Dataset</c-><c- p>;</c->
+    <c- nn>dcterms</c-><c- p>:</c-><c- f>title</c-> <c- s>"My Dataset"</c-><c- p>;</c->
+    <c- nn>dcat</c-><c- p>:</c-><c- f>distribution</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myDistribution</c-><c- p>.</c->
+        
+<c- nn>ex</c-><c- p>:</c-><c- f>myDistribution</c-> <c- b>a</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Distribution</c-><c- p>;</c->
+    <c- nn>dcat</c-><c- p>:</c-><c- f>downloadURL</c-> <c- g>&lt;https://example.org/dataset.ttl></c-><c- p>;</c->
+    <c- nn>dcat</c-><c- p>:</c-><c- f>mediaType</c-> <c- g>&lt;https://www.iana.org/assignments/media-types/text/turtle></c->
+    <c- nn>dcterms</c-><c- p>:</c-><c- f>conformsTo</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myShape</c-><c- p>.</c->
+
+<c- nn>ex</c-><c- p>:</c-><c- f>myShape</c-> <c- b>a</c-> <c- nn>sh</c-><c- p>:</c-><c- f>NodeShape</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>targetClass</c-> <c- nn>ex</c-><c- p>:</c-><c- f>MyClass</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>property</c-> <c- p>[</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>path</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myProperty</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>datatype</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>string</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>minCount</c-> <c- mi>1</c-><c- p>;</c->
+    <c- p>].</c->
+</pre>
+    </div>
+    <div class="tab-content" style="display:none;">
+     
+    RDF representation in Turtle format of a <code>dcat:DataService</code> linked to a <code>sh:NodeShape</code> via <code>dcterms:conformsTo</code>
+    
+<pre class="language-turtle highlight"><c- nn>ex</c-><c- p>:</c-><c- f>myService</c-> <c- b>a</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>DataService</c-><c- p>;</c->
+    <c- nn>dcat</c-><c- p>:</c-><c- f>servesDataset</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myDataset</c-><c- p>;</c->
+    <c- nn>dcat</c-><c- p>:</c-><c- f>endpointURL</c-> <c- g>&lt;https://example.org/my-data/service></c->
+    <c- nn>dcterms</c-><c- p>:</c-><c- f>title</c-> <c- s>"My data service"</c-><c- p>;</c->
+    <c- nn>dcterms</c-><c- p>:</c-><c- f>conformsTo</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myShape</c-><c- p>,</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myOtherShape</c-><c- p>.</c->
+
+<c- nn>ex</c-><c- p>:</c-><c- f>myShape</c-> <c- b>a</c-> <c- nn>sh</c-><c- p>:</c-><c- f>NodeShape</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>targetClass</c-> <c- nn>ex</c-><c- p>:</c-><c- f>MyClass</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>property</c-> <c- p>[</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>path</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myProperty</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>datatype</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>string</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>minCount</c-> <c- mi>1</c-><c- p>;</c->
+    <c- p>].</c->
+
+<c- nn>ex</c-><c- p>:</c-><c- f>myOtherShape</c-> <c- b>a</c-> <c- nn>sh</c-><c- p>:</c-><c- f>NodeShape</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>targetClass</c-> <c- nn>ex</c-><c- p>:</c-><c- f>MyOtherClass</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>property</c-> <c- p>[</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>path</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myOtherProperty</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>datatype</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>integer</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>minCount</c-> <c- mi>1</c-><c- p>;</c->
+    <c- p>].</c->
+</pre>
+    </div>
+   </div>
+   <p class="note" role="note"><span class="marker">Note:</span> A related <a data-link-type="dfn" href="#shape" id="ref-for-shape④">shape</a> to a <a data-link-type="dfn" href="#data-service" id="ref-for-data-service③">data service</a> could be referring to the constraints of either the input or output data (or both) of such service.
+Via the <code>dcterms:conformsTo</code> property, no distintion can be made about the role of a related shape 
+(see <a href="#qualified-relation">§ 2.2 Relating to shapes via dcat:qualifiedRelation</a> for an alternative where it is possible). 
+However, linking multiple shapes to a data service should not entail any conflicts for the <a data-link-type="dfn" href="#discovery" id="ref-for-discovery①">discovery</a> process, 
+given its inclusive nature based on a logical OR operation.</p>
+   <h3 class="heading settled" data-level="2.2" id="qualified-relation"><span class="secno">2.2. </span><span class="content">Relating to shapes via <code>dcat:qualifiedRelation</code></span><a class="self-link" href="#qualified-relation"></a></h3>
+   <p>In this approach we establish the use of the property <code>dcat:qualifiedRelation</code> as described by <a data-link-type="biblio" href="#biblio-vocab-dcat-3" title="Data Catalog Vocabulary (DCAT) - Version 3">[VOCAB-DCAT-3]</a> and <a data-link-type="biblio" href="#biblio-dcat-ap" title="DCAT Application Profile for data portals in Europe">[DCAT-AP]</a>,
+to indirectly link an RDF <a data-link-type="dfn" href="#resource" id="ref-for-resource④">resource</a> defined as part of a <a data-link-type="dfn" href="#catalog" id="ref-for-catalog③">catalog</a>, to a <a data-link-type="dfn" href="#shape" id="ref-for-shape⑤">shape</a> that describes its content.
+This approach follows an n-ary <a data-link-type="biblio" href="#biblio-swbp-n-aryrelations" title="Defining N-ary Relations on the Semantic Web">[SWBP-N-ARYRELATIONS]</a> or qualified <a data-link-type="biblio" href="#biblio-ldpatterns" title="Linked Data Patterns: A pattern catalogue for modelling, publishing, and consuming Linked Data">[LDPATTERNS]</a> data modelling pattern.</p>
+   <p>In <a data-link-type="biblio" href="#biblio-vocab-dcat-3" title="Data Catalog Vocabulary (DCAT) - Version 3">[VOCAB-DCAT-3]</a>, the use of <code>dcat:qualifiedRelation</code> is informally specified as a way to define semantically richer relations
+among resources. This is accomplished with the introduction of the <code>dcat:Relationship</code> class, on which specific roles can be set,
+to further describe the nature of the relationship between a resource and another asset.
+For specifying types of roles, the use of controlled vocabularies is encouraged, which is reflected by the exsiting subclass relation
+between the <code>dcat:Role</code> class and <code>skos:Concept</code>.</p>
+   <p>No further guidelines nor usage notes are given for <code>dcat:qualifiedRelation</code> and <code>dcat:Relationship</code> in <a data-link-type="biblio" href="#biblio-dcat-ap" title="DCAT Application Profile for data portals in Europe">[DCAT-AP]</a>.</p>
+   <p><strong>Figure 2</strong> shows how a shape can be linked to any type of resource using the <code>dcat:qualifiedRelation</code> property.</p>
+   <figure>
+    <figcaption>
+        DCAT Resources linked to a SHACL shape via <code>dcat:qualifiedRelation</code>. 
+    </figcaption>
+    <object data="img/figure-2.svg" type="image/svg+xml" width="700"></object>
+   </figure>
+   <p>In practice, for the <a data-link-type="dfn" href="#discovery" id="ref-for-discovery②">discovery</a> process, a <a data-link-type="dfn" href="#client" id="ref-for-client①">client</a> needs to traverse the property path <code>dcat:qualifiedRelation/dcterms:relation</code>,
+in search for an associated <a data-link-type="dfn" href="#shape" id="ref-for-shape⑥">shape</a>. This specification does not mandate a specific role concept value via <code>dcat:hadRole</code>.
+A discovery client must assess all existing qualified relations (see <a href="#logical-flow">§ 3 Discovery logical flow</a>).</p>
+   <p class="note" role="note"><span class="marker">Note:</span> <a data-link-type="biblio" href="#biblio-vocab-dcat-3" title="Data Catalog Vocabulary (DCAT) - Version 3">[VOCAB-DCAT-3]</a> suggests the use of coded term lists such as <a data-link-type="biblio" href="#biblio-iana-relations" title="Link Relations">[IANA-RELATIONS]</a>, or <a data-link-type="biblio" href="#biblio-iso-19115-1" title="Geographic information -- Metadata -- Part 1: Fundamentals">[ISO-19115-1]</a>,
+to specify a <code>dcat:Relationship</code> role via the <code>dcat:hadRole</code> property.
+However, none of the recommended vocabularies defines a specific role type
+that conveys a relationship between a resource and an associated <a data-link-type="dfn" href="#shape" id="ref-for-shape⑦">shape</a>.
+A semantically similar role type is the <code>describedby</code> relation defined by <a data-link-type="biblio" href="#biblio-iana-relations" title="Link Relations">[IANA-RELATIONS]</a>,
+but we opt for a lenient position since no established standard exists for this yet.</p>
+   <p><strong>Example 2</strong> shows corresponding RDF representations for a dataset and data service, respectively linked to their shapes via <code>dcat:qualifiedRelation</code>.
+According to <a data-link-type="biblio" href="#biblio-vocab-dcat-3" title="Data Catalog Vocabulary (DCAT) - Version 3">[VOCAB-DCAT-3]</a>, the domain of <code>dcat:qualifiedRelation</code> is <code>dcat:Resource</code>, which excludes <code>dcat:Distribution</code> instances.</p>
+   <div class="example" id="example-2">
+    <a class="self-link" href="#example-2"></a>
+    
+    <div class="tab-buttons">
+     <button class="tab-btn active" onclick="showExample(2, 0)">Dataset Example</button>
+     <button class="tab-btn" onclick="showExample(2, 1)">Data Service Example</button>
+    </div>
+    <div class="tab-content">
+     
+    RDF representation in Turtle format of a <code>dcat:Dataset</code> linked to a <code>sh:NodeShape</code> via <code>dcat:qualifiedRelation/dcterms:relation</code>
+    
+<pre class="language-turtle highlight"><c- nn>ex</c-><c- p>:</c-><c- f>myDataset</c-> <c- b>a</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Dataset</c-><c- p>;</c->
+    <c- nn>dcterms</c-><c- p>:</c-><c- f>title</c-> <c- s>"My Dataset"</c-><c- p>;</c->
+    <c- nn>dcat</c-><c- p>:</c-><c- f>qualifiedRelation</c-> <c- p>[</c->
+        <c- b>a</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Relationship</c-><c- p>;</c->
+        <c- nn>dcat</c-><c- p>:</c-><c- f>hadRole</c-> <c- g>&lt;http://www.iana.org/assignments/relation/describedby></c-><c- p>;</c-> <c- c># this is optional</c->
+        <c- nn>dcterms</c-><c- p>:</c-><c- f>relation</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myShape</c->
+    <c- p>].</c->
+
+<c- nn>ex</c-><c- p>:</c-><c- f>myShape</c-> <c- b>a</c-> <c- nn>sh</c-><c- p>:</c-><c- f>NodeShape</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>targetClass</c-> <c- nn>ex</c-><c- p>:</c-><c- f>MyClass</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>property</c-> <c- p>[</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>path</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myProperty</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>datatype</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>string</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>minCount</c-> <c- mi>1</c-><c- p>;</c->
+    <c- p>].</c->
+</pre>
+    </div>
+    <div class="tab-content" style="display:none;">
+     
+    RDF representation in Turtle format of a <code>dcat:DataService</code> linked to a <code>sh:NodeShape</code> via <code>dcat:qualifiedRelation/dcterms:relation</code>
+    
+<pre class="language-turtle highlight"><c- nn>ex</c-><c- p>:</c-><c- f>myService</c-> <c- b>a</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>DataService</c-><c- p>;</c->
+    <c- nn>dcat</c-><c- p>:</c-><c- f>endpointURL</c-> <c- g>&lt;https://example.org/my-data/service></c->
+    <c- nn>dcterms</c-><c- p>:</c-><c- f>title</c-> <c- s>"My data service"</c-><c- p>;</c->
+    <c- nn>dcat</c-><c- p>:</c-><c- f>qualifiedRelation</c-> <c- p>[</c->
+        <c- b>a</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Relationship</c-><c- p>;</c->
+        <c- nn>dcat</c-><c- p>:</c-><c- f>hadRole</c-> <c- nn>ex</c-><c- p>:</c-><c- f>InputDataShape</c-><c- p>;</c-> <c- c># this is optional</c->
+        <c- nn>dcterms</c-><c- p>:</c-><c- f>relation</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myShape</c->
+    <c- p>],</c-> <c- p>[</c->
+        <c- b>a</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Relationship</c-><c- p>;</c->
+        <c- nn>dcat</c-><c- p>:</c-><c- f>hadRole</c-> <c- nn>ex</c-><c- p>:</c-><c- f>OutputDataShape</c-><c- p>;</c-> <c- c># this is optional</c->
+        <c- nn>dcterms</c-><c- p>:</c-><c- f>relation</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myOtherShape</c->
+    <c- p>].</c->
+
+<c- nn>ex</c-><c- p>:</c-><c- f>myShape</c-> <c- b>a</c-> <c- nn>sh</c-><c- p>:</c-><c- f>NodeShape</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>targetClass</c-> <c- nn>ex</c-><c- p>:</c-><c- f>MyClass</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>property</c-> <c- p>[</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>path</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myProperty</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>datatype</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>string</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>minCount</c-> <c- mi>1</c-><c- p>;</c->
+    <c- p>].</c->
+
+<c- nn>ex</c-><c- p>:</c-><c- f>myOtherShape</c-> <c- b>a</c-> <c- nn>sh</c-><c- p>:</c-><c- f>NodeShape</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>targetClass</c-> <c- nn>ex</c-><c- p>:</c-><c- f>MyOtherClass</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>property</c-> <c- p>[</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>path</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myOtherProperty</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>datatype</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>integer</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>minCount</c-> <c- mi>1</c-><c- p>;</c->
+    <c- p>].</c->
+</pre>
+    </div>
+   </div>
+   <p class="note" role="note"><span class="marker">Note:</span> The qualified relation pattern allows for a more granular description of the type or relation
+that a given shape has with a resource. For example, as it is shown in <strong>Example 2 (Data Service Example)</strong>,
+where the qualified relations describe the shapes of both input and output data of a data service independently.
+This has no impact on the discovery process as both relations shall be assessed to find relevant matches
+with respect to the given discovery constraints.</p>
+   <h3 class="heading settled" data-level="2.3" id="shapes-graph"><span class="secno">2.3. </span><span class="content">Relating to shapes via <code>sh:shapesGraph</code></span><a class="self-link" href="#shapes-graph"></a></h3>
+   <p>In this approach we establish the use of the property <code>sh:shapesGraph</code>, as defined  by <a data-link-type="biblio" href="#biblio-shacl" title="Shapes Constraint Language (SHACL)">[SHACL]</a>,
+to link an RDF resource defined as part of a catalog, to a shape that describes its content.</p>
+   <p>The <code>sh:shapesGraph</code> property is used in <a data-link-type="biblio" href="#biblio-shacl" title="Shapes Constraint Language (SHACL)">[SHACL]</a> to indicate a graph where the validation shapes are defined.
+From the perspective of DCAT, the use of <code>sh:shapesGraph</code> constitutes a model extension 
+that is not currently contemplated by <a data-link-type="biblio" href="#biblio-vocab-dcat-3" title="Data Catalog Vocabulary (DCAT) - Version 3">[VOCAB-DCAT-3]</a> nor <a data-link-type="biblio" href="#biblio-dcat-ap" title="DCAT Application Profile for data portals in Europe">[DCAT-AP]</a>.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> An example of such an extenstion can be observed in the work of Frank Michiel et al. <a data-link-type="biblio" href="#biblio-web-api-disc" title="Enabling Automatic Discovery and Querying of Web APIs at Web Scale using Linked Data Standards">[WEB-API-DISC]</a>,
+where they propose the use of <code>sh:shapesGraph</code> to link a <code>dcat:Distribution</code> to a graph containing its shape definitions.</p>
+   <p><strong>Figure 3</strong> shows how any kind of RDF resource that has been declared in a catalog, may be linked to a related shape via <code>sh:shapesGraph</code>.</p>
+   <figure>
+    <figcaption>
+        DCAT Resources linked to a SHACL shape via <code>sh:shapesGraph</code>. 
+    </figcaption>
+    <object data="img/figure-3.svg" type="image/svg+xml" width="700"></object>
+   </figure>
+   <p>An associated shapes graph linked via <code>sh:shapesGraph</code> may contain one or more shape definitions,
+but these must be related only to the resource that links to them. 
+This is necessary to avoid false positives during the discovery process.</p>
+   <p><strong>Example 3</strong> shows corresponding RDF representations for a dataset, distribution, and data service,
+respectively linked to their shapes via <code>sh:shapesGraph</code>.</p>
+   <div class="example" id="example-3">
+    <a class="self-link" href="#example-3"></a>
+    
+    <div class="tab-buttons">
+     <button class="tab-btn active" onclick="showExample(3, 0)">Dataset Example</button>
+     <button class="tab-btn" onclick="showExample(3, 1)">Distribution Example</button>
+     <button class="tab-btn" onclick="showExample(3, 2)">Data Service Example</button>
+    </div>
+    <div class="tab-content">
+     
+    RDF representation in TriG format of a <code>dcat:Dataset</code> linked to a shape via <code>sh:shapesGraph</code>
+    
+<pre class="language-turtle highlight"><c- nn>ex</c-><c- p>:</c-><c- f>myDataset</c-> <c- b>a</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Dataset</c-><c- p>;</c->
+    <c- nn>dcterms</c-><c- p>:</c-><c- f>title</c-> <c- s>"My Dataset"</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>shapesGraph</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myShapesGraph</c-><c- p>.</c->
+
+<c- nn>ex</c-><c- p>:</c-><c- f>myShapesGraph</c-> <c- p>{</c->
+    <c- nn>ex</c-><c- p>:</c-><c- f>myShape</c-> <c- b>a</c-> <c- nn>sh</c-><c- p>:</c-><c- f>NodeShape</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>targetClass</c-> <c- nn>ex</c-><c- p>:</c-><c- f>MyClass</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>property</c-> <c- p>[</c->
+            <c- nn>sh</c-><c- p>:</c-><c- f>path</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myProperty</c-><c- p>;</c->
+            <c- nn>sh</c-><c- p>:</c-><c- f>datatype</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>string</c-><c- p>;</c->
+            <c- nn>sh</c-><c- p>:</c-><c- f>minCount</c-> <c- mi>1</c-><c- p>;</c->
+        <c- p>].</c->
+<c- p>}</c->
+</pre>
+    </div>
+    <div class="tab-content" style="display:none;">
+     
+    RDF representation in TriG format of a <code>dcat:Distribution</code> linked to a shape via <code>sh:shapesGraph</code>
+    
+<pre class="language-turtle highlight"><c- nn>ex</c-><c- p>:</c-><c- f>myDataset</c-> <c- b>a</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Dataset</c-><c- p>;</c->
+    <c- nn>dcterms</c-><c- p>:</c-><c- f>title</c-> <c- s>"My Dataset"</c-><c- p>;</c->
+    <c- nn>dcat</c-><c- p>:</c-><c- f>distribution</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myDistribution</c-><c- p>.</c->
+        
+<c- nn>ex</c-><c- p>:</c-><c- f>myDistribution</c-> <c- b>a</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Distribution</c-><c- p>;</c->
+    <c- nn>dcat</c-><c- p>:</c-><c- f>downloadURL</c-> <c- g>&lt;https://example.org/dataset.ttl></c-><c- p>;</c->
+    <c- nn>dcat</c-><c- p>:</c-><c- f>mediaType</c-> <c- g>&lt;https://www.iana.org/assignments/media-types/text/turtle></c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>shapesGraph</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myShapesGraph</c-><c- p>.</c->
+
+<c- nn>ex</c-><c- p>:</c-><c- f>myShapesGraph</c-> <c- p>{</c->
+    <c- nn>ex</c-><c- p>:</c-><c- f>myShape</c-> <c- b>a</c-> <c- nn>sh</c-><c- p>:</c-><c- f>NodeShape</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>targetClass</c-> <c- nn>ex</c-><c- p>:</c-><c- f>MyClass</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>property</c-> <c- p>[</c->
+            <c- nn>sh</c-><c- p>:</c-><c- f>path</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myProperty</c-><c- p>;</c->
+            <c- nn>sh</c-><c- p>:</c-><c- f>datatype</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>string</c-><c- p>;</c->
+            <c- nn>sh</c-><c- p>:</c-><c- f>minCount</c-> <c- mi>1</c-><c- p>;</c->
+        <c- p>].</c->
+<c- p>}</c->
+</pre>
+    </div>
+    <div class="tab-content" style="display:none;">
+     
+    RDF representation in TriG format of a <code>dcat:DataService</code> linked to a shape via <code>sh:shapesGraph</code>  
+    
+<pre class="language-turtle highlight"><c- nn>ex</c-><c- p>:</c-><c- f>myService</c-> <c- b>a</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>DataService</c-><c- p>;</c->
+    <c- nn>dcat</c-><c- p>:</c-><c- f>servesDataset</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myDataset</c-><c- p>;</c->
+    <c- nn>dcat</c-><c- p>:</c-><c- f>endpointURL</c-> <c- g>&lt;https://example.org/my-data/service></c->
+    <c- nn>dcterms</c-><c- p>:</c-><c- f>title</c-> <c- s>"My data service"</c-><c- p>;</c->
+    <c- nn>sh</c-><c- p>:</c-><c- f>shapesGraph</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myShapesGraph</c-><c- p>.</c->
+
+<c- nn>ex</c-><c- p>:</c-><c- f>myShapesGraph</c-> <c- p>{</c->
+    <c- nn>ex</c-><c- p>:</c-><c- f>myShape</c-> <c- b>a</c-> <c- nn>sh</c-><c- p>:</c-><c- f>NodeShape</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>targetClass</c-> <c- nn>ex</c-><c- p>:</c-><c- f>MyClass</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>property</c-> <c- p>[</c->
+            <c- nn>sh</c-><c- p>:</c-><c- f>path</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myProperty</c-><c- p>;</c->
+            <c- nn>sh</c-><c- p>:</c-><c- f>datatype</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>string</c-><c- p>;</c->
+            <c- nn>sh</c-><c- p>:</c-><c- f>minCount</c-> <c- mi>1</c-><c- p>;</c->
+        <c- p>].</c->
+
+    <c- nn>ex</c-><c- p>:</c-><c- f>myOtherShape</c-> <c- b>a</c-> <c- nn>sh</c-><c- p>:</c-><c- f>NodeShape</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>targetClass</c-> <c- nn>ex</c-><c- p>:</c-><c- f>MyOtherClass</c-><c- p>;</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>property</c-> <c- p>[</c->
+            <c- nn>sh</c-><c- p>:</c-><c- f>path</c-> <c- nn>ex</c-><c- p>:</c-><c- f>myOtherProperty</c-><c- p>;</c->
+            <c- nn>sh</c-><c- p>:</c-><c- f>datatype</c-> <c- nn>xsd</c-><c- p>:</c-><c- f>integer</c-><c- p>;</c->
+            <c- nn>sh</c-><c- p>:</c-><c- f>minCount</c-> <c- mi>1</c-><c- p>;</c->
+        <c- p>].</c->
+<c- p>}</c->
+</pre>
+    </div>
+   </div>
+   <h2 class="heading settled" data-level="3" id="logical-flow"><span class="secno">3. </span><span class="content">Discovery logical flow</span><a class="self-link" href="#logical-flow"></a></h2>
+   <p>This section describes the logical steps that a client needs to follow to perform a discovery process.
+An ovewrview of the logical flow is shown in <strong>Figure 4</strong>.</p>
+   <figure>
+    <figcaption>
+        Overview of a discovery process’s logical sequence. 
+    </figcaption>
+    <object data="img/figure-4.svg" type="image/svg+xml" width="800"></object>
+   </figure>
+   <p>In the next subsections a detailed description of each step is provided.</p>
+   <h3 class="heading settled" data-level="3.1" id="starting-from"><span class="secno">3.1. </span><span class="content">Discovery request</span><a class="self-link" href="#starting-from"></a></h3>
+   <p>This is the initial step (labeled as 1️⃣ in <strong>Figure 4</strong>). A client starts a discovery process when it receives as input:</p>
+   <ol>
+    <li data-md>
+     <p>a set of one or more <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="catalog-url">catalog URL</dfn>s (<a href="https://www.rfc-editor.org/rfc/rfc3987#section-2">IRI</a>),
+which must point to a dereferenceable RDF representation of a catalog; and</p>
+    <li data-md>
+     <p>a set of formal constraints, expressed either as an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="input-shacl-shape">input SHACL shape</dfn> (in any RDF serialization (<a href="https://infra.spec.whatwg.org/#javascript-string">string</a>))
+or an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="input-sparql-query">input SPARQL query</dfn> (<a href="https://infra.spec.whatwg.org/#javascript-string">string</a>).</p>
+   </ol>
+   <h3 class="heading settled" data-level="3.2" id="catalog-retrieval"><span class="secno">3.2. </span><span class="content">Catalog retrieval</span><a class="self-link" href="#catalog-retrieval"></a></h3>
+   <p>This step (labeled as 2️⃣ in <strong>Figure 4</strong>) involves retrieving the RDF representation of each catalog provided as input.
+A client must perform an HTTP GET request to each <a data-link-type="dfn" href="#catalog-url" id="ref-for-catalog-url">catalog URL</a>,
+which must be dereferenceable to any RDF serialization (e.g. <a data-link-type="biblio" href="#biblio-turtle" title="RDF 1.1 Turtle">[TURTLE]</a>, <a data-link-type="biblio" href="#biblio-rdf11-xml" title="RDF Primer">[RDF11-XML]</a>, <a data-link-type="biblio" href="#biblio-json-ld" title="JSON-LD 1.0">[JSON-LD]</a>, etc.).</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Even though in <strong>Figure 4</strong> the catalog retrieval step is shown as a sequential process,
+a client may choose to perform the retrieval of multiple catalogs in parallel,
+to optimise the overall performance of the discovery process.</p>
+   <h3 class="heading settled" data-level="3.3" id="extract-shapes"><span class="secno">3.3. </span><span class="content">Extracting associated shapes</span><a class="self-link" href="#extract-shapes"></a></h3>
+   <p>This step (labeled as 3️⃣ in <strong>Figure 4</strong>) involves parsing the RDF representation of each retrieved catalog,
+to extract all the shapes associated with RDF resources declared in the catalog.
+A client must identify all resources of type <code>dcat:Dataset</code>, <code>dcat:Distribution</code>, and <code>dcat:DataService</code>,
+and for each resource, extract any associated shape(s) using the three approaches defined in section <a href="#dcat-shapes">§ 2 Describing DCAT(-AP) resource content with shapes</a>.
+Given the mutually inclusive relation of these approaches, a client must consider all of them when extracting shapes.
+That is, for every resource a client must:</p>
+   <ol>
+    <li data-md>
+     <p>follow the property path <code>dcterms:conformsTo</code> and assess the existence of <code>sh:NodeShape</code> instances (<a href="#conforms-to">§ 2.1 Relating to shapes via dcterms:conformsTo</a>).
+The following SPARQL query expresses an equivalent operation to extract the relevant quads from a catalog instance.</p>
+     <div class="assertion">
+      
+    <span class="marker">EQUIVALENT SPARQL QUERY</span>
+    
+<pre class="language-sparql highlight"><c- k>PREFIX</c-> <c- nn>sh</c-><c- p>:</c-> <c- nl>&lt;http://www.w3.org/ns/shacl#></c->
+<c- k>PREFIX</c-> <c- nn>dcterms</c-><c- p>:</c-> <c- nl>&lt;http://purl.org/dc/terms/></c->
+
+<c- k>SELECT</c-> <c- g>?shape</c-> <c- k>WHERE</c-> <c- p>{</c->
+    <c- k>VALUES</c-> <c- g>?type</c-> <c- p>{</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Dataset</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Distribution</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>DataService</c-> <c- p>}</c->
+            
+    <c- g>?resource</c-> <c- k>a</c-> <c- g>?type</c-><c- p>.</c->
+        <c- nn>dcterms</c-><c- p>:</c-><c- f>conformsTo</c-> <c- g>?shape</c-><c- p>.</c->
+            
+    <c- g>?shape</c-> <c- k>a</c-> <c- nn>sh</c-><c- p>:</c-><c- f>NodeShape</c-><c- p>.</c->
+<c- p>}</c->
+</pre>
+     </div>
+    <li data-md>
+     <p>follow the property path <code>dcat:qualifiedRelation/dcterms:relation</code> and assess the existence of <code>sh:NodeShape</code> instances (<a href="#qualified-relation">§ 2.2 Relating to shapes via dcat:qualifiedRelation</a>).
+The following SPARQL query expresses an equivalent operation to extract the relevant quads from a catalog instance.</p>
+     <div class="assertion">
+      
+    <span class="marker">EQUIVALENT SPARQL QUERY</span>
+    
+<pre class="language-sparql highlight"><c- k>PREFIX</c-> <c- nn>sh</c-><c- p>:</c-> <c- nl>&lt;http://www.w3.org/ns/shacl#></c->
+<c- k>PREFIX</c-> <c- nn>dcterms</c-><c- p>:</c-> <c- nl>&lt;http://purl.org/dc/terms/></c->
+<c- k>PREFIX</c-> <c- nn>dcat</c-><c- p>:</c-> <c- nl>&lt;http://www.w3.org/ns/dcat#></c->
+
+<c- k>SELECT</c-> <c- g>?shape</c-> <c- k>WHERE</c-> <c- p>{</c->
+    <c- k>VALUES</c-> <c- g>?type</c-> <c- p>{</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Dataset</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>DataService</c-> <c- p>}</c->
+            
+    <c- g>?resource</c-> <c- k>a</c-> <c- g>?type</c-><c- p>.</c->
+        <c- nn>dcat</c-><c- p>:</c-><c- f>qualifiedRelation</c-> <c- p>[</c->
+            <c- nn>dcterms</c-><c- p>:</c-><c- f>relation</c-> <c- g>?shape</c->
+        <c- p>].</c->
+            
+    <c- g>?shape</c-> <c- k>a</c-> <c- nn>sh</c-><c- p>:</c-><c- f>NodeShape</c-><c- p>.</c->
+<c- p>}</c->
+</pre>
+     </div>
+    <li data-md>
+     <p>follow the property path <code>sh:shapesGraph</code> and assess the existence of <code>sh:NodeShape</code> instances within the referenced graph (<a href="#shapes-graph">§ 2.3 Relating to shapes via sh:shapesGraph</a>).
+The following SPARQL query expresses an equivalent operation to extract the relevant quads from a catalog instance.</p>
+     <div class="assertion">
+      
+    <span class="marker">EQUIVALENT SPARQL QUERY</span>
+    
+<pre class="language-sparql highlight"><c- k>PREFIX</c-> <c- nn>sh</c-><c- p>:</c-> <c- nl>&lt;http://www.w3.org/ns/shacl#></c->
+<c- k>PREFIX</c-> <c- nn>dcterms</c-><c- p>:</c-> <c- nl>&lt;http://purl.org/dc/terms/></c->
+<c- k>PREFIX</c-> <c- nn>dcat</c-><c- p>:</c-> <c- nl>&lt;http://www.w3.org/ns/dcat#></c->
+
+<c- k>SELECT</c-> <c- g>?shape</c-> <c- k>WHERE</c-> <c- p>{</c->
+    <c- k>VALUES</c-> <c- g>?type</c-> <c- p>{</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Dataset</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>Distribution</c-> <c- nn>dcat</c-><c- p>:</c-><c- f>DataService</c-> <c- p>}</c->
+    
+    <c- g>?resource</c-> <c- k>a</c-> <c- g>?type</c-><c- p>.</c->
+        <c- nn>sh</c-><c- p>:</c-><c- f>shapesGraph</c-> <c- g>?shapesGraph</c-><c- p>.</c->
+    
+    <c- k>GRAPH</c-> <c- g>?shapesGraph</c-> <c- p>{</c->
+        <c- g>?shape</c-> <c- k>a</c-> <c- nn>sh</c-><c- p>:</c-><c- f>NodeShape</c-><c- p>.</c->
+    <c- p>}</c->
+<c- p>}</c->
+</pre>
+     </div>
+   </ol>
+   <p>The equivalent SPARQL queries listed above, make the assumption that all RDF quads for both resources and associated shapes,
+are locally available as part of a catalog RDF document. However, it may be the case that a related shape is linked as a remote resource.
+In such case, <strong>a client must also dereference the shape’s</strong> <a href="https://www.rfc-editor.org/rfc/rfc3987#section-2"><strong>IRI</strong></a> to retrieve its RDF representation.</p>
+   <h3 class="heading settled" data-level="3.4" id="resource-relevance"><span class="secno">3.4. </span><span class="content">Determining resource relevance</span><a class="self-link" href="#resource-relevance"></a></h3>
+   <p>This step (labeled as 4️⃣ in <strong>Figure 4</strong>) involves determining the relevance of each resource,
+for which one or more shapes were extracted, according to the given <a data-link-type="dfn" href="#input-shacl-shape" id="ref-for-input-shacl-shape">input SHACL shape</a> or <a data-link-type="dfn" href="#input-sparql-query" id="ref-for-input-sparql-query">input SPARQL query</a> 
+expressing the client’s formal constraints.</p>
+   <p>A client must evaluate each resource’s shape against the <a data-link-type="dfn" href="#input-shacl-shape" id="ref-for-input-shacl-shape①">input SHACL shape</a> or <a data-link-type="dfn" href="#input-sparql-query" id="ref-for-input-sparql-query①">input SPARQL query</a> constraints,
+by applying the <a data-link-type="dfn" href="#query-shape-subsumption-algorithm" id="ref-for-query-shape-subsumption-algorithm">query-shape subsumption algorithm</a> described in section <a href="#algorithm">§ 4 Algorithm specification</a>.</p>
+   <h3 class="heading settled" data-level="3.5" id="return-results"><span class="secno">3.5. </span><span class="content">Presenting results</span><a class="self-link" href="#return-results"></a></h3>
+   <p>In this last step, (labeled as 5️⃣ in <strong>Figure 4</strong>) the client collects and returns the set of resource identifiers (<a href="https://www.rfc-editor.org/rfc/rfc3987#section-2">IRI</a>),
+which were deemed as relevant with respect to the input constrainst (<a data-link-type="dfn" href="#input-shacl-shape" id="ref-for-input-shacl-shape②">input SHACL shape</a> or <a data-link-type="dfn" href="#input-sparql-query" id="ref-for-input-sparql-query②">input SPARQL query</a>).</p>
+   <h2 class="heading settled" data-level="4" id="algorithm"><span class="secno">4. </span><span class="content">Algorithm specification</span><a class="self-link" href="#algorithm"></a></h2>
+   <p>This section defines a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="query-shape-subsumption-algorithm">query-shape subsumption algorithm</dfn> that aims to determine the <i>relevance</i> of an RDF resource
+based on a given set of formal constraints, expressed in the form of a SHACL shape or a SPARQL query,
+and considering a set of associated SHACL shapes to which the RDF resource conforms to.
+The algorithm decomposes queries and shapes into its constituent <a data-link-type="dfn" href="#graph-star-pattern" id="ref-for-graph-star-pattern">graph star pattern</a> 
+and proceeds to compare them in search of logical overlaps that indicate relevance relations 
+among the input query/shape and the set of shapes related to catalog resources.</p>
+   <p>First, a set of preliminary concepts are defined, followed by a description of the logical steps taken by the algorithm.</p>
+   <h3 class="heading settled" data-level="4.1" id="algorithm-preliminaries"><span class="secno">4.1. </span><span class="content">Preliminaries</span><a class="self-link" href="#algorithm-preliminaries"></a></h3>
+   <p>The algorithm operation is specified upon the following concepts:</p>
    <ul>
     <li data-md>
-     <p>dct:conformsTo</p>
+     <p>
+      <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="triple-pattern">triple pattern</dfn>: a triple pattern 
+      <math>
+       <mi>tp</mi>
+      </math>
+       is a tuple 
+      <math>
+       <mtext>( </mtext>
+       <msub>
+        <mi>s</mi>
+        <mn>tp</mn>
+       </msub>
+       <mtext>, </mtext>
+       <msub>
+        <mi>p</mi>
+        <mn>tp</mn>
+       </msub>
+       <mtext>, </mtext>
+       <msub>
+        <mi>o</mi>
+        <mn>tp</mn>
+       </msub>
+       <mtext> )</mtext>
+      </math>
+      
+where:
+     </p>
+     <ul>
+      <li data-md>
+       <math>
+        <msub>
+         <mi>s</mi>
+         <mn>tp</mn>
+        </msub>
+       </math>
+        is the set of all subjects (name nodes 
+       <math>
+        <mi>I</mi>
+       </math>
+       , blank nodes 
+       <math>
+        <mi>B</mi>
+       </math>
+        and variables 
+       <math>
+        <mi>V</mi>
+       </math>
+       ),
+
+      <li data-md>
+       <math>
+        <msub>
+         <mi>p</mi>
+         <mn>tp</mn>
+        </msub>
+       </math>
+        is the set of all predicates (named nodes 
+       <math>
+        <mi>I</mi>
+       </math>
+        and variables 
+       <math>
+        <mi>V</mi>
+       </math>
+       ) and
+
+      <li data-md>
+       <math>
+        <msub>
+         <mi>o</mi>
+         <mn>tp</mn>
+        </msub>
+       </math>
+        is the set of all objects (named nodes 
+       <math>
+        <mi>I</mi>
+       </math>
+       , blank nodes 
+       <math>
+        <mi>B</mi>
+       </math>
+       , literals 
+       <math>
+        <mi>L</mi>
+       </math>
+        and variables 
+       <math>
+        <mi>V</mi>
+       </math>
+       ).
+
+     </ul>
     <li data-md>
-     <p>sh:shapesGraph</p>
+     <p>
+      <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="star-pattern">star pattern</dfn> <a data-link-type="biblio" href="#biblio-star-patterns" title="Compacting frequent star patterns in RDF graphs">[STAR-PATTERNS]</a>: given a SPARQL query 
+      <math>
+       <mi>Q</mi>
+      </math>
+      , a star pattern 
+      <math>
+       <msub>
+        <mi>Q</mi>
+        <mn>sp</mn>
+       </msub>
+      </math>
+       is a set of <a data-link-type="dfn" href="#triple-pattern" id="ref-for-triple-pattern">triple patterns</a> 
+      <math>
+       <mi>tp</mi>
+      </math>
+       of 
+      <math>
+       <mi>Q</mi>
+      </math>
+      ,
+all sharing the same subject.
+     </p>
+     <div class="example" id="example-8ac05025">
+      <a class="self-link" href="#example-8ac05025"></a>
+Example of a <a data-link-type="dfn" href="#star-pattern" id="ref-for-star-pattern">star pattern</a> defined as part of a SPARQL query.
+
+<pre class="language-sparql highlight"><c- k>SELECT</c-> <c- o>*</c-> <c- k>WHERE</c-> <c- p>{</c->
+    <c- g>?subject</c-> <c- k>a</c-> <c- nn>ex</c-><c- p>:</c-><c- f>Entity</c-><c- p>;</c->  <c- c>#---</c->
+        <c- nn>ex</c-><c- p>:</c-><c- f>pred1</c-> <c- g>?obj1</c-><c- p>;</c->    <c- c>#  | start pattern </c->
+        <c- nn>ex</c-><c- p>:</c-><c- f>pred2</c-> <c- g>?obj2</c-><c- p>.</c->    <c- c>#---</c->
+<c- p>}</c->
+</pre>
+     </div>
     <li data-md>
-     <p>dcat:qualifiedRelation</p>
-    <li data-md>
-     <p>dcat:endpointDescription</p>
+     <p>
+      <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="graph-star-pattern">graph star pattern</dfn>: given a SPARQL query 
+      <math>
+       <mi>Q</mi>
+      </math>
+      , a graph star pattern 
+      <math>
+       <msub>
+        <mi>Q</mi>
+        <mn>gsp</mn>
+       </msub>
+      </math>
+      
+is the union of a root <a data-link-type="dfn" href="#star-pattern" id="ref-for-star-pattern①">star pattern</a> 
+      <math>
+       <msub>
+        <mi>Q</mi>
+        <mn>spr</mn>
+       </msub>
+      </math>
+       and all the star patterns having as a subject,
+an object of a <a data-link-type="dfn" href="#triple-pattern" id="ref-for-triple-pattern①">triple pattern</a> belonging to 
+      <math>
+       <msub>
+        <mi>Q</mi>
+        <mn>spr</mn>
+       </msub>
+      </math>
+      .
+     </p>
+     <div class="example" id="example-9102a14a">
+      <a class="self-link" href="#example-9102a14a"></a>
+Example of a <a data-link-type="dfn" href="#star-pattern" id="ref-for-star-pattern②">star pattern</a> defined as part of a SPARQL query.
+
+<pre class="language-sparql highlight"><c- k>SELECT</c-> <c- o>*</c-> <c- k>WHERE</c-> <c- p>{</c->
+    <c- g>?subject</c-> <c- k>a</c-> <c- nn>ex</c-><c- p>:</c-><c- f>Entity</c-><c- p>;</c->  <c- c>#----------------------</c->
+        <c- nn>ex</c-><c- p>:</c-><c- f>pred1</c-> <c- g>?obj1</c-><c- p>;</c->    <c- c>#  | start pattern    |</c->
+        <c- nn>ex</c-><c- p>:</c-><c- f>pred2</c-> <c- g>?obj2</c-><c- p>.</c->    <c- c>#---                  |</c->
+                           <c- c>#                     | graph star pattern</c->
+    <c- g>?obj1</c-> <c- g>?p1</c-> <c- g>?o1</c-><c- p>.</c->         <c- c>#                     |</c->
+                           <c- c>#                     |</c->
+    <c- g>?obj2</c-> <c- g>?p2</c-> <c- g>?o2</c-><c- p>.</c->         <c- c># ---------------------</c->
+<c- p>}</c->
+</pre>
+     </div>
    </ul>
-   <h3 class="heading settled" data-level="2.2" id="describe-dataset"><span class="secno">2.2. </span><span class="content">Describing DCAT Datasets</span><a class="self-link" href="#describe-dataset"></a></h3>
-   <p>TODO</p>
-   <h3 class="heading settled" data-level="2.3" id="describe-data-service"><span class="secno">2.3. </span><span class="content">Describing DCAT Data Services {#describe-data-service}</span><a class="self-link" href="#describe-data-service"></a></h3>
-   <p>TODO</p>
-   <h2 class="heading settled" data-level="3" id="logical-flow"><span class="secno">3. </span><span class="content">Discovery logical flow</span><a class="self-link" href="#logical-flow"></a></h2>
-   <p>This section describes the logical steps that a client follows to perform a discovery process.</p>
-   <h3 class="heading settled" data-level="3.1" id="starting-from"><span class="secno">3.1. </span><span class="content">Initializing a client with a url</span><a class="self-link" href="#starting-from"></a></h3>
-   <p>TODO</p>
-   <h3 class="heading settled" data-level="3.2" id="dataset-shapes"><span class="secno">3.2. </span><span class="content">Selecting a dataset via shapes</span><a class="self-link" href="#dataset-shapes"></a></h3>
-   <p>TODO</p>
-   <h3 class="heading settled" data-level="3.3" id="data-service-shapes"><span class="secno">3.3. </span><span class="content">Selecting a data service via shapes</span><a class="self-link" href="#data-service-shapes"></a></h3>
-   <p>TODO</p>
-   <h3 class="heading settled" data-level="3.4" id="dataset-queries"><span class="secno">3.4. </span><span class="content">Selecting a dataset via queries</span><a class="self-link" href="#dataset-queries"></a></h3>
-   <p>TODO</p>
-   <h3 class="heading settled" data-level="3.5" id="data-service-queries"><span class="secno">3.5. </span><span class="content">Selecting a data service via queries</span><a class="self-link" href="#data-service-queries"></a></h3>
-   <p>TODO</p>
-   <h2 class="heading settled" data-level="4" id="algorithm"><span class="secno">4. </span><span class="content">Algorithm specification</span><a class="self-link" href="#algorithm"></a></h2>
-   <p>TODO</p>
   </main>
   <div data-fill-with="conformance">
    <h2 class="no-ref no-num heading settled" id="conformance"><span class="content">
@@ -2165,9 +3140,888 @@ The extensions are designed to be minimal and compatible with existing DCAT-AP p
 
 })();
 </script>
+  <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
+  <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
+  <ul class="index">
+   <li><a href="#catalog">Catalog</a><span>, in § 1.2</span>
+   <li><a href="#catalog-url">catalog URL</a><span>, in § 3.1</span>
+   <li><a href="#client">Client</a><span>, in § 1.2</span>
+   <li><a href="#data-service">Data Service</a><span>, in § 1.2</span>
+   <li><a href="#dataset">Dataset</a><span>, in § 1.2</span>
+   <li><a href="#discovery">Discovery</a><span>, in § 1.2</span>
+   <li><a href="#distribution">Distribution</a><span>, in § 1.2</span>
+   <li><a href="#graph-star-pattern">graph star pattern</a><span>, in § 4.1</span>
+   <li><a href="#input-shacl-shape">input SHACL shape</a><span>, in § 3.1</span>
+   <li><a href="#input-sparql-query">input SPARQL query</a><span>, in § 3.1</span>
+   <li><a href="#query-shape-subsumption-algorithm">query-shape subsumption algorithm</a><span>, in § 4</span>
+   <li><a href="#resource">Resource</a><span>, in § 1.2</span>
+   <li><a href="#shape">Shape</a><span>, in § 1.2</span>
+   <li><a href="#star-pattern">star pattern</a><span>, in § 4.1</span>
+   <li><a href="#triple-pattern">triple pattern</a><span>, in § 4.1</span>
+  </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
+   <dt id="biblio-dcat-ap">[DCAT-AP]
+   <dd><a href="https://interoperable-europe.ec.europa.eu/collection/semic-support-centre/solution/dcat-application-profile-data-portals-europe"><cite>DCAT Application Profile for data portals in Europe</cite></a>. 10 July 2025. URL: <a href="https://interoperable-europe.ec.europa.eu/collection/semic-support-centre/solution/dcat-application-profile-data-portals-europe">https://interoperable-europe.ec.europa.eu/collection/semic-support-centre/solution/dcat-application-profile-data-portals-europe</a>
+   <dt id="biblio-dcterms">[DCTERMS]
+   <dd>DCMI Usage Board. <a href="https://www.dublincore.org/specifications/dublin-core/dcmi-terms/"><cite>DCMI Metadata Terms</cite></a>. 20 January 2020. DCMI Recommendation. URL: <a href="https://www.dublincore.org/specifications/dublin-core/dcmi-terms/">https://www.dublincore.org/specifications/dublin-core/dcmi-terms/</a>
+   <dt id="biblio-rdf11-concepts">[RDF11-CONCEPTS]
+   <dd>Richard Cyganiak; David Wood; Markus Lanthaler. <a href="https://w3c.github.io/rdf-concepts/spec/"><cite>RDF 1.1 Concepts and Abstract Syntax</cite></a>. URL: <a href="https://w3c.github.io/rdf-concepts/spec/">https://w3c.github.io/rdf-concepts/spec/</a>
+   <dt id="biblio-rdf11-schema">[RDF11-SCHEMA]
+   <dd>Dan Brickley; Ramanathan Guha. <a href="https://w3c.github.io/rdf-schema/spec/"><cite>RDF Schema 1.1</cite></a>. URL: <a href="https://w3c.github.io/rdf-schema/spec/">https://w3c.github.io/rdf-schema/spec/</a>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
+   <dt id="biblio-shacl">[SHACL]
+   <dd>Holger Knublauch; Dimitris Kontokostas. <a href="https://w3c.github.io/data-shapes/shacl/"><cite>Shapes Constraint Language (SHACL)</cite></a>. URL: <a href="https://w3c.github.io/data-shapes/shacl/">https://w3c.github.io/data-shapes/shacl/</a>
+   <dt id="biblio-sparql-query">[SPARQL-QUERY]
+   <dd>Eric Prud'hommeaux; Andy Seaborne. <a href="https://w3c.github.io/sparql-query/spec/"><cite>SPARQL Query Language for RDF</cite></a>. URL: <a href="https://w3c.github.io/sparql-query/spec/">https://w3c.github.io/sparql-query/spec/</a>
+   <dt id="biblio-vocab-dcat-3">[VOCAB-DCAT-3]
+   <dd>Simon Cox; et al. <a href="https://w3c.github.io/dxwg/dcat/"><cite>Data Catalog Vocabulary (DCAT) - Version 3</cite></a>. URL: <a href="https://w3c.github.io/dxwg/dcat/">https://w3c.github.io/dxwg/dcat/</a>
+   <dt id="biblio-xmlschema11-2">[XMLSCHEMA11-2]
+   <dd>David Peterson; et al. <a href="https://www.w3.org/TR/xmlschema11-2/"><cite>W3C XML Schema Definition Language (XSD) 1.1 Part 2: Datatypes</cite></a>. 5 April 2012. REC. URL: <a href="https://www.w3.org/TR/xmlschema11-2/">https://www.w3.org/TR/xmlschema11-2/</a>
   </dl>
+  <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
+  <dl>
+   <dt id="biblio-iana-relations">[IANA-RELATIONS]
+   <dd><a href="https://www.iana.org/assignments/link-relations/"><cite>Link Relations</cite></a>. URL: <a href="https://www.iana.org/assignments/link-relations/">https://www.iana.org/assignments/link-relations/</a>
+   <dt id="biblio-iso-19115-1">[ISO-19115-1]
+   <dd>ISO/TC 211. <a href="https://www.iso.org/standard/53798.html"><cite>Geographic information -- Metadata -- Part 1: Fundamentals</cite></a>. 2014. International Standard. URL: <a href="https://www.iso.org/standard/53798.html">https://www.iso.org/standard/53798.html</a>
+   <dt id="biblio-json-ld">[JSON-LD]
+   <dd>Manu Sporny; Gregg Kellogg; Markus Lanthaler. <a href="https://www.w3.org/TR/json-ld/"><cite>JSON-LD 1.0</cite></a>. 3 November 2020. REC. URL: <a href="https://www.w3.org/TR/json-ld/">https://www.w3.org/TR/json-ld/</a>
+   <dt id="biblio-ldpatterns">[LDPATTERNS]
+   <dd>Leigh Dodds; Ian Davis. <a href="http://patterns.dataincubator.org/book/"><cite>Linked Data Patterns: A pattern catalogue for modelling, publishing, and consuming Linked Data</cite></a>. May 2012. URL: <a href="http://patterns.dataincubator.org/book/">http://patterns.dataincubator.org/book/</a>
+   <dt id="biblio-rdf11-xml">[RDF11-XML]
+   <dd>Frank Manola; Eric Miller. <a href="https://w3c.github.io/rdf-primer/spec/"><cite>RDF Primer</cite></a>. URL: <a href="https://w3c.github.io/rdf-primer/spec/">https://w3c.github.io/rdf-primer/spec/</a>
+   <dt id="biblio-skos-reference">[SKOS-REFERENCE]
+   <dd>Alistair Miles; Sean Bechhofer. <a href="https://www.w3.org/TR/skos-reference/"><cite>SKOS Simple Knowledge Organization System Reference</cite></a>. 18 August 2009. REC. URL: <a href="https://www.w3.org/TR/skos-reference/">https://www.w3.org/TR/skos-reference/</a>
+   <dt id="biblio-star-patterns">[STAR-PATTERNS]
+   <dd>Farah Karim; Maria-Esther Vidal; Sören Auer. <a href="http://dx.doi.org/10.1007/s10844-020-00595-9"><cite>Compacting frequent star patterns in RDF graphs</cite></a>. April 2020. URL: <a href="http://dx.doi.org/10.1007/s10844-020-00595-9">http://dx.doi.org/10.1007/s10844-020-00595-9</a>
+   <dt id="biblio-swbp-n-aryrelations">[SWBP-N-ARYRELATIONS]
+   <dd>Natasha Noy; Alan Rector. <a href="https://www.w3.org/TR/swbp-n-aryRelations/"><cite>Defining N-ary Relations on the Semantic Web</cite></a>. 12 April 2006. NOTE. URL: <a href="https://www.w3.org/TR/swbp-n-aryRelations/">https://www.w3.org/TR/swbp-n-aryRelations/</a>
+   <dt id="biblio-turtle">[TURTLE]
+   <dd>Eric Prud'hommeaux; Gavin Carothers. <a href="https://w3c.github.io/rdf-turtle/spec/"><cite>RDF 1.1 Turtle</cite></a>. URL: <a href="https://w3c.github.io/rdf-turtle/spec/">https://w3c.github.io/rdf-turtle/spec/</a>
+   <dt id="biblio-web-api-disc">[WEB-API-DISC]
+   <dd>Frank Michiel; et al. <a href="https://doi.org/10.1145/3308560.3317073"><cite>Enabling Automatic Discovery and Querying of Web APIs at Web Scale using Linked Data Standards</cite></a>. May 2019. URL: <a href="https://doi.org/10.1145/3308560.3317073">https://doi.org/10.1145/3308560.3317073</a>
+  </dl>
+<script>/* Boilerplate: script-dom-helper */
+"use strict";
+function query(sel) { return document.querySelector(sel); }
+
+function queryAll(sel) { return [...document.querySelectorAll(sel)]; }
+
+function iter(obj) {
+	if(!obj) return [];
+	var it = obj[Symbol.iterator];
+	if(it) return it;
+	return Object.entries(obj);
+}
+
+function mk(tagname, attrs, ...children) {
+	const el = document.createElement(tagname);
+	for(const [k,v] of iter(attrs)) {
+		if(k.slice(0,3) == "_on") {
+			const eventName = k.slice(3);
+			el.addEventListener(eventName, v);
+		} else if(k[0] == "_") {
+			// property, not attribute
+			el[k.slice(1)] = v;
+		} else {
+			if(v === false || v == null) {
+        continue;
+      } else if(v === true) {
+        el.setAttribute(k, "");
+        continue;
+      } else {
+  			el.setAttribute(k, v);
+      }
+		}
+	}
+	append(el, children);
+	return el;
+}
+
+/* Create shortcuts for every known HTML element */
+[
+  "a",
+  "abbr",
+  "acronym",
+  "address",
+  "applet",
+  "area",
+  "article",
+  "aside",
+  "audio",
+  "b",
+  "base",
+  "basefont",
+  "bdo",
+  "big",
+  "blockquote",
+  "body",
+  "br",
+  "button",
+  "canvas",
+  "caption",
+  "center",
+  "cite",
+  "code",
+  "col",
+  "colgroup",
+  "datalist",
+  "dd",
+  "del",
+  "details",
+  "dfn",
+  "dialog",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "embed",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "font",
+  "footer",
+  "form",
+  "frame",
+  "frameset",
+  "head",
+  "header",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "html",
+  "i",
+  "iframe",
+  "img",
+  "input",
+  "ins",
+  "kbd",
+  "label",
+  "legend",
+  "li",
+  "link",
+  "main",
+  "map",
+  "mark",
+  "meta",
+  "meter",
+  "nav",
+  "nobr",
+  "noscript",
+  "object",
+  "ol",
+  "optgroup",
+  "option",
+  "output",
+  "p",
+  "param",
+  "pre",
+  "progress",
+  "q",
+  "s",
+  "samp",
+  "script",
+  "section",
+  "select",
+  "small",
+  "source",
+  "span",
+  "strike",
+  "strong",
+  "style",
+  "sub",
+  "summary",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "template",
+  "textarea",
+  "tfoot",
+  "th",
+  "thead",
+  "time",
+  "title",
+  "tr",
+  "u",
+  "ul",
+  "var",
+  "video",
+  "wbr",
+  "xmp",
+].forEach(tagname=>{
+	mk[tagname] = (...args) => mk(tagname, ...args);
+});
+
+function* nodesFromChildList(children) {
+	for(const child of children.flat(Infinity)) {
+		if(child instanceof Node) {
+			yield child;
+		} else {
+			yield new Text(child);
+		}
+	}
+}
+function append(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		if(el instanceof Node) el.appendChild(child);
+		else el.push(child);
+	}
+	return el;
+}
+
+function insertAfter(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		el.parentNode.insertBefore(child, el.nextSibling);
+	}
+	return el;
+}
+
+function clearContents(el) {
+	el.innerHTML = "";
+	return el;
+}
+
+function parseHTML(markup) {
+	if(markup.toLowerCase().trim().indexOf('<!doctype') === 0) {
+		const doc = document.implementation.createHTMLDocument("");
+		doc.documentElement.innerHTML = markup;
+		return doc;
+	} else {
+		const el = mk.template({});
+		el.innerHTML = markup;
+		return el.content;
+	}
+}</script>
+<script>/* Boilerplate: script-dfn-panel */
+"use strict";
+{
+let dfnPanelData = {
+"catalog": {"dfnID":"catalog","dfnText":"Catalog","external":false,"refSections":[{"refs":[{"id":"ref-for-catalog"}],"title":"1.2. Terminology"},{"refs":[{"id":"ref-for-catalog\u2460"},{"id":"ref-for-catalog\u2461"}],"title":"2.1. Relating to shapes via dcterms:conformsTo"},{"refs":[{"id":"ref-for-catalog\u2462"}],"title":"2.2. Relating to shapes via dcat:qualifiedRelation"}],"url":"#catalog"},
+"catalog-url": {"dfnID":"catalog-url","dfnText":"catalog URL","external":false,"refSections":[{"refs":[{"id":"ref-for-catalog-url"}],"title":"3.2. Catalog retrieval"}],"url":"#catalog-url"},
+"client": {"dfnID":"client","dfnText":"Client","external":false,"refSections":[{"refs":[{"id":"ref-for-client"}],"title":"2. Describing DCAT(-AP) resource content with shapes"},{"refs":[{"id":"ref-for-client\u2460"}],"title":"2.2. Relating to shapes via dcat:qualifiedRelation"}],"url":"#client"},
+"data-service": {"dfnID":"data-service","dfnText":"Data Service","external":false,"refSections":[{"refs":[{"id":"ref-for-data-service"}],"title":"1.2. Terminology"},{"refs":[{"id":"ref-for-data-service\u2460"}],"title":"2. Describing DCAT(-AP) resource content with shapes"},{"refs":[{"id":"ref-for-data-service\u2461"},{"id":"ref-for-data-service\u2462"}],"title":"2.1. Relating to shapes via dcterms:conformsTo"}],"url":"#data-service"},
+"dataset": {"dfnID":"dataset","dfnText":"Dataset","external":false,"refSections":[{"refs":[{"id":"ref-for-dataset"}],"title":"1.2. Terminology"},{"refs":[{"id":"ref-for-dataset\u2460"}],"title":"2. Describing DCAT(-AP) resource content with shapes"},{"refs":[{"id":"ref-for-dataset\u2461"}],"title":"2.1. Relating to shapes via dcterms:conformsTo"}],"url":"#dataset"},
+"discovery": {"dfnID":"discovery","dfnText":"Discovery","external":false,"refSections":[{"refs":[{"id":"ref-for-discovery"}],"title":"2. Describing DCAT(-AP) resource content with shapes"},{"refs":[{"id":"ref-for-discovery\u2460"}],"title":"2.1. Relating to shapes via dcterms:conformsTo"},{"refs":[{"id":"ref-for-discovery\u2461"}],"title":"2.2. Relating to shapes via dcat:qualifiedRelation"}],"url":"#discovery"},
+"distribution": {"dfnID":"distribution","dfnText":"Distribution","external":false,"refSections":[{"refs":[{"id":"ref-for-distribution"}],"title":"1.2. Terminology"},{"refs":[{"id":"ref-for-distribution\u2460"}],"title":"2.1. Relating to shapes via dcterms:conformsTo"}],"url":"#distribution"},
+"graph-star-pattern": {"dfnID":"graph-star-pattern","dfnText":"graph star pattern","external":false,"refSections":[{"refs":[{"id":"ref-for-graph-star-pattern"}],"title":"4. Algorithm specification"}],"url":"#graph-star-pattern"},
+"input-shacl-shape": {"dfnID":"input-shacl-shape","dfnText":"input SHACL shape","external":false,"refSections":[{"refs":[{"id":"ref-for-input-shacl-shape"},{"id":"ref-for-input-shacl-shape\u2460"}],"title":"3.4. Determining resource relevance"},{"refs":[{"id":"ref-for-input-shacl-shape\u2461"}],"title":"3.5. Presenting results"}],"url":"#input-shacl-shape"},
+"input-sparql-query": {"dfnID":"input-sparql-query","dfnText":"input SPARQL query","external":false,"refSections":[{"refs":[{"id":"ref-for-input-sparql-query"},{"id":"ref-for-input-sparql-query\u2460"}],"title":"3.4. Determining resource relevance"},{"refs":[{"id":"ref-for-input-sparql-query\u2461"}],"title":"3.5. Presenting results"}],"url":"#input-sparql-query"},
+"query-shape-subsumption-algorithm": {"dfnID":"query-shape-subsumption-algorithm","dfnText":"query-shape subsumption algorithm","external":false,"refSections":[{"refs":[{"id":"ref-for-query-shape-subsumption-algorithm"}],"title":"3.4. Determining resource relevance"}],"url":"#query-shape-subsumption-algorithm"},
+"resource": {"dfnID":"resource","dfnText":"Resource","external":false,"refSections":[{"refs":[{"id":"ref-for-resource"}],"title":"1.2. Terminology"},{"refs":[{"id":"ref-for-resource\u2460"}],"title":"2. Describing DCAT(-AP) resource content with shapes"},{"refs":[{"id":"ref-for-resource\u2461"},{"id":"ref-for-resource\u2462"}],"title":"2.1. Relating to shapes via dcterms:conformsTo"},{"refs":[{"id":"ref-for-resource\u2463"}],"title":"2.2. Relating to shapes via dcat:qualifiedRelation"}],"url":"#resource"},
+"shape": {"dfnID":"shape","dfnText":"Shape","external":false,"refSections":[{"refs":[{"id":"ref-for-shape"}],"title":"2. Describing DCAT(-AP) resource content with shapes"},{"refs":[{"id":"ref-for-shape\u2460"},{"id":"ref-for-shape\u2461"},{"id":"ref-for-shape\u2462"},{"id":"ref-for-shape\u2463"}],"title":"2.1. Relating to shapes via dcterms:conformsTo"},{"refs":[{"id":"ref-for-shape\u2464"},{"id":"ref-for-shape\u2465"},{"id":"ref-for-shape\u2466"}],"title":"2.2. Relating to shapes via dcat:qualifiedRelation"}],"url":"#shape"},
+"star-pattern": {"dfnID":"star-pattern","dfnText":"star pattern","external":false,"refSections":[{"refs":[{"id":"ref-for-star-pattern"},{"id":"ref-for-star-pattern\u2460"},{"id":"ref-for-star-pattern\u2461"}],"title":"4.1. Preliminaries"}],"url":"#star-pattern"},
+"triple-pattern": {"dfnID":"triple-pattern","dfnText":"triple pattern","external":false,"refSections":[{"refs":[{"id":"ref-for-triple-pattern"},{"id":"ref-for-triple-pattern\u2460"}],"title":"4.1. Preliminaries"}],"url":"#triple-pattern"},
+};
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    genAllDfnPanels();
+
+    document.body.addEventListener("click", (e) => {
+        // If not handled already, just hide all dfn panels.
+        hideAllDfnPanels();
+    });
+});
+
+window.addEventListener("resize", () => {
+    // Pin any visible dfn panel
+    queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>positionDfnPanel(el));
+});
+
+function genAllDfnPanels() {
+    for(const panelData of Object.values(dfnPanelData)) {
+        const dfnID = panelData.dfnID;
+        const dfn = document.getElementById(dfnID);
+        if(!dfn) {
+            console.log(`Can't find dfn#${dfnID}.`, panelData);
+            continue;
+        }
+        dfn.panelData = panelData;
+        insertDfnPopupAction(dfn);
+    }
+}
+
+function genDfnPanel(dfn, { dfnID, url, dfnText, refSections, external }) {
+    const dfnPanel = mk.aside({
+        class: "dfn-panel on",
+        id: `infopanel-for-${dfnID}`,
+        "data-for": dfnID,
+        "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
+        },
+        mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
+            `Info about the '${dfnText}' ${external?"external":""} reference.`),
+        mk.a({href:url, class:"dfn-link"}, url),
+        refSections.length == 0 ? [] :
+            mk.b({}, "Referenced in:"),
+            mk.ul({},
+                ...refSections.map(section=>
+                    mk.li({},
+                        ...section.refs.map((ref, refI)=>
+                            [
+                                mk.a({ href: `#${ref.id}` },
+                                    (refI == 0) ? section.title : `(${refI + 1})`
+                                ),
+                                " ",
+                            ]
+                        ),
+                    ),
+                ),
+            ),
+        genLinkingSyntaxes(dfn),
+    );
+
+    dfnPanel.addEventListener('click', (event) => {
+        if (event.target.nodeName == 'A') {
+            scrollToTargetAndHighlight(event);
+            pinDfnPanel(dfnPanel);
+        }
+        event.stopPropagation();
+        refocusOnTarget(event);
+    });
+    dfnPanel.addEventListener('keydown', (event) => {
+        if(event.keyCode == 27) { // Escape key
+            hideDfnPanel({dfnPanel});
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+
+    dfnPanel.dfn = dfn;
+    dfn.dfnPanel = dfnPanel;
+    return dfnPanel;
+}
+
+
+
+function hideAllDfnPanels() {
+    // Delete the currently-active dfn panel.
+    queryAll(".dfn-panel").forEach(dfnPanel=>hideDfnPanel({dfnPanel}));
+}
+
+function showDfnPanel(dfn) {
+    hideAllDfnPanels(); // Only display one at a time.
+
+    dfn.setAttribute("aria-expanded", "true");
+
+    const dfnPanel = genDfnPanel(dfn, dfn.panelData);
+
+    // Give the dfn a unique tabindex, and then
+    // give all the tabbable panel bits successive indexes.
+    let tabIndex = 100;
+    dfn.tabIndex = tabIndex++;
+    const tabbable = dfnPanel.querySelectorAll(":is(a, button)");
+    for (const el of tabbable) {
+        el.tabIndex = tabIndex++;
+    }
+
+    append(document.body, dfnPanel);
+    positionDfnPanel(dfnPanel);
+}
+
+function positionDfnPanel(dfnPanel) {
+    const dfn = dfnPanel.dfn;
+    const dfnPos = getBounds(dfn);
+    dfnPanel.style.top = dfnPos.bottom + "px";
+    dfnPanel.style.left = dfnPos.left + "px";
+
+    const panelPos = dfnPanel.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, dfnPos.left - overflowAmount);
+        dfnPanel.style.left = newLeft + "px";
+    }
+}
+
+function pinDfnPanel(dfnPanel) {
+    // Switch it to "activated" state, which pins it.
+    dfnPanel.classList.add("activated");
+    dfnPanel.style.position = "fixed";
+    dfnPanel.style.left = null;
+    dfnPanel.style.top = null;
+}
+
+function hideDfnPanel({dfn, dfnPanel}) {
+    if(!dfnPanel) dfnPanel = dfn.dfnPanel;
+    if(!dfn) dfn = dfnPanel.dfn;
+    dfn.dfnPanel = undefined;
+    dfnPanel.dfn = undefined;
+    dfn.setAttribute("aria-expanded", "false");
+    dfn.tabIndex = undefined;
+    dfnPanel.remove()
+}
+
+function toggleDfnPanel(dfn) {
+    if(dfn.dfnPanel) {
+        hideDfnPanel(dfn);
+    } else {
+        showDfnPanel(dfn);
+    }
+}
+
+function insertDfnPopupAction(dfn) {
+    dfn.setAttribute('role', 'button');
+    dfn.setAttribute('aria-expanded', 'false')
+    dfn.tabIndex = 0;
+    dfn.classList.add('has-dfn-panel');
+    dfn.addEventListener('click', (event) => {
+        toggleDfnPanel(dfn);
+        event.stopPropagation();
+    });
+    dfn.addEventListener('keypress', (event) => {
+        const kc = event.keyCode;
+        // 32->Space, 13->Enter
+        if(kc == 32 || kc == 13) {
+            toggleDfnPanel(dfn);
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+}
+
+function refocusOnTarget(event) {
+    const target = event.target;
+    setTimeout(() => {
+        // Refocus on the event.target element.
+        // This is needed after browser scrolls to the destination.
+        target.focus();
+    });
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function scrollToTargetAndHighlight(event) {
+    let hash = event.target.hash;
+    if (hash) {
+        hash = decodeURIComponent(hash.substring(1));
+        const dest = document.getElementById(hash);
+        if (dest) {
+            dest.classList.add('highlighted');
+            setTimeout(() => dest.classList.remove('highlighted'), 1000);
+        }
+    }
+}
+
+// Functions, divided by link type, that wrap an autolink's
+// contents with the appropriate outer syntax.
+// Alternately, a string naming another type they format
+// the same as.
+function needsFor(type) {
+    switch(type) {
+        case "descriptor":
+        case "value":
+        case "element-attr":
+        case "attr-value":
+        case "element-state":
+        case "method":
+        case "constructor":
+        case "argument":
+        case "attribute":
+        case "const":
+        case "dict-member":
+        case "event":
+        case "enum-value":
+        case "stringifier":
+        case "serializer":
+        case "iterator":
+        case "maplike":
+        case "setlike":
+        case "state":
+        case "mode":
+        case "context":
+        case "facet": return true;
+
+        default: return false;
+    }
+}
+function refusesFor(type) {
+    switch(type) {
+        case "property":
+        case "element":
+        case "interface":
+        case "namespace":
+        case "callback":
+        case "dictionary":
+        case "enum":
+        case "exception":
+        case "typedef":
+        case "http-header":
+        case "permission": return true;
+
+        default: return false;
+    }
+}
+function linkFormatterFromType(type) {
+    switch(type) {
+        case 'scheme':
+        case 'permission':
+        case 'dfn': return (text) => `[=${text}=]`;
+
+        case 'abstract-op': return (text) => `[\$${text}\$]`;
+
+        case 'function':
+        case 'at-rule':
+        case 'selector':
+        case 'value': return (text) => `''${text}''`;
+
+        case 'http-header': return (text) => `[:${text}:]`;
+
+        case 'interface':
+        case 'constructor':
+        case 'method':
+        case 'argument':
+        case 'attribute':
+        case 'callback':
+        case 'dictionary':
+        case 'dict-member':
+        case 'enum':
+        case 'enum-value':
+        case 'exception':
+        case 'const':
+        case 'typedef':
+        case 'stringifier':
+        case 'serializer':
+        case 'iterator':
+        case 'maplike':
+        case 'setlike':
+        case 'extended-attribute':
+        case 'event':
+        case 'idl': return (text) => `{{${text}}}`;
+
+        case 'element-state':
+        case 'element-attr':
+        case 'attr-value':
+        case 'element': return (element) => `<{${element}}>`;
+
+        case 'grammar': return (text) => `${text} (within a <pre class=prod>)`;
+
+        case 'type': return (text)=> `<<${text}>>`;
+
+        case 'descriptor':
+        case 'property': return (text) => `'${text}'`;
+
+        default: return;
+    };
+};
+
+function genLinkingSyntaxes(dfn) {
+    if(dfn.tagName != "DFN") return;
+
+    const type = dfn.getAttribute('data-dfn-type');
+    if(!type) {
+        console.log(`<dfn> doesn't have a data-dfn-type:`, dfn);
+        return [];
+    }
+
+    // Return a function that wraps link text based on the type
+    const linkFormatter = linkFormatterFromType(type);
+    if(!linkFormatter) {
+        console.log(`<dfn> has an unknown data-dfn-type:`, dfn);
+        return [];
+    }
+
+    let ltAlts;
+    if(dfn.hasAttribute('data-lt')) {
+        ltAlts = dfn.getAttribute('data-lt')
+            .split("|")
+            .map(x=>x.trim());
+    } else {
+        ltAlts = [dfn.textContent.trim()];
+    }
+    if(type == "type") {
+        // lt of "<foo>", but "foo" is the interior;
+        // <<foo/bar>> is how you write it with a for,
+        // not <foo/<bar>> or whatever.
+        for(var i = 0; i < ltAlts.length; i++) {
+            const lt = ltAlts[i];
+            const match = /<(.*)>/.exec(lt);
+            if(match) { ltAlts[i] = match[1]; }
+        }
+    }
+
+    let forAlts;
+    if(dfn.hasAttribute('data-dfn-for')) {
+        forAlts = dfn.getAttribute('data-dfn-for')
+            .split(",")
+            .map(x=>x.trim());
+    } else {
+        forAlts = [''];
+    }
+
+    let linkingSyntaxes = [];
+    if(!needsFor(type)) {
+        for(const lt of ltAlts) {
+            linkingSyntaxes.push(linkFormatter(lt));
+        }
+    }
+    if(!refusesFor(type)) {
+        for(const f of forAlts) {
+            linkingSyntaxes.push(linkFormatter(`${f}/${ltAlts[0]}`))
+        }
+    }
+    return [
+        mk.b({}, 'Possible linking syntaxes:'),
+        mk.ul({},
+            ...linkingSyntaxes.map(link => {
+                const copyLink = async () =>
+                    await navigator.clipboard.writeText(link);
+                return mk.li({},
+                    mk.div({ class: 'link-item' },
+                        mk.button({
+                            class: 'copy-icon', title: 'Copy',
+                            type: 'button',
+                            _onclick: copyLink,
+                            tabindex: 0,
+                        }, mk.span({ class: 'icon' }) ),
+                        mk.span({}, link)
+                    )
+                );
+            })
+        )
+    ];
+}
+}
+</script>
+<script>/* Boilerplate: script-ref-hints */
+"use strict";
+{
+let refsData = {
+"#catalog": {"displayText":"catalog","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"catalog","type":"dfn","url":"#catalog"},
+"#catalog-url": {"displayText":"catalog url","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"catalog url","type":"dfn","url":"#catalog-url"},
+"#client": {"displayText":"client","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"client","type":"dfn","url":"#client"},
+"#data-service": {"displayText":"data service","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"data service","type":"dfn","url":"#data-service"},
+"#dataset": {"displayText":"dataset","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"dataset","type":"dfn","url":"#dataset"},
+"#discovery": {"displayText":"discovery","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"discovery","type":"dfn","url":"#discovery"},
+"#distribution": {"displayText":"distribution","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"distribution","type":"dfn","url":"#distribution"},
+"#graph-star-pattern": {"displayText":"graph star pattern","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"graph star pattern","type":"dfn","url":"#graph-star-pattern"},
+"#input-shacl-shape": {"displayText":"input shacl shape","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"input shacl shape","type":"dfn","url":"#input-shacl-shape"},
+"#input-sparql-query": {"displayText":"input sparql query","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"input sparql query","type":"dfn","url":"#input-sparql-query"},
+"#query-shape-subsumption-algorithm": {"displayText":"query-shape subsumption algorithm","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"query-shape subsumption algorithm","type":"dfn","url":"#query-shape-subsumption-algorithm"},
+"#resource": {"displayText":"resource","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"resource","type":"dfn","url":"#resource"},
+"#shape": {"displayText":"shape","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"shape","type":"dfn","url":"#shape"},
+"#star-pattern": {"displayText":"star pattern","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"star pattern","type":"dfn","url":"#star-pattern"},
+"#triple-pattern": {"displayText":"triple pattern","export":true,"for_":[],"level":"1","normative":true,"shortname":"dishacled-discovery","spec":"dishacled-discovery-1","status":"local","text":"triple pattern","type":"dfn","url":"#triple-pattern"},
+};
+
+function mkRefHint(link, ref) {
+    const linkText = link.textContent;
+    let dfnTextElements = '';
+    if (ref.displayText.toLowerCase() != linkText.toLowerCase()) {
+        // Give the original term if it's being displayed in a different way.
+        // But allow casing differences, they're insignificant.
+        dfnTextElements =
+            mk.li({},
+                mk.b({}, "Term: "),
+                mk.span({}, ref.displayText)
+            );
+    }
+    const forList = ref.for_;
+    let forListElements;
+    if(forList.length == 0) {
+        forListElements = [];
+    } else if(forList.length == 1) {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.span({}, forList[0]),
+        );
+    } else {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.ul({},
+                ...forList.map(forItem =>
+                    mk.li({},
+                        mk.span({}, forItem)
+                    ),
+                ),
+            ),
+        );
+    }
+    const url = ref.url;
+    const safeUrl = encodeURIComponent(url);
+    const hintPanel = mk.aside({
+        class: "ref-hint",
+        id: `ref-hint-for-${safeUrl}`,
+        "data-for": url,
+        "aria-labelled-by": `ref-hint-for-${safeUrl}`,
+    },
+        mk.ul({},
+            dfnTextElements,
+            mk.li({},
+                mk.b({}, "URL: "),
+                mk.a({ href: url, class: "ref" }, url),
+            ),
+            mk.li({},
+                mk.b({}, "Type: "),
+                mk.span({}, `${ref.type}`),
+            ),
+            mk.li({},
+                mk.b({}, "Spec: "),
+                mk.span({}, `${ref.spec ? ref.spec : ''}`),
+            ),
+            forListElements
+        ),
+    );
+    hintPanel.forLink = link;
+    setupRefHintEventListeners(link, hintPanel);
+    return hintPanel;
+}
+
+function hideAllRefHints() {
+    queryAll(".ref-hint").forEach(el=>hideRefHint(el));
+}
+
+function hideRefHint(refHint) {
+    const link = refHint.forLink;
+    link.setAttribute("aria-expanded", "false");
+    if(refHint.teardownEventListeners) {
+        refHint.teardownEventListeners();
+    }
+    refHint.remove();
+}
+
+function showRefHint(link) {
+    if(link.classList.contains("dfn-link")) return;
+    const url = link.getAttribute("href");
+    const refHintKey = link.getAttribute("data-refhint-key");
+    let key = url;
+    if(refHintKey) {
+        key = refHintKey + "_" + url;
+    }
+    const ref = refsData[key];
+    if(!ref) return;
+
+    hideAllRefHints(); // Only display one at this time.
+
+    const refHint = mkRefHint(link, ref);
+    append(document.body, refHint);
+    link.setAttribute("aria-expanded", "true");
+    positionRefHint(refHint);
+}
+
+function setupRefHintEventListeners(link, refHint) {
+    if (refHint.teardownEventListeners) return;
+    // Add event handlers to hide the refHint after the user moves away
+    // from both the link and refHint, if not hovering either within one second.
+    let timeout = null;
+    const startHidingRefHint = (event) => {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => {
+            hideRefHint(refHint);
+        }, 1000);
+    }
+    const resetHidingRefHint = (event) => {
+        if (timeout) clearTimeout(timeout);
+        timeout = null;
+    };
+    link.addEventListener("mouseleave", startHidingRefHint);
+    link.addEventListener("mouseenter", resetHidingRefHint);
+    link.addEventListener("blur", startHidingRefHint);
+    link.addEventListener("focus", resetHidingRefHint);
+    refHint.addEventListener("mouseleave", startHidingRefHint);
+    refHint.addEventListener("mouseenter", resetHidingRefHint);
+    refHint.addEventListener("blur", startHidingRefHint);
+    refHint.addEventListener("focus", resetHidingRefHint);
+
+    refHint.teardownEventListeners = () => {
+        // remove event listeners
+        resetHidingRefHint();
+        link.removeEventListener("mouseleave", startHidingRefHint);
+        link.removeEventListener("mouseenter", resetHidingRefHint);
+        link.removeEventListener("blur", startHidingRefHint);
+        link.removeEventListener("focus", resetHidingRefHint);
+        refHint.removeEventListener("mouseleave", startHidingRefHint);
+        refHint.removeEventListener("mouseenter", resetHidingRefHint);
+        refHint.removeEventListener("blur", startHidingRefHint);
+        refHint.removeEventListener("focus", resetHidingRefHint);
+    };
+}
+
+function positionRefHint(refHint) {
+    const link = refHint.forLink;
+    const linkPos = getBounds(link);
+    refHint.style.top = linkPos.bottom + "px";
+    refHint.style.left = linkPos.left + "px";
+
+    const panelPos = refHint.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, linkPos.left - overflowAmount);
+        refHint.style.left = newLeft + "px";
+    }
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function showRefHintListener(e) {
+    // If the target isn't in a link (or is a link),
+    // just ignore it.
+    let link = e.target.closest("a");
+    if(!link) return;
+
+    // If the target is in a ref-hint panel
+    // (aka a link in the already-open one),
+    // also just ignore it.
+    if(link.closest(".ref-hint")) return;
+
+    // Otherwise, show the panel for the link.
+    showRefHint(link);
+}
+
+function hideAllHintsListener(e) {
+    // If the click is inside a ref-hint panel, ignore it.
+    if(e.target.closest(".ref-hint")) return;
+    // Otherwise, close all the current panels.
+    hideAllRefHints();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.body.addEventListener("mousedown", showRefHintListener);
+    document.body.addEventListener("focus", showRefHintListener);
+
+    document.body.addEventListener("click", hideAllHintsListener);
+});
+
+window.addEventListener("resize", () => {
+    // Hide any open ref hint.
+    hideAllRefHints();
+});
+}
+</script>
