@@ -79,7 +79,7 @@ Abstract: This specification defines an algorithm and the logical processes for 
     }
 </style>
 
-<script type='text/javascript'>
+<script>
     function showExample(ex, idx) {
         const wrapper = document.querySelector(`#example-${ex}`);
         const examples = wrapper.querySelectorAll(".tab-content");
@@ -631,4 +631,4 @@ First, a set of preliminary concepts are defined, followed by a description of t
 
 The algorithm operation is specified upon the following concepts:
 
-- <dfn>triple pattern</dfn>: a triple pattern <math>tp</math> is a tuple <math>( <math><msub><mi>s</mi><mn>tp</mn></msub></math>, <math><msub><mi>p</mi><mn>tp</mn></msub></math>, <math><msub><mi>o</mi><mn>tp</mn></msub></math> )</math>
+- <dfn>triple pattern</dfn>: a triple pattern <math>tp</math> is a tuple <math>( <msub><mi>s</mi><mn>tp</mn></msub>, <msub><mi>p</mi><mn>tp</mn></msub>, <msub><mi>o</mi><mn>tp</mn></msub> )</math>
