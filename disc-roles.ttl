@@ -1,0 +1,24 @@
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix disc: <https://dishacled.github.io/discovery-specification/#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+disc:ShapeRoles
+	a skos:ConceptScheme ;
+	dcterms:title "Shape relationship roles"@en ;
+	dcterms:description "Roles conveying the nature of the relationship between a DCAT resource and an associated data shape."@en ;
+	skos:hasTopConcept disc:InputShape, disc:OutputShape .
+
+disc:InputShape
+	a dcat:Role, skos:Concept ;
+	skos:prefLabel "Input shape role"@en ;
+	skos:definition "A role identifying a data shape that describes data accepted as input by a data service."@en ;
+	skos:topConceptOf disc:ShapeRoles ;
+	skos:inScheme disc:ShapeRoles .
+
+disc:OutputShape
+	a dcat:Role, skos:Concept ;
+	skos:prefLabel "Output shape role"@en ;
+	skos:definition "A role identifying a data shape that describes data produced as output by a data service."@en ;
+	skos:topConceptOf disc:ShapeRoles ;
+	skos:inScheme disc:ShapeRoles .

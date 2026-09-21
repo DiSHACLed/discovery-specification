@@ -6,10 +6,25 @@ Status: LD
 Markup Shorthands: markdown yes
 URL: https://dishacled.github.io/discovery-specification/
 Repository: https://github.com/DiSHACLed/discovery-specification/
-Editor: Julián Rojas, Ghent University - imec http://idlab.ugent.be/, julianandres.roajsmelendez@ugent.be
+Editor: Julián Rojas, Ghent University - imec http://idlab.ugent.be/, julianandres.rojasmelendez@ugent.be
 Abstract: This specification defines an algorithm and the logical processes for a client application to discover a (set of) RDF dataset(s) and/or data service(s) from one or more DCAT-AP data catalogs, based on a given input SHACL shape or SPARQL query.
 </pre>
 
+<pre class='biblio'>
+{
+    "SHEX-PRIMER": {
+    "authors": [
+        "Eric Prud'hommeaux",
+        "Iovka Boneva",
+        "Jose Emilio Labra Gayo",
+        "Gregg Kellogg"
+    ],
+    "href": "https://shex.io/shex-primer/",
+    "title": "Shape Expressions (ShEx) 2.1 Primer",
+    "date": "June 2019"
+  }
+}
+</pre>
 <pre class='biblio'>
 {
     "LDPATTERNS": {
@@ -27,7 +42,7 @@ Abstract: This specification defines an algorithm and the logical processes for 
 {
     "WEB-API-DISC": {
     "authors": [
-        "Frank Michiel",
+        "Franck Michel",
         "Catherine Faron-Zucker",
         "Olivier Corby",
         "Fabien Gandon"
@@ -50,6 +65,22 @@ Abstract: This specification defines an algorithm and the logical processes for 
     "title": "Compacting frequent star patterns in RDF graphs",
     "date": "April 2020"
   }
+}
+</pre>
+<pre class='biblio'>
+{
+        "TRAVELING-WITH-A-MAP": {
+        "authors": [
+                "Bryan-Elliott Tam",
+                "Joachim Van Herwegen",
+                "Pieter Colpaert",
+                "Ruben Verborgh",
+                "Ruben Taelman"
+        ],
+        "href": "https://www.semantic-web-journal.net/content/traveling-map-reducing-search-space-link-traversal-queries-using-rdf-shapes-0",
+        "title": "Traveling with a Map: Reducing the Search Space of Link Traversal Queries Using RDF Shapes",
+        "date": "2026"
+    }
 }
 </pre>
 
@@ -111,17 +142,18 @@ Abstract: This specification defines an algorithm and the logical processes for 
 The DCAT Application Profile for data portals (DCAT-AP) [[!DCAT-AP]] is the [official standard in Europe](https://interoperable-europe.ec.europa.eu/collection/semic-support-centre/solution/dcat-application-profile-data-portals-europe) 
 for describing datasets and data services in catalogues on the Web. 
 It provides a common model that enables interoperability across data portals, making it easier to publish and share metadata consistently. 
-This interoperability has been instrumental in improving the visibility and accessibility of open data across domains and EU member states.
+This interoperability has been instrumental in improving the visibility and accessibility of open data across domains and EU member states,
+with the [EU Data Portal](https://data.europa.eu/en) serving as a prime example of DCAT-AP powered data catalogues throughout Europe.
 
 However, the current design and usage of DCAT-AP are primarily oriented towards human-driven discovery. 
-Catalogues are typically accessed through graphical interfaces where users browse, filter, and search for resources based on keywords or metadata attributes. 
+Catalogues are typically accessed through graphical interfaces where users explore, filter, and search for resources based on keywords or metadata attributes. 
 While this supports transparency and accessibility for a wide audience, it limits the potential for automated, machine-based discovery and integration of datasets and data services. 
 In practice, many use cases—such as federated analytics, cross-domain applications, or dynamic data integration pipelines—require more than keyword search: 
 they need support for automated identification of datasets and services that match specific structural and semantic requirements.
 
-This specification, aims to address this gap by defining a (i) data model extension for DCAT-AP that allows describing sematically
-what is contained within RDF [[!RDF11-CONCEPTS]] datasets and expected/produced by RDF data services; 
-and an (ii) algorithm for automated discovery and selection of RDF datasets and RDF data services over DCAT-AP catalogues, 
+This specification aims to address this gap by defining (i) how DCAT-AP descriptions of RDF [[!RDF11-CONCEPTS]] [=datasets=] and [=data services=]
+can be defined/extended to include semantic descriptions of their content (for datasets) and expected inputs/outputs (for data services); 
+and (ii) an algorithm for automated discovery and selection of [=resources=] over DCAT-AP [=catalogs=], 
 based on formal input constraints expressed as either:
 
 - a [[!SHACL]] shape, describing the expected structure and semantics of the data, or
@@ -149,33 +181,38 @@ Within this document, the following namespace prefix bindings are used:
             <td>[[!VOCAB-DCAT-3]]</td>
         </tr>
         <tr>
+            <td>disc:</td>
+            <td><a href='https://dishacled.github.io/discovery-specification/#'>https://dishacled.github.io/discovery-specification/#</a></td>
+            <td>This specification</td>
+        </tr>
+        <tr>
             <td>dcterms:</td>
-            <td>http://purl.org/dc/terms/</td>
+            <td><a href='http://purl.org/dc/terms/'>http://purl.org/dc/terms/</a></td>
             <td>[[!DCTERMS]]</td>
         </tr>
         <tr>
             <td>rdf:</td>
-            <td>http://www.w3.org/1999/02/22-rdf-syntax-ns#</td>
-            <td>[[!RDF11-SCHEMA]]</td>
+            <td><a href='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>http://www.w3.org/1999/02/22-rdf-syntax-ns#</a></td>
+            <td>[[!RDF11-CONCEPTS]]</td>
         </tr>
         <tr>
             <td>rdfs:</td>
-            <td>http://www.w3.org/2000/01/rdf-schema#</td>
+            <td><a href='http://www.w3.org/2000/01/rdf-schema#'>http://www.w3.org/2000/01/rdf-schema#</a></td>
             <td>[[!RDF11-SCHEMA]]</td>
         </tr>
         <tr>
             <td>sh:</td>
-            <td>http://www.w3.org/ns/shacl#</td>
+            <td><a href='http://www.w3.org/ns/shacl#'>http://www.w3.org/ns/shacl#</a></td>
             <td>[[!SHACL]]</td>
         </tr>
         <tr>
             <td>skos:</td>
-            <td>http://www.w3.org/2004/02/skos/core#</td>
-            <td>[[SKOS-REFERENCE]]</td>
+            <td><a href='http://www.w3.org/2004/02/skos/core#'>http://www.w3.org/2004/02/skos/core#</a></td>
+            <td>[[!SKOS-REFERENCE]]</td>
         </tr>
         <tr>
             <td>xsd:</td>
-            <td>http://www.w3.org/2001/XMLSchema#</td>
+            <td><a href='http://www.w3.org/2001/XMLSchema#'>http://www.w3.org/2001/XMLSchema#</a></td>
             <td>[[!XMLSCHEMA11-2]]</td>
         </tr>
     </tbody>
@@ -257,7 +294,7 @@ beyond the informal suggestion to link to relevant standards, understood as inst
         
     ex:myDistribution a dcat:Distribution;
         dcat:downloadURL <https://example.org/dataset.ttl>;
-        dcat:mediaType <https://www.iana.org/assignments/media-types/text/turtle>
+        dcat:mediaType <https://www.iana.org/assignments/media-types/text/turtle>;
         dcterms:conformsTo ex:myShape.
 
     ex:myShape a sh:NodeShape;
@@ -274,7 +311,7 @@ beyond the informal suggestion to link to relevant standards, understood as inst
     ```turtle
     ex:myService a dcat:DataService;
         dcat:servesDataset ex:myDataset;
-        dcat:endpointURL <https://example.org/my-data/service>
+        dcat:endpointURL <https://example.org/my-data/service>;
         dcterms:title "My data service";
         dcterms:conformsTo ex:myShape, ex:myOtherShape.
 
@@ -298,7 +335,7 @@ beyond the informal suggestion to link to relevant standards, understood as inst
 </div>
 
 Note: A related [=shape=] to a [=data service=] could be referring to the constraints of either the input or output data (or both) of such service.
-Via the `dcterms:conformsTo` property, no distintion can be made about the role of a related shape 
+Via the `dcterms:conformsTo` property, no distinction can be made about the role of a related shape 
 (see [[#qualified-relation]] for an alternative where it is possible). 
 However, linking multiple shapes to a data service should not entail any conflicts for the [=discovery=] process, 
 given its inclusive nature based on a logical OR operation. 
@@ -306,14 +343,16 @@ given its inclusive nature based on a logical OR operation.
 ## Relating to shapes via `dcat:qualifiedRelation` ## {#qualified-relation}
 
 In this approach we establish the use of the property `dcat:qualifiedRelation` as described by [[!VOCAB-DCAT-3]] and [[!DCAT-AP]], 
-to indirectly link an RDF [=resource=] defined as part of a [=catalog=], to a [=shape=] that describes its content.
+to indirectly link an RDF [=resource=] defined as part of a [=catalog=], to a [=shape=] that describes its content or the expected structure of input/output data for [=data services=].
 This approach follows an n-ary [[SWBP-N-ARYRELATIONS]] or qualified [[LDPATTERNS]] data modelling pattern.
 
 In [[!VOCAB-DCAT-3]], the use of `dcat:qualifiedRelation` is informally specified as a way to define semantically richer relations
-among resources. This is accomplished with the introduction of the `dcat:Relationship` class, on which specific roles can be set,
+among resources. This is accomplished with the use of the `dcat:Relationship` class, on which specific roles can be set,
 to further describe the nature of the relationship between a resource and another asset.
-For specifying types of roles, the use of controlled vocabularies is encouraged, which is reflected by the exsiting subclass relation
+For specifying types of roles, the use of controlled vocabularies is encouraged, which is reflected by the existing subclass relation
 between the `dcat:Role` class and `skos:Concept`.
+
+The domain of `dcat:qualifiedRelation` is `dcat:Resource`, which includes DCAT [=datasets=] and [=data services=] but not [=distributions=].
 
 No further guidelines nor usage notes are given for `dcat:qualifiedRelation` and `dcat:Relationship` in [[!DCAT-AP]].
 
@@ -332,10 +371,8 @@ A discovery client must assess all existing qualified relations (see [[#logical-
 
 Note: [[!VOCAB-DCAT-3]] suggests the use of coded term lists such as [[IANA-RELATIONS]], or [[ISO-19115-1]],
 to specify a `dcat:Relationship` role via the `dcat:hadRole` property.
-However, none of the recommended vocabularies defines a specific role type
-that conveys a relationship between a resource and an associated [=shape=].
-A semantically similar role type is the `describedby` relation defined by [[IANA-RELATIONS]],
-but we opt for a lenient position since no established standard exists for this yet.
+However no established standard vocabulary currently exists for defining a role type that specifically conveys a relationship between a data resource and an associated [=shape=].
+In section [[#roles]], we discuss how a discovery client may handle qualified relations to identify associated shapes.
 
 **Example 2** shows corresponding RDF representations for a dataset and data service, respectively linked to their shapes via `dcat:qualifiedRelation`.
 According to [[!VOCAB-DCAT-3]], the domain of `dcat:qualifiedRelation` is `dcat:Resource`, which excludes `dcat:Distribution` instances.
@@ -369,15 +406,15 @@ According to [[!VOCAB-DCAT-3]], the domain of `dcat:qualifiedRelation` is `dcat:
     RDF representation in Turtle format of a `dcat:DataService` linked to a `sh:NodeShape` via `dcat:qualifiedRelation/dcterms:relation`
     ```turtle
     ex:myService a dcat:DataService;
-        dcat:endpointURL <https://example.org/my-data/service>
+        dcat:endpointURL <https://example.org/my-data/service>;
         dcterms:title "My data service";
         dcat:qualifiedRelation [
             a dcat:Relationship;
-            dcat:hadRole ex:InputDataShape; # this is optional
+            dcat:hadRole disc:InputShape; # this is optional
             dcterms:relation ex:myShape
         ], [
             a dcat:Relationship;
-            dcat:hadRole ex:OutputDataShape; # this is optional
+            dcat:hadRole disc:OutputShape; # this is optional
             dcterms:relation ex:myOtherShape
         ].
 
@@ -403,19 +440,18 @@ According to [[!VOCAB-DCAT-3]], the domain of `dcat:qualifiedRelation` is `dcat:
 Note: The qualified relation pattern allows for a more granular description of the type or relation
 that a given shape has with a resource. For example, as it is shown in **Example 2 (Data Service Example)**,
 where the qualified relations describe the shapes of both input and output data of a data service independently.
-This has no impact on the discovery process as both relations shall be assessed to find relevant matches
-with respect to the given discovery constraints.
+Roles may only influence the discovery process when defined as indicated in section [[#roles]].
 
 ## Relating to shapes via `sh:shapesGraph` ## {#shapes-graph}
 
 In this approach we establish the use of the property `sh:shapesGraph`, as defined  by [[!SHACL]],
-to link an RDF resource defined as part of a catalog, to a shape that describes its content.
+to link an RDF resource listed as part of a [=catalog=], to a shape that describes its content.
 
 The `sh:shapesGraph` property is used in [[!SHACL]] to indicate a graph where the validation shapes are defined.
 From the perspective of DCAT, the use of `sh:shapesGraph` constitutes a model extension 
 that is not currently contemplated by [[!VOCAB-DCAT-3]] nor [[!DCAT-AP]].
 
-Note: An example of such an extenstion can be observed in the work of Frank Michiel et al. [[WEB-API-DISC]],
+Note: An example of such an extension can be observed in the work of Franck Michel et al. [[WEB-API-DISC]],
 where they propose the use of `sh:shapesGraph` to link a `dcat:Distribution` to a graph containing its shape definitions.
 
 **Figure 3** shows how any kind of RDF resource that has been declared in a catalog, may be linked to a related shape via `sh:shapesGraph`.
@@ -427,9 +463,8 @@ where they propose the use of `sh:shapesGraph` to link a `dcat:Distribution` to 
     <object type='image/svg+xml' data='img/figure-3.svg' width='700'></object>
 </figure>
 
-An associated shapes graph linked via `sh:shapesGraph` may contain one or more shape definitions, 
-but these must be related only to the resource that links to them. 
-This is necessary to avoid false positives during the discovery process.
+An associated shapes graph linked via `sh:shapesGraph` may contain one or more shape definitions.
+It is assumed that these must be related to the resource that links to them. 
 
 **Example 3** shows corresponding RDF representations for a dataset, distribution, and data service, 
 respectively linked to their shapes via `sh:shapesGraph`.
@@ -467,7 +502,7 @@ respectively linked to their shapes via `sh:shapesGraph`.
         
     ex:myDistribution a dcat:Distribution;
         dcat:downloadURL <https://example.org/dataset.ttl>;
-        dcat:mediaType <https://www.iana.org/assignments/media-types/text/turtle>
+        dcat:mediaType <https://www.iana.org/assignments/media-types/text/turtle>;
         sh:shapesGraph ex:myShapesGraph.
 
     ex:myShapesGraph {
@@ -486,7 +521,7 @@ respectively linked to their shapes via `sh:shapesGraph`.
     ```turtle
     ex:myService a dcat:DataService;
         dcat:servesDataset ex:myDataset;
-        dcat:endpointURL <https://example.org/my-data/service>
+        dcat:endpointURL <https://example.org/my-data/service>;
         dcterms:title "My data service";
         sh:shapesGraph ex:myShapesGraph.
 
@@ -511,10 +546,82 @@ respectively linked to their shapes via `sh:shapesGraph`.
     </div>
 </div>
 
+# Shape relationship roles # {#roles}
+
+Shape relationship roles provide guidance to a [=discovery=] [=client=] about whether comparing two [=shapes=]
+is meaningful. They are applicable only to shape descriptions expressed through `dcat:qualifiedRelation`
+([[#qualified-relation]]), where the role is the value of `dcat:hadRole` on the corresponding `dcat:Relationship`.
+
+In [[!VOCAB-DCAT-3]], `dcat:Role` is a subclass of `skos:Concept` and the value of `dcat:hadRole` is a role *instance*, not a
+class. Accordingly, this specification defines the roles below as concepts of a <dfn export>shape role scheme</dfn>, identified by
+`disc:ShapeRoles`, rather than as subclasses of `dcat:Role`:
+
+- <dfn id="InputShape" export><code>disc:InputShape</code></dfn> identifies a [=shape=] that describes data accepted as input by a [=data service=].
+- <dfn id="OutputShape" export><code>disc:OutputShape</code></dfn> identifies a [=shape=] that describes data produced as output by a [=data service=].
+
+The following RDF statements formally express these definitions:
+
+```turtle
+@prefix dcat: <http://www.w3.org/ns/dcat#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix disc: <https://dishacled.github.io/discovery-specification/#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+
+disc:ShapeRoles
+	a skos:ConceptScheme ;
+	dcterms:title "Shape relationship roles"@en ;
+	skos:hasTopConcept disc:InputShape, disc:OutputShape .
+
+disc:InputShape
+	a dcat:Role, skos:Concept ;
+	skos:prefLabel "Input shape role"@en ;
+	skos:definition "A role identifying a data shape that describes data accepted as input by a data service."@en ;
+	skos:topConceptOf disc:ShapeRoles ;
+	skos:inScheme disc:ShapeRoles .
+
+disc:OutputShape
+	a dcat:Role, skos:Concept ;
+	skos:prefLabel "Output shape role"@en ;
+	skos:definition "A role identifying a data shape that describes data produced as output by a data service."@en ;
+	skos:topConceptOf disc:ShapeRoles ;
+	skos:inScheme disc:ShapeRoles .
+```
+
+The two concepts are distinct: a single `dcat:Relationship` must not carry both `disc:InputShape` and `disc:OutputShape` as
+values of `dcat:hadRole`. A [=client=] that encounters such a relationship must treat its role as undetermined and assess the
+shape without role-based filtering.
+
+When a user assigns one of these roles to the shape supplied in a discovery request (see [[#starting-from]]), a [=client=] should use
+the complementary role to select the shapes of a candidate [=data service=] for relevance assessment:
+
+- a user-provided shape with role `disc:InputShape` should be assessed against candidate shapes with role `disc:OutputShape`; and
+- a user-provided shape with role `disc:OutputShape` should be assessed against candidate shapes with role `disc:InputShape`.
+
+Discovery clients following this specification should also support application-specific roles declared as narrower concepts of
+`disc:InputShape` or `disc:OutputShape` through `skos:broader`. Such a role must be treated according to the corresponding
+broader role when selecting complementary candidate shapes. A role that is neither of these concepts nor transitively narrower
+than one of them has no matching semantics defined by this specification and should not be used to exclude an otherwise
+eligible shape.
+
+<div class=example>
+An application-specific role that refines `disc:OutputShape`, and which a [=client=] must therefore treat as an output role.
+```turtle
+ex:GeoJSONOutputShape
+	a dcat:Role, skos:Concept ;
+	skos:prefLabel "GeoJSON output shape role"@en ;
+	skos:broader disc:OutputShape .
+```
+</div>
+
+If the user does not indicate a role for the provided shape, or a candidate shape has no `dcat:hadRole`, the [=client=]
+must not exclude the candidate based on role. In that case, relevance is assessed without role-based filtering as specified
+in [[#resource-relevance]].
+
+
 # Discovery logical flow # {#logical-flow}
 
 This section describes the logical steps that a client needs to follow to perform a discovery process.
-An ovewrview of the logical flow is shown in **Figure 4**.
+An overview of the logical flow is shown in **Figure 4**.
 
 <figure>
     <figcaption>
@@ -528,10 +635,14 @@ In the next subsections a detailed description of each step is provided.
 ## Discovery request ## {#starting-from}
 
 This is the initial step (labeled as 1️⃣ in **Figure 4**). A client starts a discovery process when it receives as input:
-1. a set of one or more <dfn>catalog URL</dfn>s ([IRI](https://www.rfc-editor.org/rfc/rfc3987#section-2)),
-    which must point to a dereferenceable RDF representation of a catalog; and
-2. a set of formal constraints, expressed either as an <dfn>input SHACL shape</dfn> (in any RDF serialization ([string](https://infra.spec.whatwg.org/#javascript-string))) 
-    or an <dfn>input SPARQL query</dfn> ([string](https://infra.spec.whatwg.org/#javascript-string)).
+1. a set of formal constraints, expressed either as an <dfn>input SHACL shape</dfn> (in any RDF serialization ([string](https://infra.spec.whatwg.org/#javascript-string)))
+    or an <dfn>input SPARQL query</dfn> ([string](https://infra.spec.whatwg.org/#javascript-string)); and
+2. optionally, a <dfn>shape role</dfn> value for an [=input SHACL shape=], as defined in [[#roles]]; and
+3. optionally, a set of one or more <dfn>catalog URL</dfn>s ([IRI](https://www.rfc-editor.org/rfc/rfc3987#section-2)),
+    which must point to a dereferenceable RDF representation of a catalog. Alternatively, a client may operate over previously retrieved catalogs.
+
+Note: A [=shape role=] only makes sense when defined together with an [=input SHACL shape=].
+It should be ignored if present together with an [=input SPARQL query=].
 
 ## Catalog retrieval ## {#catalog-retrieval}
 
@@ -541,12 +652,13 @@ which must be dereferenceable to any RDF serialization (e.g. [[TURTLE]], [[RDF11
 
 Note: Even though in **Figure 4** the catalog retrieval step is shown as a sequential process,
 a client may choose to perform the retrieval of multiple catalogs in parallel,
+or to locally cache the retrieved catalogs,
 to optimise the overall performance of the discovery process.
 
-## Extracting associated shapes ## {#extract-shapes}
+## Extraction of associated shapes ## {#extract-shapes}
 
-This step (labeled as 3️⃣ in **Figure 4**) involves parsing the RDF representation of each retrieved catalog,
-to extract all the shapes associated with RDF resources declared in the catalog.
+This step (labeled as 3️⃣ in **Figure 4**) involves parsing the RDF representation of each retrieved [=catalog=],
+to extract all the shapes associated with RDF resources declared in it.
 A client must identify all resources of type `dcat:Dataset`, `dcat:Distribution`, and `dcat:DataService`,
 and for each resource, extract any associated shape(s) using the three approaches defined in section [[#dcat-shapes]].
 Given the mutually inclusive relation of these approaches, a client must consider all of them when extracting shapes.
@@ -558,18 +670,20 @@ That is, for every resource a client must:
         ```sparql
         PREFIX sh: <http://www.w3.org/ns/shacl#>
         PREFIX dcterms: <http://purl.org/dc/terms/>
+        PREFIX dcat: <http://www.w3.org/ns/dcat#>
 
-        SELECT ?shape WHERE {
+        SELECT ?resource ?shape WHERE {
             VALUES ?type { dcat:Dataset dcat:Distribution dcat:DataService }
-            
-            ?resource a ?type.
+
+            ?resource a ?type;
                 dcterms:conformsTo ?shape.
-            
+
             ?shape a sh:NodeShape.
         }
         ```
     </div>
 2. follow the property path `dcat:qualifiedRelation/dcterms:relation` and assess the existence of `sh:NodeShape` instances ([[#qualified-relation]]).
+    For each extracted shape, the client must also retain any provided [=shape role=] and assess it against the value of `dcat:hadRole` properties according to the rules defined in section [[#roles]].
     The following SPARQL query expresses an equivalent operation to extract the relevant quads from a catalog instance.
     <div class='assertion'>
         <span class='marker'>EQUIVALENT SPARQL QUERY</span>
@@ -578,14 +692,15 @@ That is, for every resource a client must:
         PREFIX dcterms: <http://purl.org/dc/terms/>
         PREFIX dcat: <http://www.w3.org/ns/dcat#>
 
-        SELECT ?shape WHERE {
+        SELECT ?resource ?shape ?role WHERE {
             VALUES ?type { dcat:Dataset dcat:DataService }
-            
-            ?resource a ?type.
-                dcat:qualifiedRelation [
-                    dcterms:relation ?shape
-                ].
-            
+
+            ?resource a ?type;
+                dcat:qualifiedRelation ?relation.
+
+            ?relation dcterms:relation ?shape.
+            OPTIONAL { ?relation dcat:hadRole ?role. }
+
             ?shape a sh:NodeShape.
         }
         ```
@@ -599,12 +714,12 @@ That is, for every resource a client must:
         PREFIX dcterms: <http://purl.org/dc/terms/>
         PREFIX dcat: <http://www.w3.org/ns/dcat#>
         
-        SELECT ?shape WHERE {
+        SELECT ?resource ?shape WHERE {
             VALUES ?type { dcat:Dataset dcat:Distribution dcat:DataService }
-            
-            ?resource a ?type.
+
+            ?resource a ?type;
                 sh:shapesGraph ?shapesGraph.
-            
+
             GRAPH ?shapesGraph {
                 ?shape a sh:NodeShape.
             }
@@ -616,66 +731,314 @@ The equivalent SPARQL queries listed above, make the assumption that all RDF qua
 are locally available as part of a catalog RDF document. However, it may be the case that a related shape is linked as a remote resource.
 In such case, **a client must also dereference the shape's** [**IRI**](https://www.rfc-editor.org/rfc/rfc3987#section-2) to retrieve its RDF representation.
 
-## Determining resource relevance ## {#resource-relevance}
+## Relevance assessment ## {#resource-relevance}
 
-This step (labeled as 4️⃣ in **Figure 4**) involves determining the relevance of each resource,
-for which one or more shapes were extracted, according to the given [=input SHACL shape=] or [=input SPARQL query=] 
+This step (labeled as 4️⃣ in **Figure 4**) determines how relevant each resource is,
+based on a containment assessment among their extracted shapes and the given [=input SHACL shape=] or [=input SPARQL query=] 
 expressing the client's formal constraints.
 
-A client must evaluate each resource's shape against the [=input SHACL shape=] or [=input SPARQL query=] constraints,
+A client must evaluate the containment relationship ([[#discovery-result]]) of the shapes of each candidate [=resource=],
+taken together, against the [=input SHACL shape=] or [=input SPARQL query=] constraints,
 by applying the [=query-shape subsumption algorithm=] described in section [[#algorithm]].
+The algorithm is applied once per candidate resource and yields one [=discovery result=] for it, not one per shape.
 
-## Presenting results ## {#return-results}
+Role-based filtering ([[#roles]]) selects which of a resource's shapes may determine that result, and does not remove the
+others from the assessment. A client must therefore partition the shapes it extracted for a candidate resource into:
 
-In this last step, (labeled as 5️⃣ in **Figure 4**) the client collects and returns the set of resource identifiers ([IRI](https://www.rfc-editor.org/rfc/rfc3987#section-2)),
-which were deemed as relevant with respect to the input constrainst ([=input SHACL shape=] or [=input SPARQL query=]).
+- the <dfn>deciding shapes</dfn>: the role-compliant shapes, or all of the resource's shapes when no role applies. Only these
+    contribute to the classification of a star pattern in [[#algorithm-steps]]; and
+- the <dfn>available shapes</dfn>: every shape extracted for the resource, including the deciding ones. These remain
+    resolvable as targets of `sh:node` references, so that a [=star-pattern dependency=] can be followed even when the
+    referenced shape is not itself eligible to decide the result.
+
+A client must not discard a non-deciding shape before running the algorithm: doing so would break the resolution of
+[=star-pattern dependencies=] and can lower an otherwise [=contained=] result.
+
+## Presentation of results ## {#return-results}
+
+In this last step, (labeled as 5️⃣ in **Figure 4**) the client returns an ordered (sub-)set of resource identifiers ([IRI](https://www.rfc-editor.org/rfc/rfc3987#section-2))
+from the considered data catalogs, labeled according to their relevance degree as specified in [[#discovery-result]], with respect to the given input constraints ([=input SHACL shape=] / [=input SPARQL query=]).
 
 # Algorithm specification # {#algorithm}
 
-This section defines a <dfn>query-shape subsumption algorithm</dfn> that aims to determine the <i>relevance</i> of an RDF resource
-based on a given set of formal constraints, expressed in the form of a SHACL shape or a SPARQL query,
-and considering a set of associated SHACL shapes to which the RDF resource conforms to.
-The algorithm decomposes queries and shapes into its constituent [=graph star pattern=] 
-and proceeds to compare them in search of logical overlaps that indicate relevance relations 
-among the input query/shape and the set of shapes related to catalog resources.  
+This section defines a <dfn>query-shape subsumption algorithm</dfn> that aims to determine the <i>relevance</i> of an RDF resource,
+described by a set of associated SHACL shapes, towards a given set of formal constraints, 
+expressed in the form of a SHACL shape or a SPARQL query.
+The algorithm decomposes the given input constraints into [=star patterns=] and compares each pattern with the
+constraints expressed by the resource shapes. The result is expressed in the form of a qualified degree 
+that indicates whether the resource shapes contain, partially align with, or reject the input constraints.
 
 First, a set of preliminary concepts are defined, followed by a description of the logical steps taken by the algorithm.
 
 ## Preliminaries ## {#algorithm-preliminaries}
 
-The algorithm operation is specified upon the following concepts:
+Let <math><mi>I</mi></math>, <math><mi>B</mi></math>, <math><mi>L</mi></math>, and <math><mi>V</mi></math> denote the mutually disjoint
+sets of IRIs, blank nodes, literals, and variables, respectively. The algorithm is specified using the following concepts,
+adapted from the formalization of query-shape subsumption in [[TRAVELING-WITH-A-MAP]]:
 
-- <dfn>triple pattern</dfn>: a triple pattern <math><mi>tp</mi></math> is a tuple <math><mtext>( </mtext><msub><mi>s</mi><mn>tp</mn></msub><mtext>, </mtext><msub><mi>p</mi><mn>tp</mn></msub><mtext>, </mtext><msub><mi>o</mi><mn>tp</mn></msub><mtext> )</mtext></math> 
-    where: 
-    - <math><msub><mi>s</mi><mn>tp</mn></msub></math> is the set of all subjects (name nodes <math><mi>I</mi></math>, blank nodes <math><mi>B</mi></math> and variables <math><mi>V</mi></math>), 
-    - <math><msub><mi>p</mi><mn>tp</mn></msub></math> is the set of all predicates (named nodes <math><mi>I</mi></math> and variables <math><mi>V</mi></math>) and 
-    - <math><msub><mi>o</mi><mn>tp</mn></msub></math> is the set of all objects (named nodes <math><mi>I</mi></math>, blank nodes <math><mi>B</mi></math>, literals <math><mi>L</mi></math> and variables <math><mi>V</mi></math>).
-- <dfn>star pattern</dfn> [[STAR-PATTERNS]]: given a SPARQL query <math><mi>Q</mi></math>, a star pattern <math><msub><mi>Q</mi><mn>sp</mn></msub></math> is a set of [=triple patterns=] <math><mi>tp</mi></math> of <math><mi>Q</mi></math>, 
-    all sharing the same subject.
+- <dfn>triple pattern</dfn>: a tuple <math><mi>tp</mi><mo>=</mo><mfenced><msub><mi>s</mi><mi>tp</mi></msub><msub><mi>p</mi><mi>tp</mi></msub><msub><mi>o</mi><mi>tp</mi></msub></mfenced></math> in
+    <math><mfenced><mi>I</mi><mo>∪</mo><mi>B</mi><mo>∪</mo><mi>V</mi></mfenced><mo>×</mo><mfenced><mi>I</mi><mo>∪</mo><mi>V</mi></mfenced><mo>×</mo><mfenced><mi>I</mi><mo>∪</mo><mi>B</mi><mo>∪</mo><mi>L</mi><mo>∪</mo><mi>V</mi></mfenced></math>.
+    <math><mi>S</mi><mfenced><mi>tp</mi></mfenced></math> and <math><mi>O</mi><mfenced><mi>tp</mi></mfenced></math> denote its subject and object;
+    <math><mi>O</mi></math> is undefined when the object is a literal.
+- <dfn>star pattern</dfn> [[STAR-PATTERNS]]: for a query <math><mi>Q</mi></math> and
+    <math><mi>x</mi><mo>∈</mo><mi>I</mi><mo>∪</mo><mi>B</mi><mo>∪</mo><mi>V</mi></math>,
+    <math><msub><mi>SP</mi><mi>Q</mi></msub><mfenced><mi>x</mi></mfenced><mo>=</mo><mfenced><mrow><mi>tp</mi><mo>∈</mo><mi>Q</mi><mo>|</mo><mi>S</mi><mfenced><mi>tp</mi></mfenced><mo>=</mo><mi>x</mi></mrow></mfenced></math>.
+    In other words, a star pattern is the set of [=triple patterns=] of <math><mi>Q</mi></math> sharing subject <math><mi>x</mi></math>.
     <div class=example>
     Example of a [=star pattern=] defined as part of a SPARQL query.
     ```sparql
     SELECT * WHERE {
-        ?subject a ex:Entity;  #---
+        ?subject a ex:Entity;  #--|
             ex:pred1 ?obj1;    #  | start pattern 
-            ex:pred2 ?obj2.    #---
+            ex:pred2 ?obj2.    #--|
     }
     ```
     </div>
-- <dfn>graph star pattern</dfn>: given a SPARQL query <math><mi>Q</mi></math>, a graph star pattern <math><msub><mi>Q</mi><mn>gsp</mn></msub></math> 
-    is the union of a root [=star pattern=] <math><msub><mi>Q</mi><mn>spr</mn></msub></math> and all the star patterns having as a subject,
-    an object of a [=triple pattern=] belonging to <math><msub><mi>Q</mi><mn>spr</mn></msub></math>.
+- <dfn export>graph star pattern</dfn>: the least set containing a designated root [=star pattern=] and, recursively, every star pattern
+    whose subject is the non-literal object of a triple pattern in a star pattern already in the set. An edge from a triple
+    pattern to such a star pattern is a <dfn>star-pattern dependency</dfn>. This transitive definition includes dependencies at
+    arbitrary depth, not only direct children of the root.
     <div class=example>
     Example of a [=star pattern=] defined as part of a SPARQL query.
     ```sparql
     SELECT * WHERE {
-        ?subject a ex:Entity;  #----------------------
-            ex:pred1 ?obj1;    #  | start pattern    |
-            ex:pred2 ?obj2.    #---                  |
-                               #                     | graph star pattern
-        ?obj1 ?p1 ?o1.         #                     |
-                               #                     |
-        ?obj2 ?p2 ?o2.         # ---------------------
+        ?subject a ex:Entity;  #--|-------------------|
+            ex:pred1 ?obj1;    #  | root star pattern |
+            ex:pred2 ?obj2.    #--|                   |
+                               #                      |
+        ?obj1 a ex:SubEntity;  #--|                   |
+            ex:pred3 ?obj3;    #  | star pattern      | graph star pattern
+            ex:pred4 ?obj4.    #--|                   |
+                               #                      |
+        ?obj2 a ex:SubEntity2; #--|                   |
+            ex:pred5 ?obj5;    #  | star pattern      |
+            ex:pred6 ?obj6.    #--|-------------------|
     }
     ```
     </div>
+- <dfn>normalized shape</dfn>: a representation of a SHACL node shape containing its identifier, open or closed status,
+    positive and negative property constraints, object constraints, disjunctions, and references to other normalized shapes.
+    A shape is closed exactly when its `sh:closed` value is `true`; otherwise it is open.
+    A <dfn>negative property constraint</dfn> is a property constraint declared under `sh:not`. It states that conforming data
+    must **not** carry the property, and is therefore the only constraint of an open shape that can positively establish
+    incompatibility.
+- <dfn>pattern-shape match</dfn>: a relation <math><mi>tp</mi><mo>≼</mo><mi>c</mi></math> between a [=triple pattern=]
+    <math><mi>tp</mi></math> and a normalized shape property constraint <math><mi>c</mi></math>. Their predicates must match.
+    Explicit query object restrictions must satisfy the supported shape constraints, and retained query filters must not be
+    provably contradictory. An object variable for which no applicable restriction is available is compatible rather than
+    contradictory. A [=negative property constraint=] never yields a [=pattern-shape match=]: a triple pattern whose predicate
+    the shape forbids is instead a <dfn>negative contradiction</dfn> for that shape.
+    This is a conservative approximation of the paper's `match` relation, which requires the domain of triples
+    matched by the query pattern to be a subset of the domain permitted by the shape pattern.
+- <dfn export>star-shape subsumption</dfn>: a [=star pattern=] is subsumed by a normalized shape when every **required** triple
+    pattern has a [=pattern-shape match=] in the shape body or in one accepted disjunctive branch, at least one triple pattern
+    has such a match, and every [=star-pattern dependency=]
+    is recursively subsumed by the referenced shape. Implementations must memoize visited star/shape pairs, or use an equivalent
+    mechanism, so cyclic dependencies terminate.
+    A triple pattern is required unless it originates from an `OPTIONAL` graph pattern or from a shape property constraint
+    whose `sh:minCount` is zero. Optional triple patterns never prevent subsumption, because a resource can answer the query
+    without them. This rule is the same for open and closed shapes.
+
+The Boolean relation <math><mi>Q</mi><msub><mo>⊑</mo><mi>qs</mi></msub><mi>S</mi></math> from
+[[TRAVELING-WITH-A-MAP]] establishes query relevance when at least one [=star pattern=] of at least one [=graph star pattern=]
+of <math><mi>Q</mi></math>, taken as a root, is subsumed by the query obtained from shape <math><mi>S</mi></math>. This specification retains that local relation as the basis of a full
+match, but extends its Boolean output with partial-evidence classifications. In particular, [=contained=] below is deliberately
+stronger: it requires every normalized star pattern of the discovery input to be subsumed by at least one eligible resource shape.
+
+This specification departs from [[TRAVELING-WITH-A-MAP]] in two respects that an implementer familiar with that work should note.
+
+**Open shapes are graded rather than treated as unconstrained.** [[TRAVELING-WITH-A-MAP]] translates an open shape into a query
+over the entire knowledge graph, on the grounds that such a shape imposes only the minimal constraints its data must satisfy;
+subsumption by an open shape is consequently always satisfied. That treatment is appropriate for link pruning, where the only
+question is whether a resource may be skipped. Discovery instead has to rank resources that cannot be excluded, so this
+specification distinguishes degrees of partial evidence over open shapes: [=aligned=] when some of the input is positively
+covered, and [=weakly rejected=] when none of it is but the shape does not exclude it either. The complete scale is defined in
+[[#discovery-result]]. Only [=rejected=] carries the exclusion force of the Boolean relation.
+
+**Resource shapes are not translated into queries.** [[TRAVELING-WITH-A-MAP]] compares two queries, having obtained
+<math><mi>Q</mi><mi>s</mi><mo>=</mo><mi>T</mi><mfenced><mi>S</mi></mfenced></math> from the shape. This specification compares a
+query against shape constraints directly, as a [=normalized shape=] ([[#algorithm-steps]], step 2). The translation to a query
+is applied only to an [=input shape=], so that a shape-based and a query-based discovery request are normalized to the same
+representation. The comparison is otherwise the same relation, and the direction is fixed: the input is the source and the
+resource shapes are the candidate targets.
+
+## Logical steps ## {#algorithm-steps}
+
+The algorithm accepts the following inputs:
+
+1. exactly one of:
+    - an <dfn>input shape</dfn>: the user-provided SHACL shape defining the discovery constraints; or
+    - an <dfn>input query</dfn>: the user-provided SPARQL query defining the discovery constraints; and
+2. one or more <dfn>resource shapes</dfn>: the [=available shapes=] of a candidate RDF [=resource=], that is, every SHACL shape
+    extracted for it in [[#extract-shapes]]; and
+3. the subset of those shapes that are [=deciding shapes=], as determined in [[#resource-relevance]]. When role-based filtering
+    does not apply, every [=resource shape=] is a deciding shape.
+
+When comparing shapes, the [=input shape=] is the source and the [=resource shapes=] are the candidate targets.
+An implementation must not reverse this orientation: containment means that a target resource shape covers the constraints
+expressed by the source input shape.
+
+The algorithm proceeds as follows:
+
+1. **Normalize the input constraints.**
+    1. An [=input query=] is parsed and its [=triple patterns=] are grouped by subject into [=star patterns=].
+        When the object of a triple pattern is also the subject of another star pattern, the latter is recorded as a dependency
+        of the former. Supported `OPTIONAL`, `UNION`, `VALUES`, property-path, and `FILTER` forms are retained as described in
+        [[#algorithm-profile]]; constructs outside that profile are discarded, as specified in [[#algorithm-profile]].
+    2. An [=input shape=] is translated to the same query representation. Positive SHACL property constraints become triple
+        patterns; `sh:node` relations become star-pattern dependencies; `sh:or` and `sh:xone` become alternative branches; and
+        supported datatype, numeric-bound, and regular-expression facets become filter constraints.
+    3. A triple pattern whose predicate is a variable is an <dfn>unrestricted triple pattern</dfn>. It yields no
+        [=star pattern=], because a [=shape=] constrains named predicates, but it asks for every triple of a resource.
+        An input whose triple patterns are all unrestricted is therefore [=contained=] by any [=resource shape=], and every
+        resource shape must be marked visitable: the input is maximally unselective, which is a property of the input and not
+        a failure to assess it.
+    4. Normalization must otherwise yield at least one [=star pattern=]. An input that yields none and contains no
+        [=unrestricted triple pattern=] never asks the resource for data — its answer is the same whichever resource is
+        considered — so relevance is undefined and a client must not assign it a [=discovery result=]. An empty `WHERE`
+        clause, a body of only `VALUES` or `FILTER`, and a body left empty after discarding out-of-profile constructs
+        ([[#out-of-profile]]) are of this kind.
+2. **Normalize the resource shapes.** Each [=resource shape=] becomes a [=normalized shape=] represented by its IRI, open or closed status,
+    property constraints, cardinalities, value constraints, [=negative property constraints=], disjunctions, and references to
+    other shapes. A shape is closed when `sh:closed` is `true`; otherwise it is open.
+3. **Bind star patterns to resource shapes.** For every normalized star pattern and every resource shape, the algorithm:
+    1. computes [=pattern-shape matches=] for predicates and supported object constraints;
+    2. checks compatible datatype, class, numeric-bound, and regular-expression constraints;
+    3. recursively evaluates dependent star patterns against referenced shapes, while tracking visited dependencies to terminate cycles.
+          A [=star-pattern dependency=] that is not established is <dfn>refuted</dfn> only when the referenced shape leaves a
+          required nested triple pattern unmatched while being closed, or yields a [=negative contradiction=]. When the
+          referenced shape is open and merely does not describe the nested pattern, the dependency is undecided rather than
+          refuted: the predicate of the referring triple pattern still matched the resource shape, which step 4 counts as a
+          partial match. A resource shape reached only through `sh:node` also governs the nested star pattern it resolves, and
+          that pattern must be classified against it in step 4, whether or not the shape is itself a [=deciding shape=];
+    4. evaluates `UNION` or SHACL disjunction branches; and
+    5. checks whether retained filters contradict the resource shape constraints. A filter that cannot be decided from shape
+          information alone must not cause rejection; a provable contradiction prevents that shape from contributing a match; and
+    6. checks for a [=negative contradiction=]. A resource shape that forbids the predicate of a required triple pattern must
+          not contribute a match, and must not be counted as an open shape in step 4, because it establishes incompatibility
+          rather than remaining silent about the property.
+4. **Classify each star pattern.** Considering only the [=deciding shapes=] of the candidate resource, assign the first
+     applicable result in the following order. A non-deciding [=resource shape=] takes part in step 3, so that
+     [=star-pattern dependencies=] resolve, but never contributes to this step.
+    1. [=contained=], if the root star pattern and all its required nested patterns are subsumed. A single deciding shape is
+        normally responsible for this, but a disjunctive branch left unresolved by that shape may be subsumed by another
+        deciding shape of the same candidate resource;
+    2. [=aligned=], if at least one triple in the root star pattern binds to an open resource shape;
+    3. [=unaligned=], if a root triple binds only to a closed resource shape, or if only a nested star pattern binds. A root
+        triple whose predicate matched a closed resource shape but whose [=star-pattern dependency=] was undecided rather than
+        [=refuted=] counts as binding for this purpose;
+    4. [=weakly rejected=], if no triple binds and at least one deciding shape is open; or
+    5. [=rejected=], if no triple binds and every resource shape that describes the star pattern is closed or yields a
+        [=negative contradiction=], or the resource has no deciding shape at all. A star pattern must not be [=rejected=]
+        on the strength of shapes that never described it.
+5. **Aggregate the result.** The result for the complete input is the least favorable result assigned to any of its star patterns,
+    according to the ordering defined in [[#discovery-result]]. Consequently, the complete input is [=contained=] only when every
+    star pattern is [=contained=].
+
+The algorithm returns a [=discovery result=] containing the aggregate result, the result and matching shape IRIs for each
+star pattern, the corresponding predicate-level bindings, and a visit indication for every resource shape. A resource shape
+is marked as visitable when at least one input triple pattern binds to it. This indication is independent from the aggregate
+result and may be used by a client to decide whether to retrieve data associated with the shape.
+
+## Supported constraint profile ## {#algorithm-profile}
+
+Conforming implementations must document the SPARQL and SHACL fragment they evaluate. The reference implementation supports:
+
+- SPARQL basic triple patterns with IRI predicates; `OPTIONAL`; `UNION`; object-variable substitution from `VALUES`;
+    alternative paths; negated property sets; and the `?`, `*`, and `+` path cardinality forms over a single IRI path.
+    Sequence and inverse paths are partially normalized when they occur as branches of an alternative path;
+- conservative `FILTER` compatibility for equality and inequality comparisons, numeric bounds, conjunction, disjunction,
+    and regular expressions; an undecidable expression produces unknown evidence and must not produce rejection; and
+- SHACL property paths represented by IRIs, `sh:closed`, `sh:node`, `sh:class`, `sh:datatype`, `sh:or`, `sh:xone`,
+    numeric bounds, `sh:pattern` with optional flags, and `sh:not` over a property shape, which yields a
+    [=negative property constraint=].
+
+The reference implementation records path and SHACL cardinalities, and treats a minimum cardinality of zero as optional,
+but does not otherwise compare cardinality ranges during binding. `sh:not` over anything other than a property shape,
+top-level sequence or inverse paths, and arbitrarily nested property paths are outside the supported profile.
+
+Note: This specification does not define the use of ShEx [[SHEX-PRIMER]] to describe resource content. The reference implementation
+additionally accepts ShEx shapes and normalizes them to the same [=normalized shape=] representation, but only the SHACL
+fragment listed above is in scope here.
+
+### Handling constructs outside the profile ### {#out-of-profile}
+
+A construct outside the supported profile must be **discarded** during normalization: it must not contribute [=triple patterns=]
+to the normalized input. In particular, a client must discard `MINUS` and `FILTER NOT EXISTS` graph patterns, `SERVICE`
+clauses, sub-`SELECT`s and aggregates, and `BIND`.
+
+Note: An [=unrestricted triple pattern=] is not a discarded construct. It contributes no [=star pattern=], but it does express
+a constraint — that the resource holds triples — which every resource satisfies. See [[#algorithm-steps]].
+
+Discarding a construct removes constraints from the input, so the resulting [=discovery result=] is computed over a sub-input
+of the one given. This can only over-estimate relevance; it can never cause a relevant resource to be classified lower than it
+would otherwise be, and therefore preserves the guarantee stated in [[#discovery-result]]. Retaining such a construct as an
+ordinary conjunctive pattern must be avoided, because `MINUS` and `SERVICE` patterns describe, respectively, solutions to
+exclude and data held elsewhere; treating them as required patterns changes the result in both directions.
+
+A client should report which constructs it discarded, so that a consumer can tell that the result approximates the input.
+If discarding leaves no [=star pattern=] at all, the rule in [[#algorithm-steps]] applies and no [=discovery result=] is
+produced.
+
+
+# Discovery result # {#discovery-result}
+
+A <dfn id="discovery-result-definition">discovery result</dfn> expresses the degree to which a candidate resource's shapes satisfy the input constraints.
+The following result values are ordered from highest to lowest relevance:
+
+<table class="def">
+    <thead>
+        <tr>
+            <th>Result</th>
+            <th>Meaning</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><dfn>contained</dfn> (<code>CONTAINED</code>)</td>
+            <td>Every input star pattern, including its required nested patterns, is fully covered by the resource shapes.</td>
+        </tr>
+        <tr>
+            <td><dfn>aligned</dfn> (<code>ALIGNED</code>)</td>
+            <td>The input is not contained, but at least one root triple pattern matches an open resource shape. Because the shape is open, unmatched properties do not establish incompatibility.</td>
+        </tr>
+        <tr>
+            <td><dfn>unaligned</dfn> (<code>UNALIGNED</code>)</td>
+            <td>The input is neither contained nor aligned, but a root triple pattern matches a closed resource shape, or a match exists only in a nested star pattern. A predicate that a resource shape declares but whose [=star-pattern dependency=] was undecided rather than [=refuted=] counts as such a match.</td>
+        </tr>
+        <tr>
+            <td><dfn>weakly rejected</dfn> (<code>WEAKLY_REJECTED</code>)</td>
+            <td>No triple pattern matches, but at least one resource shape is open. The absence of a declared property is therefore not definitive evidence of incompatibility.</td>
+        </tr>
+        <tr>
+            <td><dfn>rejected</dfn> (<code>REJECTED</code>)</td>
+            <td>No triple pattern matches and every resource shape that describes the star pattern is closed or forbids a required predicate (a [=negative contradiction=]), or no eligible resource shape is available.</td>
+        </tr>
+    </tbody>
+</table>
+
+The relevance ordering is:
+
+<p class="equation"><code>CONTAINED &gt; ALIGNED &gt; UNALIGNED &gt; WEAKLY_REJECTED &gt; REJECTED</code>.</p>
+
+For an input containing multiple star patterns, the aggregate result must be the lowest result in this ordering among all
+per-star-pattern results. A discovery client should order returned resources by this aggregate result. Resources with equal
+aggregate results may be ordered using application-specific criteria. A client may omit [=rejected=] resources from the returned
+subset, but must preserve their classification when they are included. Omitting them does not discard a resource that could have
+satisfied the input constraints: [=rejected=] is assigned only when every [=resource shape=] that describes the star pattern is
+closed or yields a [=negative contradiction=], and in both cases the shape positively establishes that the required properties
+are absent. An open shape reached only through `sh:node` therefore prevents [=rejected=] just as a candidate open shape does,
+because it forbids nothing.
+A client must not omit resources classified [=weakly rejected=] on the same grounds, because an open shape that simply does not
+declare a property is not evidence that the property is absent.
+
+The per-star-pattern details and visit indications are supporting evidence rather than additional relevance degrees. In particular,
+a resource shape may be marked as visitable after a partial binding even when the resource's aggregate result is [=unaligned=].
+
+A [=discovery result=] computed from an input from which constructs were discarded ([[#out-of-profile]]) approximates a sub-input
+of the one given, and should be reported together with the list of discarded constructs.
+
+Note: The reference implementation currently exposes the misspelled identifier <code>UNALINGED</code> for
+<code>UNALIGNED</code>. These identifiers denote the same result; serializations defined by this specification should use
+<code>UNALIGNED</code>.
+
