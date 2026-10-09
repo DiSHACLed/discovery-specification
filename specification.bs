@@ -1086,26 +1086,99 @@ The algorithm is specified using the following concepts, adapted from the formal
     }
     ```
     </div>
-- <dfn>normalized shape</dfn>: a representation of a SHACL node shape containing its identifier, open or closed status,
-    positive and negative property constraints, object constraints, disjunctions, references to other normalized shapes,
-    and targets. A shape is closed exactly when its `sh:closed` value is `true`; otherwise it is open. A closed shape allows
-    the properties listed by its `sh:ignoredProperties` without declaring them.
-    A <dfn>negative property constraint</dfn> is a property constraint declared under `sh:not`, or one whose `sh:maxCount`
-    is 0. It states that conforming data must **not** carry the property, and is therefore the only constraint of an open
-    shape that can positively establish incompatibility.
+- <dfn>normalized shape</dfn>: a tuple <math><mi>S</mi><mo>=</mo><mrow><mo stretchy="false">(</mo><msub><mi>n</mi><mi>S</mi></msub><mo>,</mo><msub><mi>κ</mi><mi>S</mi></msub><mo>,</mo><msub><mi>C</mi><mi>S</mi></msub><mo>,</mo><msub><mi>N</mi><mi>S</mi></msub><mo>,</mo><msub><mi>D</mi><mi>S</mi></msub><mo>,</mo><msub><mi>τ</mi><mi>S</mi></msub><mo>,</mo><msub><mi>Ign</mi><mi>S</mi></msub><mo stretchy="false">)</mo></mrow></math>
+    that represents a SHACL node shape, where:
 
-    The <dfn>shape targets</dfn> of a shape are its [[SHACL]] node targets (`sh:targetNode`), class targets
-    (`sh:targetClass`, and the shape itself when it is also an `rdfs:Class`), subjects-of targets (`sh:targetSubjectsOf`),
-    and objects-of targets (`sh:targetObjectsOf`). Its focus nodes are the nodes of any of them. Shape targets state
-    which nodes a shape describes when it is used on its own; SHACL ignores them when the shape is reached through
-    `sh:node`, and so does the algorithm. A shape used on its own has the <dfn>implied property constraints</dfn> of its
-    shape targets, which count as property constraints of the shape and are allowed on it when it is closed: a class
-    target implies a constraint on `rdf:type` whose value is one of the target classes, compared by IRI only, because
-    the class hierarchy is described in data that a client does not see; and a subjects-of target implies a constraint
-    on its predicate. An implied property constraint is required only when every focus node carries it: when all the
-    shape targets are class targets, or when the only one is a subjects-of target.
+    - its identifier is <math><msub><mi>n</mi><mi>S</mi></msub><mo>∈</mo><mi>I</mi><mo>∪</mo><mi>B</mi></math>;
+    - its status is <math><msub><mi>κ</mi><mi>S</mi></msub><mo>∈</mo><mrow><mo stretchy="false">{</mo><mi>open</mi><mo>,</mo><mi>closed</mi><mo stretchy="false">}</mo></mrow></math>: closed exactly
+        when its `sh:closed` value is `true`, and open otherwise;
+    - its positive [=property constraints=] form a finite set <math><msub><mi>C</mi><mi>S</mi></msub></math>, with one property constraint for each
+        value of `sh:property` that does not yield a [=negative property constraint=];
+    - the predicates of its [=negative property constraints=] form the set <math><msub><mi>N</mi><mi>S</mi></msub><mo>⊆</mo><mi>I</mi></math>;
+    - its disjunctions form a finite set <math><msub><mi>D</mi><mi>S</mi></msub></math>, with one disjunction for each value of `sh:or` or `sh:xone`.
+        A disjunction is a set of branches, one for each member of the list, and a branch is the set of property
+        constraints of that member. `sh:xone` is read as `sh:or`, which admits every node that `sh:xone` admits;
+    - its [=shape targets=] form the set <math><msub><mi>τ</mi><mi>S</mi></msub></math>; and
+    - its ignored properties form the set <math><msub><mi>Ign</mi><mi>S</mi></msub><mo>⊆</mo><mi>I</mi></math> of the properties listed by
+        `sh:ignoredProperties` when the shape is closed, and the empty set otherwise.
+
+    A <dfn>property constraint</dfn> is a tuple <math><mi>c</mi><mo>=</mo><mrow><mo stretchy="false">(</mo><msub><mi>p</mi><mi>c</mi></msub><mo>,</mo><msub><mi>Ω</mi><mi>c</mi></msub><mo>,</mo><msub><mi>m</mi><mi>c</mi></msub><mo>,</mo><msub><mi>M</mi><mi>c</mi></msub><mo stretchy="false">)</mo></mrow></math>
+    obtained from a SHACL property shape whose `sh:path` is an IRI. Its predicate is that IRI, <math><msub><mi>p</mi><mi>c</mi></msub><mo>∈</mo><mi>I</mi></math>;
+    its [=object constraints=] form a finite set <math><msub><mi>Ω</mi><mi>c</mi></msub></math>; and its minimum and maximum counts are the values
+    of `sh:minCount` and `sh:maxCount`, <math><msub><mi>m</mi><mi>c</mi></msub><mo>∈</mo><mi>ℕ</mi></math> and <math><msub><mi>M</mi><mi>c</mi></msub><mo>∈</mo><mi>ℕ</mi><mo>∪</mo><mrow><mo stretchy="false">{</mo><mi>∞</mi><mo stretchy="false">}</mo></mrow></math>,
+    or 0 and ∞ when they are absent, as in [[SHACL]]. A property constraint is required when <math><msub><mi>m</mi><mi>c</mi></msub><mo>≥</mo><mn>1</mn></math>.
+    Its maximum count is at least 1, because a property shape whose `sh:maxCount` is 0 yields a
+    [=negative property constraint=] instead.
+
+    An <dfn>object constraint</dfn> restricts the values of a property, and is one of:
+
+    - a datatype constraint <math><mi>datatype</mi><mrow><mo stretchy="false">(</mo><mi>d</mi><mo stretchy="false">)</mo></mrow></math>, for a value <math><mi>d</mi><mo>∈</mo><mi>I</mi></math>
+        of `sh:datatype`;
+    - a class constraint <math><mi>class</mi><mrow><mo stretchy="false">(</mo><mi>k</mi><mo stretchy="false">)</mo></mrow></math>, for a value <math><mi>k</mi><mo>∈</mo><mi>I</mi></math>
+        of `sh:class`;
+    - a shape reference <math><mi>node</mi><mrow><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></math>, for a value <math><mi>n</mi><mo>∈</mo><mi>I</mi><mo>∪</mo><mi>B</mi></math>
+        of `sh:node`, which refers to the normalized shape whose identifier is <math><mi>n</mi></math>;
+    - a numeric bound <math><mi>bound</mi><mrow><mo stretchy="false">(</mo><mi>θ</mi><mo>,</mo><mi>a</mi><mo stretchy="false">)</mo></mrow></math>, for a numeric value <math><mi>a</mi></math>
+        of `sh:minInclusive`, `sh:minExclusive`, `sh:maxInclusive`, or `sh:maxExclusive`, where <math><mi>θ</mi></math> is
+        ≥, &gt;, ≤, or &lt;, respectively;
+    - a regular expression <math><mi>pattern</mi><mrow><mo stretchy="false">(</mo><mi>r</mi><mo>,</mo><mi>f</mi><mo stretchy="false">)</mo></mrow></math>, for a value <math><mi>r</mi></math>
+        of `sh:pattern` and the value <math><mi>f</mi></math> of `sh:flags`, empty when it is absent; or
+    - a value set <math><mi>in</mi><mrow><mo stretchy="false">(</mo><mi>K</mi><mo stretchy="false">)</mo></mrow></math>, for a set <math><mi>K</mi><mo>⊆</mo><mi>I</mi></math>, which only the
+        members of <math><mi>K</mi></math> satisfy, and which only [=implied property constraints=] carry.
+
+    The property constraints of the branches of a shape are <math><mi>br</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><munder><mo>⋃</mo><mrow><mi>d</mi><mo>∈</mo><msub><mi>D</mi><mi>S</mi></msub></mrow></munder><mo>⋃</mo><mi>d</mi></math>, and the
+    normalized shapes that it references are <math><mi>refs</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mrow><mo stretchy="false">{</mo><mi>n</mi><mo>|</mo><mi>node</mi><mrow><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><mo>∈</mo><msub><mi>Ω</mi><mi>c</mi></msub><mo>,</mo><mi>c</mi><mo>∈</mo><msub><mi>C</mi><mi>S</mi></msub><mo>∪</mo><mi>br</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">}</mo></mrow></math>.
+
+    A <dfn>negative property constraint</dfn> states that conforming data must **not** carry a property, and is therefore
+    the only constraint of an open shape that can positively establish incompatibility. It is either a property shape whose
+    `sh:maxCount` is 0, or a value of `sh:not` that is a property shape whose only parameters are an IRI `sh:path` and
+    `sh:minCount 1`: a node conforms to that negation exactly when it has no value for the path. A value of `sh:not` in any
+    other form does not forbid its property, and is ignored. For example, `sh:not [ sh:path ex:age; sh:minCount 2 ]`
+    admits a node with one value of `ex:age`, and `sh:not [ sh:path ex:age; sh:datatype xsd:string ]` requires a value of
+    `ex:age` that is not a string. Ignoring a negation only widens the data that a shape admits, so it never causes a
+    rejection.
+
+    The <dfn>shape targets</dfn> of a shape are its [[SHACL]] targets, which <math><msub><mi>τ</mi><mi>S</mi></msub></math> represents as pairs:
+
+    - a node target <math><mrow><mo stretchy="false">(</mo><mi>targetNode</mi><mo>,</mo><mi>v</mi><mo stretchy="false">)</mo></mrow></math> for each value <math><mi>v</mi><mo>∈</mo><mi>I</mi><mo>∪</mo><mi>L</mi></math> of `sh:targetNode`;
+    - a class target <math><mrow><mo stretchy="false">(</mo><mi>targetClass</mi><mo>,</mo><mi>k</mi><mo stretchy="false">)</mo></mrow></math> for each value <math><mi>k</mi><mo>∈</mo><mi>I</mi></math> of `sh:targetClass`, and for <math><mi>k</mi><mo>=</mo><msub><mi>n</mi><mi>S</mi></msub></math> when the shape is
+        also an `rdfs:Class`;
+    - a subjects-of target <math><mrow><mo stretchy="false">(</mo><mi>targetSubjectsOf</mi><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo></mrow></math> for each value <math><mi>p</mi><mo>∈</mo><mi>I</mi></math> of `sh:targetSubjectsOf`; and
+    - an objects-of target <math><mrow><mo stretchy="false">(</mo><mi>targetObjectsOf</mi><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo></mrow></math> for each value <math><mi>p</mi><mo>∈</mo><mi>I</mi></math> of `sh:targetObjectsOf`.
+
+    In an RDF graph <math><mi>G</mi></math>, the focus nodes of a shape are the union, over every target <math><mrow><mo stretchy="false">(</mo><mi>t</mi><mo>,</mo><mi>v</mi><mo stretchy="false">)</mo></mrow><mo>∈</mo><msub><mi>τ</mi><mi>S</mi></msub></math>, of:
+
+    - the node <math><mi>v</mi></math> itself, for a node target;
+    - the set <math><mrow><mo stretchy="false">{</mo><mi>s</mi><mo>|</mo><mrow><mo stretchy="false">(</mo><mi>s</mi><mo>,</mo><mi>rdf:type</mi><mo>,</mo><mi>k</mi><mo stretchy="false">)</mo></mrow><mo>∈</mo><mi>G</mi><mo stretchy="false">}</mo></mrow></math>
+        of [[SHACL]] instances of <math><mi>v</mi></math>, for a class target, where <math><mi>k</mi></math> ranges over <math><mi>v</mi></math> and its subclasses in <math><mi>G</mi></math>;
+    - the set <math><mrow><mo stretchy="false">{</mo><mi>s</mi><mo>|</mo><mrow><mo stretchy="false">(</mo><mi>s</mi><mo>,</mo><mi>v</mi><mo>,</mo><mi>o</mi><mo stretchy="false">)</mo></mrow><mo>∈</mo><mi>G</mi><mo stretchy="false">}</mo></mrow></math>,
+        for a subjects-of target; and
+    - the set <math><mrow><mo stretchy="false">{</mo><mi>o</mi><mo>|</mo><mrow><mo stretchy="false">(</mo><mi>s</mi><mo>,</mo><mi>v</mi><mo>,</mo><mi>o</mi><mo stretchy="false">)</mo></mrow><mo>∈</mo><mi>G</mi><mo stretchy="false">}</mo></mrow></math>,
+        for an objects-of target.
+
+    Shape targets state which nodes a shape describes when it is used on its own; SHACL ignores them when the shape is
+    reached through `sh:node`, and so does the algorithm. A shape used on its own has the <dfn>implied property constraints</dfn> of its shape targets. With <math><msub><mi>K</mi><mi>S</mi></msub><mo>=</mo><mrow><mo stretchy="false">{</mo><mi>k</mi><mo>|</mo><mrow><mo stretchy="false">(</mo><mi>targetClass</mi><mo>,</mo><mi>k</mi><mo stretchy="false">)</mo></mrow><mo>∈</mo><msub><mi>τ</mi><mi>S</mi></msub><mo stretchy="false">}</mo></mrow></math>
+    its target classes, they form the set <math><mi>imp</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow></math> that contains:
+
+    - the constraint <math><mrow><mo stretchy="false">(</mo><mi>rdf:type</mi><mo>,</mo><mrow><mo stretchy="false">{</mo><mi>in</mi><mrow><mo stretchy="false">(</mo><msub><mi>K</mi><mi>S</mi></msub><mo stretchy="false">)</mo></mrow><mo stretchy="false">}</mo></mrow><mo>,</mo><mi>m</mi><mo>,</mo><mi>∞</mi><mo stretchy="false">)</mo></mrow></math>
+        when <math><msub><mi>K</mi><mi>S</mi></msub><mo>≠</mo><mi>∅</mi></math>, where <math><mi>m</mi><mo>=</mo><mn>1</mn></math> when all the shape targets are
+        class targets, and <math><mi>m</mi><mo>=</mo><mn>0</mn></math> otherwise; and
+    - a constraint <math><mrow><mo stretchy="false">(</mo><mi>p</mi><mo>,</mo><mi>∅</mi><mo>,</mo><msub><mi>m</mi><mi>p</mi></msub><mo>,</mo><mi>∞</mi><mo stretchy="false">)</mo></mrow></math> for each <math><mrow><mo stretchy="false">(</mo><mi>targetSubjectsOf</mi><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo></mrow><mo>∈</mo><msub><mi>τ</mi><mi>S</mi></msub></math>, where <math><msub><mi>m</mi><mi>p</mi></msub><mo>=</mo><mn>1</mn></math> when <math><msub><mi>τ</mi><mi>S</mi></msub><mo>=</mo><mrow><mo stretchy="false">{</mo><mrow><mo stretchy="false">(</mo><mi>targetSubjectsOf</mi><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">}</mo></mrow></math>,
+        and <math><msub><mi>m</mi><mi>p</mi></msub><mo>=</mo><mn>0</mn></math> otherwise.
+
+    An implied property constraint is thus required only when every focus node carries it. Class targets are compared by
+    IRI only, through <math><mi>in</mi><mrow><mo stretchy="false">(</mo><msub><mi>K</mi><mi>S</mi></msub><mo stretchy="false">)</mo></mrow></math> rather than a class constraint, because the class
+    hierarchy is described in data that a client does not see.
+
+    The <dfn>shape body</dfn> of a shape used on its own is <math><mi>body</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><msub><mi>C</mi><mi>S</mi></msub><mo>∪</mo><mi>imp</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow><mo>∪</mo><mrow><mo stretchy="false">{</mo><mrow><mo stretchy="false">(</mo><mi>p</mi><mo>,</mo><mi>∅</mi><mo>,</mo><mn>0</mn><mo>,</mo><mi>∞</mi><mo stretchy="false">)</mo></mrow><mo>|</mo><mi>p</mi><mo>∈</mo><msub><mi>Ign</mi><mi>S</mi></msub><mo stretchy="false">}</mo></mrow></math>,
+    and that of a shape reached through `sh:node` is the same set without <math><mi>imp</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow></math>: ignored properties count as
+    optional property constraints that leave their values unrestricted. The <dfn>declared predicates</dfn> of a shape are <math><mi>decl</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mrow><mo stretchy="false">{</mo><msub><mi>p</mi><mi>c</mi></msub><mo>|</mo><mi>c</mi><mo>∈</mo><mi>body</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow><mo>∪</mo><mi>br</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">}</mo></mrow></math>, and a closed shape
+    allows exactly these. They include every property that [[SHACL]] allows on a closed shape and that the shape does not
+    forbid, and may include more, because SHACL counts neither the branches of a disjunction nor implied property
+    constraints; a closed shape is therefore never taken to forbid a property that SHACL allows. Together, <math><mi>body</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow></math> and <math><msub><mi>D</mi><mi>S</mi></msub></math> play the roles of the basic graph pattern and the union graph patterns of the
+    query <math><mi>T</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow></math> that [[TRAVELING-WITH-A-MAP]] obtains from the shape.
     <div class=example>
-    A SHACL node shape describing persons, followed by the components of its [=normalized shape=].
+    A SHACL node shape describing persons, followed by the components of its [=normalized shape=] <math><mi>S</mi></math>.
     ```turtle
     ex:PersonShape a sh:NodeShape;
         sh:targetClass ex:Person;
@@ -1130,19 +1203,26 @@ The algorithm is specified using the following concepts, adapted from the formal
             sh:minCount 1;
         ].
     ```
-    - identifier: `ex:PersonShape`;
-    - status: open, since the shape does not declare `sh:closed true`;
-    - positive property constraints: `ex:name`, with the object constraint `xsd:string`; `ex:age`, with the object
-        constraints `xsd:integer` and a minimum of 0; and `ex:address`, with a reference to `ex:AddressShape`;
-    - negative property constraints: `ex:password`;
-    - disjunctions: one, whose branches constrain `ex:email` and `ex:phone`, respectively;
-    - references to other normalized shapes: `ex:AddressShape`; and
-    - shape targets: the class target `ex:Person`, which implies a required constraint on `rdf:type` with the value
-        `ex:Person`.
+    - identifier: <math><msub><mi>n</mi><mi>S</mi></msub><mo>=</mo><mi>ex:PersonShape</mi></math>;
+    - status: <math><msub><mi>κ</mi><mi>S</mi></msub><mo>=</mo><mi>open</mi></math>, since the shape does not declare `sh:closed true`;
+    - positive property constraints: <math><msub><mi>C</mi><mi>S</mi></msub><mo>=</mo><mrow><mo stretchy="false">{</mo><msub><mi>c</mi><mn>1</mn></msub><mo>,</mo><msub><mi>c</mi><mn>2</mn></msub><mo>,</mo><msub><mi>c</mi><mn>3</mn></msub><mo stretchy="false">}</mo></mrow></math>, where
+
+        - on `ex:name`, <math><msub><mi>c</mi><mn>1</mn></msub><mo>=</mo><mrow><mo stretchy="false">(</mo><mi>ex:name</mi><mo>,</mo><mrow><mo stretchy="false">{</mo><mi>datatype</mi><mrow><mo stretchy="false">(</mo><mi>xsd:string</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">}</mo></mrow><mo>,</mo><mn>1</mn><mo>,</mo><mi>∞</mi><mo stretchy="false">)</mo></mrow></math>;
+        - on `ex:age`, <math><msub><mi>c</mi><mn>2</mn></msub><mo>=</mo><mrow><mo stretchy="false">(</mo><mi>ex:age</mi><mo>,</mo><mrow><mo stretchy="false">{</mo><mi>datatype</mi><mrow><mo stretchy="false">(</mo><mi>xsd:integer</mi><mo stretchy="false">)</mo></mrow><mo>,</mo><mi>bound</mi><mrow><mo stretchy="false">(</mo><mo lspace="0" rspace="0">≥</mo><mo>,</mo><mn>0</mn><mo stretchy="false">)</mo></mrow><mo stretchy="false">}</mo></mrow><mo>,</mo><mn>0</mn><mo>,</mo><mi>∞</mi><mo stretchy="false">)</mo></mrow></math>; and
+        - on `ex:address`, <math><msub><mi>c</mi><mn>3</mn></msub><mo>=</mo><mrow><mo stretchy="false">(</mo><mi>ex:address</mi><mo>,</mo><mrow><mo stretchy="false">{</mo><mi>node</mi><mrow><mo stretchy="false">(</mo><mi>ex:AddressShape</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">}</mo></mrow><mo>,</mo><mn>0</mn><mo>,</mo><mi>∞</mi><mo stretchy="false">)</mo></mrow></math>;
+
+    - negative property constraints: <math><msub><mi>N</mi><mi>S</mi></msub><mo>=</mo><mrow><mo stretchy="false">{</mo><mi>ex:password</mi><mo stretchy="false">}</mo></mrow></math>;
+    - disjunctions: <math><msub><mi>D</mi><mi>S</mi></msub><mo>=</mo><mrow><mo stretchy="false">{</mo><mrow><mo stretchy="false">{</mo><msub><mi>β</mi><mn>1</mn></msub><mo>,</mo><msub><mi>β</mi><mn>2</mn></msub><mo stretchy="false">}</mo></mrow><mo stretchy="false">}</mo></mrow></math>, with the branches <math><msub><mi>β</mi><mn>1</mn></msub><mo>=</mo><mrow><mo stretchy="false">{</mo><mrow><mo stretchy="false">(</mo><mi>ex:email</mi><mo>,</mo><mi>∅</mi><mo>,</mo><mn>1</mn><mo>,</mo><mi>∞</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">}</mo></mrow></math> and <math><msub><mi>β</mi><mn>2</mn></msub><mo>=</mo><mrow><mo stretchy="false">{</mo><mrow><mo stretchy="false">(</mo><mi>ex:phone</mi><mo>,</mo><mi>∅</mi><mo>,</mo><mn>1</mn><mo>,</mo><mi>∞</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">}</mo></mrow></math>;
+    - references to other normalized shapes: <math><mi>refs</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mrow><mo stretchy="false">{</mo><mi>ex:AddressShape</mi><mo stretchy="false">}</mo></mrow></math>;
+    - shape targets: <math><msub><mi>τ</mi><mi>S</mi></msub><mo>=</mo><mrow><mo stretchy="false">{</mo><mrow><mo stretchy="false">(</mo><mi>targetClass</mi><mo>,</mo><mi>ex:Person</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">}</mo></mrow></math>, which imply <math><mi>imp</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mrow><mo stretchy="false">{</mo><mrow><mo stretchy="false">(</mo><mi>rdf:type</mi><mo>,</mo><mrow><mo stretchy="false">{</mo><mi>in</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">{</mo><mi>ex:Person</mi><mo stretchy="false">}</mo></mrow><mo stretchy="false">)</mo></mrow><mo stretchy="false">}</mo></mrow><mo>,</mo><mn>1</mn><mo>,</mo><mi>∞</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">}</mo></mrow></math>,
+        required because the only shape target is a class target; and
+    - ignored properties: <math><msub><mi>Ign</mi><mi>S</mi></msub><mo>=</mo><mi>∅</mi></math>, since the shape is open.
+
+    Used on its own, the shape has the [=shape body=] <math><mi>body</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><msub><mi>C</mi><mi>S</mi></msub><mo>∪</mo><mi>imp</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow></math>.
 
     </div>
-- <dfn>pattern-shape match</dfn>: a relation <math><mi>tp</mi><mo>≼</mo><mi>c</mi></math> between a [=triple pattern=] <math><mi>tp</mi></math> and a normalized shape property constraint <math><mi>c</mi></math>. Their predicates must match.
-    Explicit object restrictions of the input must satisfy the supported shape constraints, and the filters retained for it
+- <dfn>pattern-shape match</dfn>: a relation <math><mi>tp</mi><mo>≼</mo><mi>c</mi></math> between a [=triple pattern=] <math><mi>tp</mi></math> and a [=property constraint=] <math><mi>c</mi></math> of a [=normalized shape=]. Their predicates must be equal, <math><msub><mi>p</mi><mi>tp</mi></msub><mo>=</mo><msub><mi>p</mi><mi>c</mi></msub></math>.
+    Explicit object restrictions of the input must satisfy the [=object constraints=] <math><msub><mi>Ω</mi><mi>c</mi></msub></math>, and the filters retained for it
     must not be provably contradictory. An object variable for which no applicable restriction is available is compatible rather than
     contradictory. A [=negative property constraint=] never yields a [=pattern-shape match=]: a triple pattern whose predicate
     the shape forbids is instead a <dfn>negative contradiction</dfn> for that shape. Conversely, a [=negated triple pattern=]
@@ -1173,10 +1253,11 @@ The algorithm is specified using the following concepts, adapted from the formal
     solutions: those whose subject carries the predicate, whatever its value. A [=negative property constraint=] of an
     [=input shape=] is translated to a negated triple pattern too.
     A negated triple pattern belongs to the [=star pattern=] of its subject, but it is never required and never yields a
-    [=pattern-shape match=]. A shape whose body requires its predicate, through a property constraint whose `sh:minCount`
-    is at least 1, is a [=negative contradiction=] for it, because every node that conforms to the shape carries the
-    predicate. A shape that forbids the predicate, or is closed without declaring it, satisfies the negation, and any
-    other shape leaves it undecided.
+    [=pattern-shape match=]. A shape <math><mi>S</mi></math> whose [=shape body=] requires its predicate <math><mi>p</mi></math>, that is, has a
+    constraint <math><mi>c</mi><mo>∈</mo><mi>body</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow></math> with <math><msub><mi>p</mi><mi>c</mi></msub><mo>=</mo><mi>p</mi></math> and <math><msub><mi>m</mi><mi>c</mi></msub><mo>≥</mo><mn>1</mn></math>, is a [=negative contradiction=] for it,
+    because every node that conforms to the shape carries the predicate. A shape that forbids the predicate, with <math><mi>p</mi><mo>∈</mo><msub><mi>N</mi><mi>S</mi></msub></math>,
+    or is closed and lacks it among its [=declared predicates=], with <math><mi>p</mi><mo>∉</mo><mi>decl</mi><mrow><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow></math>, satisfies the negation, and any other
+    shape leaves it undecided.
     <div class=example>
     Negations compared with `ex:PersonShape` from the previous examples. Each line follows the triple pattern
     `?p ex:name ?name`, which binds `?p`.
@@ -1191,7 +1272,7 @@ The algorithm is specified using the following concepts, adapted from the formal
     are not negated triple patterns, and are discarded as described in [[#out-of-profile]].
     </div>
 - <dfn export>star-shape subsumption</dfn>: a [=star pattern=] is subsumed by a normalized shape when every **required** triple
-    pattern has a [=pattern-shape match=] in the shape body or in one accepted disjunctive branch, at least one triple pattern
+    pattern has a [=pattern-shape match=] in the [=shape body=] or in one accepted disjunctive branch, at least one triple pattern
     has such a match, and every [=star-pattern dependency=]
     is recursively subsumed by the referenced shape. Implementations must cache visited star/shape pairs, or use an equivalent
     mechanism, so cyclic dependencies terminate. A [=negated triple pattern=] needs no match, but a shape for which it is a
@@ -1315,10 +1396,9 @@ Given the inputs described in [[#algorithm-inputs]], the algorithm proceeds as f
         considered — so relevance is undefined and a client must not assign it a [=discovery result=]. An empty `WHERE`
         clause, a body of only `VALUES` or `FILTER`, and a body left empty after discarding out-of-profile constructs
         ([[#out-of-profile]]) are of this kind.
-2. **Normalize the resource shapes.** Each [=resource shape=] becomes a [=normalized shape=] represented by its IRI, open or closed status,
-    property constraints, cardinalities, value constraints, [=negative property constraints=], disjunctions, references to
-    other shapes, and [=shape targets=] with their [=implied property constraints=]. A shape is closed when `sh:closed` is
-    `true`; otherwise it is open. A closed shape allows the properties listed by `sh:ignoredProperties`.
+2. **Normalize the resource shapes.** Each [=resource shape=], and each shape it reaches through `sh:node`, becomes a
+    [=normalized shape=]. A resource shape compared with a star pattern directly, rather than reached through `sh:node`, is
+    used on its own, so its [=shape body=] includes the [=implied property constraints=] of its [=shape targets=].
 3. **Bind star patterns to resource shapes.** For every normalized star pattern and every resource shape, the algorithm:
     1. computes [=pattern-shape matches=] for predicates and supported object constraints;
     2. checks compatible datatype, class, numeric-bound, and regular-expression constraints;
@@ -1370,15 +1450,15 @@ Conforming implementations must document the SPARQL and SHACL fragment they eval
 - conservative `FILTER` compatibility for equality and inequality comparisons, numeric bounds, conjunction, disjunction,
     and regular expressions; an undecidable expression produces unknown evidence and must not produce rejection; and
 - SHACL property paths represented by IRIs, `sh:closed`, `sh:node`, `sh:class`, `sh:datatype`, `sh:or`, `sh:xone`,
-    numeric bounds, `sh:pattern` with optional flags, and both `sh:not` over a property shape and `sh:maxCount 0`, each of
-    which yields a [=negative property constraint=]; `sh:ignoredProperties` of a closed shape; and the [[SHACL]] targets
+    numeric bounds, `sh:pattern` with optional flags, and both `sh:maxCount 0` and `sh:not` over a property shape whose
+    only parameters are `sh:path` and `sh:minCount 1`, each of which yields a [=negative property constraint=]; `sh:ignoredProperties` of a closed shape; and the [[SHACL]] targets
     `sh:targetNode`, `sh:targetClass`, implicit class targets, `sh:targetSubjectsOf`, and `sh:targetObjectsOf`
     ([=shape targets=]), with class targets compared by IRI only.
 
 The reference implementation records path and SHACL cardinalities, reading an absent `sh:minCount` as zero and an absent
 `sh:maxCount` as unbounded, as [[SHACL]] does. It treats a minimum cardinality of zero as optional, and a minimum of at
 least one in the shape body as requiring the property for [=negated triple patterns=], but does not otherwise compare
-cardinality ranges during binding. `sh:not` over anything other than a property shape,
+cardinality ranges during binding. `sh:not` in any other form, which is ignored,
 top-level sequence or inverse paths, and arbitrarily nested property paths are outside the supported profile.
 
 Note: This specification does not define the use of ShEx [[SHEX-PRIMER]] to describe resource content. The reference implementation
@@ -1408,7 +1488,7 @@ ordinary conjunctive pattern must be avoided, because `MINUS` and `SERVICE` patt
 exclude and data held elsewhere; treating them as required patterns changes the result in both directions.
 
 A client should report which constructs it discarded, including those inside a `UNION` branch, existence tests treated as
-undecidable, and [=shape targets=] of an [=input shape=] that could not be translated, so that a consumer can tell that the
+undecidable, and the [=shape targets=] and `sh:not` values of an [=input shape=] that could not be translated, so that a consumer can tell that the
 result approximates the input.
 If discarding leaves no [=star pattern=] at all, the rule in [[#algorithm-steps]] applies and no [=discovery result=] is
 produced.
