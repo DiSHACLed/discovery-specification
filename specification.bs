@@ -1108,7 +1108,10 @@ sets of IRIs, blank nodes, literals, and variables, respectively. The algorithm 
     - its status is <math><msub><mi>κ</mi><mi>S</mi></msub><mo>∈</mo><mrow><mo stretchy="false">{</mo><mi>open</mi><mo>,</mo><mi>closed</mi><mo stretchy="false">}</mo></mrow></math>: closed exactly
         when its `sh:closed` value is `true`, and open otherwise;
     - its positive [=property constraints=] form a finite set <math><msub><mi>C</mi><mi>S</mi></msub></math>, with one property constraint for each
-        value of `sh:property` that does not yield a [=negative property constraint=];
+        path of the values of `sh:property` that do not yield a [=negative property constraint=]. Property shapes on the
+        same path combine into one property constraint, with the largest minimum count, the smallest maximum count, and
+        the object constraints of all of them, because a conforming node conforms to each of them. A path that the shape
+        also forbids has no property constraint: conforming data has no value for it;
     - the predicates of its [=negative property constraints=] form the set <math><msub><mi>N</mi><mi>S</mi></msub><mo>⊆</mo><mi>I</mi></math>;
     - its disjunctions form a finite set <math><msub><mi>D</mi><mi>S</mi></msub></math>, with one disjunction for each value of `sh:or` or `sh:xone`.
         A disjunction is a set of branches, one for each member of the list, and a branch is the set of property
@@ -1279,11 +1282,13 @@ sets of IRIs, blank nodes, literals, and variables, respectively. The algorithm 
     </div>
 - <dfn>pattern-shape match</dfn>: a relation <math><mi>tp</mi><mo>≼</mo><mi>c</mi></math> between a [=triple pattern=] <math><mi>tp</mi></math> and a [=property constraint=] <math><mi>c</mi></math> of a [=normalized shape=]. Their predicates must be equal, <math><msub><mi>p</mi><mi>tp</mi></msub><mo>=</mo><msub><mi>p</mi><mi>c</mi></msub></math>, unless the predicate of <math><mi>tp</mi></math> is a
     negated property set <math><mo>!</mo><mi>P</mi></math>, which requires <math><msub><mi>p</mi><mi>c</mi></msub><mo>∉</mo><mi>P</mi></math>.
-    The explicit object restrictions of the input, that is, an object of <math><mi>tp</mi></math> that is a constant and the
+    The explicit object restrictions of the input, that is, an object of <math><mi>tp</mi></math> that is a constant and at least one of the
     values <math><msub><mi>ν</mi><mi>Q</mi></msub><mrow><mo stretchy="false">(</mo><msub><mi>o</mi><mi>tp</mi></msub><mo stretchy="false">)</mo></mrow></math> to which an object variable is restricted, must satisfy the
     [=object constraints=] <math><msub><mi>Ω</mi><mi>c</mi></msub></math>, and the filters of <math><msub><mi>Φ</mi><mi>Q</mi></msub></math> on its object must not be provably
-    contradictory. An object variable for which no applicable restriction is available is compatible rather than
-    contradictory. A [=negative property constraint=] never yields a [=pattern-shape match=]: a triple pattern whose predicate
+    contradictory. An object for which the constraints cannot be decided from the input is compatible rather than
+    contradictory: an object variable without applicable restriction, and an IRI or a blank node against a class
+    constraint, whose instances only the data determines. A literal is never an instance of a class, and an IRI has no
+    datatype. A [=negative property constraint=] never yields a [=pattern-shape match=]: a triple pattern whose predicate
     the shape forbids is instead a <dfn>negative contradiction</dfn> for that shape. Conversely, a [=negated triple pattern=]
     whose predicate the shape requires is a negative contradiction as well.
     This is a conservative approximation of the paper's `match` relation, which requires the domain of triples
@@ -1334,7 +1339,7 @@ sets of IRIs, blank nodes, literals, and variables, respectively. The algorithm 
     every **required** triple pattern has a [=pattern-shape match=] in the [=shape body=] or in one accepted disjunctive
     branch; for every union of <math><mi>Q</mi></math> with a non-empty [=branch star pattern=] of <math><mi>x</mi></math>, one of these is subsumed by the shape; at least one triple pattern, of <math><msub><mi>SP</mi><mi>Q</mi></msub><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></math> or of those branch star patterns, has such a match; and every [=star-pattern dependency=]
     is recursively subsumed by the referenced shape. Implementations must cache visited star/shape pairs, or use an equivalent
-    mechanism, so cyclic dependencies terminate. A [=negated triple pattern=] needs no match, but a shape for which it is a
+    mechanism, so cyclic dependencies terminate: a pair reached again while it is being evaluated counts as subsumed. A [=negated triple pattern=] needs no match, but a shape for which it is a
     [=negative contradiction=] does not subsume the star pattern. A shape used on its own whose [=shape targets=] are all
     node targets describes those nodes only, so it does not subsume a star pattern whose subject is a constant that is
     none of them.
@@ -1437,7 +1442,7 @@ Given the inputs described in [[#algorithm-inputs]], the algorithm proceeds as f
     3. A triple pattern whose predicate is a variable is an <dfn>unrestricted triple pattern</dfn>. It yields no
         [=star pattern=], because a [=shape=] constrains named predicates, but it asks for every triple of a resource.
         An input whose triple patterns are all unrestricted is therefore [=contained=] by any [=resource shape=], and every
-        resource shape must be marked visitable: the input is maximally unselective, which is a property of the input and not
+        resource shape must be marked visitable; without any resource shape, step 4.5 applies: the input is maximally unselective, which is a property of the input and not
         a failure to assess it.
     4. Normalization must otherwise yield at least one [=star pattern=]. An input that yields none and contains no
         [=unrestricted triple pattern=] never asks the resource for data — its answer is the same whichever resource is
@@ -1465,7 +1470,8 @@ Given the inputs described in [[#algorithm-inputs]], the algorithm proceeds as f
           requires the predicate of a [=negated triple pattern=], must not contribute a match, and must not be counted as an
           open shape in step 4, because it establishes incompatibility rather than remaining silent about the property.
 4. **Classify each star pattern.** Assign the first applicable result in the following order. A resource shape that does
-    not [=describes|describe=] the star pattern counts as open for it.
+    not [=describes|describe=] the star pattern counts as open for it, and the triples of a star pattern include those of its
+    [=branch star patterns=].
     1. [=contained=], if a resource shape subsumes the root star pattern with all its required nested patterns, and each of
         its non-empty [=branch star patterns=] is subsumed by that resource shape or by another resource shape of the same
         candidate resource;
@@ -1484,7 +1490,8 @@ Given the inputs described in [[#algorithm-inputs]], the algorithm proceeds as f
 
 The algorithm returns a [=discovery result=] containing the aggregate result, the result and matching shape IRIs for each
 star pattern, the corresponding predicate-level bindings, and a visit indication for every resource shape. A resource shape
-is marked as visitable when at least one input triple pattern binds to it. This indication is independent from the aggregate
+is marked as visitable when at least one input triple pattern binds to it, which includes a triple pattern whose
+predicate matched while its [=star-pattern dependency=] is undecided (step 3.3). This indication is independent from the aggregate
 result and may be used by a client to decide whether to retrieve data associated with the shape.
 
 ## Supported constraint profile ## {#algorithm-profile}
@@ -1492,8 +1499,9 @@ result and may be used by a client to decide whether to retrieve data associated
 Conforming implementations must document the SPARQL and SHACL fragment they evaluate. The reference implementation supports:
 
 - SPARQL basic triple patterns with IRI predicates; `OPTIONAL`; `UNION`; object-variable substitution from `VALUES`;
-    alternative paths; negated property sets; and the `?`, `*`, and `+` path cardinality forms over a single IRI path.
-    Sequence and inverse paths are partially normalized when they occur as branches of an alternative path;
+    negated property sets; the `?`, `*`, and `+` path cardinality forms over an IRI or a negated property set; and
+    alternative paths over these, over sequence paths, and over inverse paths. A sequence or inverse path outside an
+    alternative path is rewritten into triple patterns by the SPARQL algebra [[SPARQL11-QUERY]];
 - `FILTER NOT EXISTS`, `FILTER(!EXISTS …)`, and `MINUS` over a single triple pattern, as [=negated triple patterns=];
 - conservative `FILTER` compatibility for equality and inequality comparisons, numeric bounds, conjunction, disjunction,
     and regular expressions; an undecidable expression produces unknown evidence and must not produce rejection; and
@@ -1506,11 +1514,12 @@ Conforming implementations must document the SPARQL and SHACL fragment they eval
 The reference implementation records path and SHACL cardinalities, reading an absent `sh:minCount` as zero and an absent
 `sh:maxCount` as unbounded, as [[SHACL]] does. It treats a minimum cardinality of zero as optional, and a minimum of at
 least one in the shape body as requiring the property for [=negated triple patterns=], but does not otherwise compare
-cardinality ranges during binding. It keeps at most one of `sh:class`, `sh:node`, and `sh:datatype` for a property shape,
+cardinality ranges during binding. It keeps at most one of `sh:class`, `sh:node`, and `sh:datatype` for a path,
 in that order of precedence, keeps numeric bounds and `sh:pattern` only together with `sh:datatype`, and applies a
 `VALUES` restriction to object variables only. Each of these omissions drops a constraint of a resource shape or of the
-input, so it can only over-estimate relevance. `sh:not` in any other form, which is ignored,
-top-level sequence or inverse paths, and arbitrarily nested property paths are outside the supported profile.
+input, so it can only over-estimate relevance. `sh:not` in any other form, which is ignored, SHACL property shapes whose
+path is not an IRI, and the other SPARQL property paths, such as a cardinality form over a sequence, are outside the
+supported profile.
 
 Note: This specification does not define the use of ShEx [[SHEX-PRIMER]] to describe resource content. The reference implementation
 additionally accepts ShEx shapes and normalizes them to the same [=normalized shape=] representation, but only the SHACL
@@ -1520,8 +1529,10 @@ fragment listed above is in scope here.
 
 A construct outside the supported profile must be **discarded** during normalization: it must not contribute [=triple patterns=]
 to the [=normalized input=]. In particular, a client must discard `MINUS` and `NOT EXISTS` graph patterns that do not form
-a [=negated triple pattern=], `SERVICE` clauses, sub-`SELECT`s and aggregates, and `BIND`. A discarded `MINUS` keeps its
-left operand. Any other `EXISTS` or `NOT EXISTS` expression is discarded by treating it as undecidable: the rest of the
+a [=negated triple pattern=], `SERVICE` clauses, sub-`SELECT`s and aggregates, `BIND`, and the property paths outside the
+supported profile, each as a whole. A discarded `MINUS` keeps its left operand, and a discarded aggregate or `BIND` the
+graph pattern it applies to. An expression bound on top of the whole graph pattern, such as one of the `SELECT` clause,
+constrains no triple pattern, so discarding it does not approximate the input. Any other `EXISTS` or `NOT EXISTS` expression is discarded by treating it as undecidable: the rest of the
 `FILTER` expression that contains it is still evaluated, but the existence test itself must not cause rejection.
 
 Note: Outside the form of a [=negated triple pattern=], `MINUS` and `NOT EXISTS` no longer remove the same solutions, and
@@ -1539,8 +1550,8 @@ ordinary conjunctive pattern must be avoided, because `MINUS` and `SERVICE` patt
 exclude and data held elsewhere; treating them as required patterns changes the result in both directions.
 
 A client should report which constructs it discarded, including those inside a `UNION` branch, existence tests treated as
-undecidable, and the [=shape targets=] and `sh:not` values of an [=input shape=] that could not be translated, so that a consumer can tell that the
-result approximates the input.
+undecidable, and the [=shape targets=], `sh:not` values, and property shapes whose path is not an IRI of an
+[=input shape=] that could not be translated, so that a consumer can tell that the result approximates the input.
 If discarding leaves no [=star pattern=] at all, the rule in [[#algorithm-steps]] applies and no [=discovery result=] is
 produced.
 

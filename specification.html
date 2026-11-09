@@ -1490,7 +1490,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version ac92c2f0d, updated Fri Aug 21 16:01:29 2026 -0700" name="generator">
   <link href="https://dishacled.github.io/discovery-specification/" rel="canonical">
-  <meta content="b786f104e980fed80cccf8d5cbefcff3f1160ad2" name="revision">
+  <meta content="9357639effdae92799c483d1b21273bff2576bcb" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
   .assertion {
@@ -2247,7 +2247,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <p data-fill-with="logo"></p>
    <h1 class="no-ref p-name" id="title">DiSHACLed Dataset and Data Service Discovery</h1>
    <h2 class="heading no-num no-ref no-toc settled" id="profile-and-date"><span class="content">Living Document,
-    <time class="dt-updated" datetime="2026-10-17">17 October 2026</time></span></h2>
+    <time class="dt-updated" datetime="2026-11-09">9 November 2026</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -2262,7 +2262,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <p class="copyright" data-fill-with="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" height="15" src="https://licensebuttons.net/p/zero/1.0/80x15.png" width="80"></a>
 To the extent possible under law, the editors have waived all copyright
 and related or neighboring rights to this work.
-In addition, as of 17 October 2026,
+In addition, as of 9 November 2026,
 the editors have made this specification available under the
 <a href="https://www.openwebfoundation.org/the-agreements/the-owf-1-0-agreements-granted-claims/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at https://www.openwebfoundation.org/the-agreements/the-owf-1-0-agreements-granted-claims/owfa-1-0.
@@ -3284,7 +3284,10 @@ that represents a SHACL node shape, where:</p>
 when its <code>sh:closed</code> value is <code>true</code>, and open otherwise;</p>
       <li data-md>
        <p>its positive <a data-link-type="dfn" href="#property-constraint" id="ref-for-property-constraint">property constraints</a> form a finite set <math><msub><mi>C</mi><mi>S</mi></msub></math>, with one property constraint for each
-value of <code>sh:property</code> that does not yield a <a data-link-type="dfn" href="#negative-property-constraint" id="ref-for-negative-property-constraint">negative property constraint</a>;</p>
+path of the values of <code>sh:property</code> that do not yield a <a data-link-type="dfn" href="#negative-property-constraint" id="ref-for-negative-property-constraint">negative property constraint</a>. Property shapes on the
+same path combine into one property constraint, with the largest minimum count, the smallest maximum count, and
+the object constraints of all of them, because a conforming node conforms to each of them. A path that the shape
+also forbids has no property constraint: conforming data has no value for it;</p>
       <li data-md>
        <p>the predicates of its <a data-link-type="dfn" href="#negative-property-constraint" id="ref-for-negative-property-constraint①">negative property constraints</a> form the set <math><msub><mi>N</mi><mi>S</mi></msub><mo>⊆</mo><mi>I</mi></math>;</p>
       <li data-md>
@@ -3501,11 +3504,13 @@ star pattern of <math><msub><mi>x</mi><mi>A</mi></msub></math> a dependency of t
     <li data-md>
      <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="pattern-shape-match">pattern-shape match</dfn>: a relation <math><mi>tp</mi><mo>≼</mo><mi>c</mi></math> between a <a data-link-type="dfn" href="#triple-pattern" id="ref-for-triple-pattern③">triple pattern</a> <math><mi>tp</mi></math> and a <a data-link-type="dfn" href="#property-constraint" id="ref-for-property-constraint①">property constraint</a> <math><mi>c</mi></math> of a <a data-link-type="dfn" href="#normalized-shape" id="ref-for-normalized-shape④">normalized shape</a>. Their predicates must be equal, <math><msub><mi>p</mi><mi>tp</mi></msub><mo>=</mo><msub><mi>p</mi><mi>c</mi></msub></math>, unless the predicate of <math><mi>tp</mi></math> is a
 negated property set <math><mo>!</mo><mi>P</mi></math>, which requires <math><msub><mi>p</mi><mi>c</mi></msub><mo>∉</mo><mi>P</mi></math>.
-The explicit object restrictions of the input, that is, an object of <math><mi>tp</mi></math> that is a constant and the
+The explicit object restrictions of the input, that is, an object of <math><mi>tp</mi></math> that is a constant and at least one of the
 values <math><msub><mi>ν</mi><mi>Q</mi></msub><mrow><mo stretchy="false">(</mo><msub><mi>o</mi><mi>tp</mi></msub><mo stretchy="false">)</mo></mrow></math> to which an object variable is restricted, must satisfy the
 <a data-link-type="dfn" href="#object-constraint" id="ref-for-object-constraint①">object constraints</a> <math><msub><mi>Ω</mi><mi>c</mi></msub></math>, and the filters of <math><msub><mi>Φ</mi><mi>Q</mi></msub></math> on its object must not be provably
-contradictory. An object variable for which no applicable restriction is available is compatible rather than
-contradictory. A <a data-link-type="dfn" href="#negative-property-constraint" id="ref-for-negative-property-constraint③">negative property constraint</a> never yields a <a data-link-type="dfn" href="#pattern-shape-match" id="ref-for-pattern-shape-match">pattern-shape match</a>: a triple pattern whose predicate
+contradictory. An object for which the constraints cannot be decided from the input is compatible rather than
+contradictory: an object variable without applicable restriction, and an IRI or a blank node against a class
+constraint, whose instances only the data determines. A literal is never an instance of a class, and an IRI has no
+datatype. A <a data-link-type="dfn" href="#negative-property-constraint" id="ref-for-negative-property-constraint③">negative property constraint</a> never yields a <a data-link-type="dfn" href="#pattern-shape-match" id="ref-for-pattern-shape-match">pattern-shape match</a>: a triple pattern whose predicate
 the shape forbids is instead a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="negative-contradiction">negative contradiction</dfn> for that shape. Conversely, a <a data-link-type="dfn" href="#negated-triple-pattern" id="ref-for-negated-triple-pattern④">negated triple pattern</a>
 whose predicate the shape requires is a negative contradiction as well.
 This is a conservative approximation of the paper’s <code>match</code> relation, which requires the domain of triples
@@ -3562,7 +3567,7 @@ are not negated triple patterns, and are discarded as described in <a href="#out
 every <strong>required</strong> triple pattern has a <a data-link-type="dfn" href="#pattern-shape-match" id="ref-for-pattern-shape-match②">pattern-shape match</a> in the <a data-link-type="dfn" href="#shape-body" id="ref-for-shape-body②">shape body</a> or in one accepted disjunctive
 branch; for every union of <math><mi>Q</mi></math> with a non-empty <a data-link-type="dfn" href="#branch-star-pattern" id="ref-for-branch-star-pattern①">branch star pattern</a> of <math><mi>x</mi></math>, one of these is subsumed by the shape; at least one triple pattern, of <math><msub><mi>SP</mi><mi>Q</mi></msub><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></math> or of those branch star patterns, has such a match; and every <a data-link-type="dfn" href="#star-pattern-dependency" id="ref-for-star-pattern-dependency③">star-pattern dependency</a>
 is recursively subsumed by the referenced shape. Implementations must cache visited star/shape pairs, or use an equivalent
-mechanism, so cyclic dependencies terminate. A <a data-link-type="dfn" href="#negated-triple-pattern" id="ref-for-negated-triple-pattern⑤">negated triple pattern</a> needs no match, but a shape for which it is a
+mechanism, so cyclic dependencies terminate: a pair reached again while it is being evaluated counts as subsumed. A <a data-link-type="dfn" href="#negated-triple-pattern" id="ref-for-negated-triple-pattern⑤">negated triple pattern</a> needs no match, but a shape for which it is a
 <a data-link-type="dfn" href="#negative-contradiction" id="ref-for-negative-contradiction①">negative contradiction</a> does not subsume the star pattern. A shape used on its own whose <a data-link-type="dfn" href="#shape-targets" id="ref-for-shape-targets②">shape targets</a> are all
 node targets describes those nodes only, so it does not subsume a star pattern whose subject is a constant that is
 none of them.
@@ -3675,7 +3680,7 @@ cannot be translated are discarded (<a href="#out-of-profile">§ 5.4.1 Handlin
        <p>A triple pattern whose predicate is a variable is an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="unrestricted-triple-pattern">unrestricted triple pattern</dfn>. It yields no
 <a data-link-type="dfn" href="#star-pattern" id="ref-for-star-pattern①⓪">star pattern</a>, because a <a data-link-type="dfn" href="#shape" id="ref-for-shape①②">shape</a> constrains named predicates, but it asks for every triple of a resource.
 An input whose triple patterns are all unrestricted is therefore <a data-link-type="dfn" href="#contained" id="ref-for-contained③">contained</a> by any <a data-link-type="dfn" href="#resource-shapes" id="ref-for-resource-shapes⑤">resource shape</a>, and every
-resource shape must be marked visitable: the input is maximally unselective, which is a property of the input and not
+resource shape must be marked visitable; without any resource shape, step 4.5 applies: the input is maximally unselective, which is a property of the input and not
 a failure to assess it.</p>
       <li data-md>
        <p>Normalization must otherwise yield at least one <a data-link-type="dfn" href="#star-pattern" id="ref-for-star-pattern①①">star pattern</a>. An input that yields none and contains no
@@ -3716,11 +3721,12 @@ used on its own, so its <a data-link-type="dfn" href="#shape-body" id="ref-for-s
      </ol>
     <li data-md>
      <p><strong>Classify each star pattern.</strong> Assign the first applicable result in the following order. A resource shape that does
-not <a data-link-type="dfn" href="#describes" id="ref-for-describes">describe</a> the star pattern counts as open for it.</p>
+not <a data-link-type="dfn" href="#describes" id="ref-for-describes">describe</a> the star pattern counts as open for it, and the triples of a star pattern include those of its
+<a data-link-type="dfn" href="#branch-star-pattern" id="ref-for-branch-star-pattern②">branch star patterns</a>.</p>
      <ol>
       <li data-md>
        <p><a data-link-type="dfn" href="#contained" id="ref-for-contained④">contained</a>, if a resource shape subsumes the root star pattern with all its required nested patterns, and each of
-its non-empty <a data-link-type="dfn" href="#branch-star-pattern" id="ref-for-branch-star-pattern②">branch star patterns</a> is subsumed by that resource shape or by another resource shape of the same
+its non-empty <a data-link-type="dfn" href="#branch-star-pattern" id="ref-for-branch-star-pattern③">branch star patterns</a> is subsumed by that resource shape or by another resource shape of the same
 candidate resource;</p>
       <li data-md>
        <p><a data-link-type="dfn" href="#aligned" id="ref-for-aligned①">aligned</a>, if at least one triple in the root star pattern binds to an open resource shape;</p>
@@ -3743,15 +3749,17 @@ star pattern is <a data-link-type="dfn" href="#contained" id="ref-for-contained�
    </ol>
    <p>The algorithm returns a <a data-link-type="dfn" href="#discovery-result-definition" id="ref-for-discovery-result-definition②">discovery result</a> containing the aggregate result, the result and matching shape IRIs for each
 star pattern, the corresponding predicate-level bindings, and a visit indication for every resource shape. A resource shape
-is marked as visitable when at least one input triple pattern binds to it. This indication is independent from the aggregate
+is marked as visitable when at least one input triple pattern binds to it, which includes a triple pattern whose
+predicate matched while its <a data-link-type="dfn" href="#star-pattern-dependency" id="ref-for-star-pattern-dependency⑦">star-pattern dependency</a> is undecided (step 3.3). This indication is independent from the aggregate
 result and may be used by a client to decide whether to retrieve data associated with the shape.</p>
    <h3 class="heading settled" data-level="5.4" id="algorithm-profile"><span class="secno">5.4. </span><span class="content">Supported constraint profile</span><a class="self-link" href="#algorithm-profile"></a></h3>
    <p>Conforming implementations must document the SPARQL and SHACL fragment they evaluate. The reference implementation supports:</p>
    <ul>
     <li data-md>
      <p>SPARQL basic triple patterns with IRI predicates; <code>OPTIONAL</code>; <code>UNION</code>; object-variable substitution from <code>VALUES</code>;
-alternative paths; negated property sets; and the <code>?</code>, <code>*</code>, and <code>+</code> path cardinality forms over a single IRI path.
-Sequence and inverse paths are partially normalized when they occur as branches of an alternative path;</p>
+negated property sets; the <code>?</code>, <code>*</code>, and <code>+</code> path cardinality forms over an IRI or a negated property set; and
+alternative paths over these, over sequence paths, and over inverse paths. A sequence or inverse path outside an
+alternative path is rewritten into triple patterns by the SPARQL algebra <a data-link-type="biblio" href="#biblio-sparql11-query" title="SPARQL 1.1 Query Language">[SPARQL11-QUERY]</a>;</p>
     <li data-md>
      <p><code>FILTER NOT EXISTS</code>, <code>FILTER(!EXISTS …)</code>, and <code>MINUS</code> over a single triple pattern, as <a data-link-type="dfn" href="#negated-triple-pattern" id="ref-for-negated-triple-pattern⑦">negated triple patterns</a>;</p>
     <li data-md>
@@ -3767,19 +3775,22 @@ only parameters are <code>sh:path</code> and <code>sh:minCount 1</code>, each of
    <p>The reference implementation records path and SHACL cardinalities, reading an absent <code>sh:minCount</code> as zero and an absent
 <code>sh:maxCount</code> as unbounded, as <a data-link-type="biblio" href="#biblio-shacl" title="Shapes Constraint Language (SHACL)">[SHACL]</a> does. It treats a minimum cardinality of zero as optional, and a minimum of at
 least one in the shape body as requiring the property for <a data-link-type="dfn" href="#negated-triple-pattern" id="ref-for-negated-triple-pattern⑧">negated triple patterns</a>, but does not otherwise compare
-cardinality ranges during binding. It keeps at most one of <code>sh:class</code>, <code>sh:node</code>, and <code>sh:datatype</code> for a property shape,
+cardinality ranges during binding. It keeps at most one of <code>sh:class</code>, <code>sh:node</code>, and <code>sh:datatype</code> for a path,
 in that order of precedence, keeps numeric bounds and <code>sh:pattern</code> only together with <code>sh:datatype</code>, and applies a
 <code>VALUES</code> restriction to object variables only. Each of these omissions drops a constraint of a resource shape or of the
-input, so it can only over-estimate relevance. <code>sh:not</code> in any other form, which is ignored,
-top-level sequence or inverse paths, and arbitrarily nested property paths are outside the supported profile.</p>
+input, so it can only over-estimate relevance. <code>sh:not</code> in any other form, which is ignored, SHACL property shapes whose
+path is not an IRI, and the other SPARQL property paths, such as a cardinality form over a sequence, are outside the
+supported profile.</p>
    <p class="note" role="note"><span class="marker">Note:</span> This specification does not define the use of ShEx <a data-link-type="biblio" href="#biblio-shex-primer" title="Shape Expressions (ShEx) 2.1 Primer">[SHEX-PRIMER]</a> to describe resource content. The reference implementation
 additionally accepts ShEx shapes and normalizes them to the same <a data-link-type="dfn" href="#normalized-shape" id="ref-for-normalized-shape⑧">normalized shape</a> representation, but only the SHACL
 fragment listed above is in scope here.</p>
    <h4 class="heading settled" data-level="5.4.1" id="out-of-profile"><span class="secno">5.4.1. </span><span class="content">Handling constructs outside the profile</span><a class="self-link" href="#out-of-profile"></a></h4>
    <p>A construct outside the supported profile must be <strong>discarded</strong> during normalization: it must not contribute <a data-link-type="dfn" href="#triple-pattern" id="ref-for-triple-pattern⑥">triple patterns</a>
 to the <a data-link-type="dfn" href="#normalized-input" id="ref-for-normalized-input①⓪">normalized input</a>. In particular, a client must discard <code>MINUS</code> and <code>NOT EXISTS</code> graph patterns that do not form
-a <a data-link-type="dfn" href="#negated-triple-pattern" id="ref-for-negated-triple-pattern⑨">negated triple pattern</a>, <code>SERVICE</code> clauses, sub-<code>SELECT</code>s and aggregates, and <code>BIND</code>. A discarded <code>MINUS</code> keeps its
-left operand. Any other <code>EXISTS</code> or <code>NOT EXISTS</code> expression is discarded by treating it as undecidable: the rest of the
+a <a data-link-type="dfn" href="#negated-triple-pattern" id="ref-for-negated-triple-pattern⑨">negated triple pattern</a>, <code>SERVICE</code> clauses, sub-<code>SELECT</code>s and aggregates, <code>BIND</code>, and the property paths outside the
+supported profile, each as a whole. A discarded <code>MINUS</code> keeps its left operand, and a discarded aggregate or <code>BIND</code> the
+graph pattern it applies to. An expression bound on top of the whole graph pattern, such as one of the <code>SELECT</code> clause,
+constrains no triple pattern, so discarding it does not approximate the input. Any other <code>EXISTS</code> or <code>NOT EXISTS</code> expression is discarded by treating it as undecidable: the rest of the
 <code>FILTER</code> expression that contains it is still evaluated, but the existence test itself must not cause rejection.</p>
    <p class="note" role="note"><span class="marker">Note:</span> Outside the form of a <a data-link-type="dfn" href="#negated-triple-pattern" id="ref-for-negated-triple-pattern①⓪">negated triple pattern</a>, <code>MINUS</code> and <code>NOT EXISTS</code> no longer remove the same solutions, and
 shape constraints cannot decide either of them. A <code>MINUS</code> that shares no variable with its left operand removes nothing,
@@ -3793,8 +3804,8 @@ would otherwise be, and therefore preserves the guarantee stated in <a href="#di
 ordinary conjunctive pattern must be avoided, because <code>MINUS</code> and <code>SERVICE</code> patterns describe, respectively, solutions to
 exclude and data held elsewhere; treating them as required patterns changes the result in both directions.</p>
    <p>A client should report which constructs it discarded, including those inside a <code>UNION</code> branch, existence tests treated as
-undecidable, and the <a data-link-type="dfn" href="#shape-targets" id="ref-for-shape-targets⑦">shape targets</a> and <code>sh:not</code> values of an <a data-link-type="dfn" href="#input-shape" id="ref-for-input-shape①⓪">input shape</a> that could not be translated, so that a consumer can tell that the
-result approximates the input.
+undecidable, and the <a data-link-type="dfn" href="#shape-targets" id="ref-for-shape-targets⑦">shape targets</a>, <code>sh:not</code> values, and property shapes whose path is not an IRI of an
+<a data-link-type="dfn" href="#input-shape" id="ref-for-input-shape①⓪">input shape</a> that could not be translated, so that a consumer can tell that the result approximates the input.
 If discarding leaves no <a data-link-type="dfn" href="#star-pattern" id="ref-for-star-pattern①③">star pattern</a> at all, the rule in <a href="#algorithm-steps">§ 5.3 Logical steps</a> applies and no <a data-link-type="dfn" href="#discovery-result-definition" id="ref-for-discovery-result-definition④">discovery result</a> is
 produced.</p>
    <h2 class="heading settled" data-level="6" id="discovery-result"><span class="secno">6. </span><span class="content">Discovery result</span><a class="self-link" href="#discovery-result"></a></h2>
@@ -3814,7 +3825,7 @@ The following result values are ordered from highest to lowest relevance:</p>
       <td>The input is not contained, but at least one root triple pattern matches an open resource shape. Because the shape is open, unmatched properties do not establish incompatibility.
      <tr>
       <td><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="unaligned">unaligned</dfn> (<code>UNALIGNED</code>)
-      <td>The input is neither contained nor aligned, but a root triple pattern matches a closed resource shape, or a match exists only in a nested star pattern. A predicate that a resource shape declares but whose <a data-link-type="dfn" href="#star-pattern-dependency" id="ref-for-star-pattern-dependency⑦">star-pattern dependency</a> was undecided rather than <a data-link-type="dfn" href="#refuted" id="ref-for-refuted①">refuted</a> counts as such a match.
+      <td>The input is neither contained nor aligned, but a root triple pattern matches a closed resource shape, or a match exists only in a nested star pattern. A predicate that a resource shape declares but whose <a data-link-type="dfn" href="#star-pattern-dependency" id="ref-for-star-pattern-dependency⑧">star-pattern dependency</a> was undecided rather than <a data-link-type="dfn" href="#refuted" id="ref-for-refuted①">refuted</a> counts as such a match.
      <tr>
       <td><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="weakly-rejected">weakly rejected</dfn> (<code>WEAKLY_REJECTED</code>)
       <td>No triple pattern matches, but at least one resource shape that <a data-link-type="dfn" href="#describes" id="ref-for-describes③">describes</a> the star pattern is open, or none describes it. The absence of a declared property is therefore not definitive evidence of incompatibility.
@@ -4323,7 +4334,7 @@ let dfnPanelData = {
 "InputShape": {"dfnID":"InputShape","dfnText":"disc:inputShape","external":false,"refSections":[],"url":"#InputShape"},
 "OutputShape": {"dfnID":"OutputShape","dfnText":"disc:outputShape","external":false,"refSections":[],"url":"#OutputShape"},
 "aligned": {"dfnID":"aligned","dfnText":"aligned","external":false,"refSections":[{"refs":[{"id":"ref-for-aligned"}],"title":"5.2. Preliminaries"},{"refs":[{"id":"ref-for-aligned\u2460"}],"title":"5.3. Logical steps"}],"url":"#aligned"},
-"branch-star-pattern": {"dfnID":"branch-star-pattern","dfnText":"branch star patterns","external":false,"refSections":[{"refs":[{"id":"ref-for-branch-star-pattern"},{"id":"ref-for-branch-star-pattern\u2460"}],"title":"5.2. Preliminaries"},{"refs":[{"id":"ref-for-branch-star-pattern\u2461"}],"title":"5.3. Logical steps"}],"url":"#branch-star-pattern"},
+"branch-star-pattern": {"dfnID":"branch-star-pattern","dfnText":"branch star patterns","external":false,"refSections":[{"refs":[{"id":"ref-for-branch-star-pattern"},{"id":"ref-for-branch-star-pattern\u2460"}],"title":"5.2. Preliminaries"},{"refs":[{"id":"ref-for-branch-star-pattern\u2461"},{"id":"ref-for-branch-star-pattern\u2462"}],"title":"5.3. Logical steps"}],"url":"#branch-star-pattern"},
 "catalog": {"dfnID":"catalog","dfnText":"Catalog","external":false,"refSections":[{"refs":[{"id":"ref-for-catalog"}],"title":"1. Introduction"},{"refs":[{"id":"ref-for-catalog\u2460"}],"title":"1.2. Terminology"},{"refs":[{"id":"ref-for-catalog\u2461"},{"id":"ref-for-catalog\u2462"}],"title":"2.1. Relating to shapes via dcterms:conformsTo"},{"refs":[{"id":"ref-for-catalog\u2463"}],"title":"2.2. Relating to shapes via dcat:qualifiedRelation"},{"refs":[{"id":"ref-for-catalog\u2464"}],"title":"2.3. Relating to shapes via sh:shapesGraph"},{"refs":[{"id":"ref-for-catalog\u2465"}],"title":"4.1. Discovery request"},{"refs":[{"id":"ref-for-catalog\u2466"}],"title":"4.2. Catalog retrieval"},{"refs":[{"id":"ref-for-catalog\u2467"}],"title":"4.3. Extraction of associated shapes"}],"url":"#catalog"},
 "catalog-url": {"dfnID":"catalog-url","dfnText":"catalog URL","external":false,"refSections":[{"refs":[{"id":"ref-for-catalog-url"}],"title":"4.2. Catalog retrieval"}],"url":"#catalog-url"},
 "client": {"dfnID":"client","dfnText":"Client","external":false,"refSections":[{"refs":[{"id":"ref-for-client"},{"id":"ref-for-client\u2460"}],"title":"2. Describing DCAT(-AP) resource content with shapes"},{"refs":[{"id":"ref-for-client\u2461"}],"title":"2.2. Relating to shapes via dcat:qualifiedRelation"},{"refs":[{"id":"ref-for-client\u2462"},{"id":"ref-for-client\u2463"},{"id":"ref-for-client\u2464"},{"id":"ref-for-client\u2465"}],"title":"3. Shape relationship roles"}],"url":"#client"},
@@ -4362,7 +4373,7 @@ let dfnPanelData = {
 "shape-role-scheme": {"dfnID":"shape-role-scheme","dfnText":"shape role scheme","external":false,"refSections":[],"url":"#shape-role-scheme"},
 "shape-targets": {"dfnID":"shape-targets","dfnText":"shape targets","external":false,"refSections":[{"refs":[{"id":"ref-for-shape-targets"},{"id":"ref-for-shape-targets\u2460"},{"id":"ref-for-shape-targets\u2461"},{"id":"ref-for-shape-targets\u2462"}],"title":"5.2. Preliminaries"},{"refs":[{"id":"ref-for-shape-targets\u2463"},{"id":"ref-for-shape-targets\u2464"}],"title":"5.3. Logical steps"},{"refs":[{"id":"ref-for-shape-targets\u2465"}],"title":"5.4. Supported constraint profile"},{"refs":[{"id":"ref-for-shape-targets\u2466"}],"title":"5.4.1. Handling constructs outside the profile"},{"refs":[{"id":"ref-for-shape-targets\u2467"}],"title":"6. Discovery result"}],"url":"#shape-targets"},
 "star-pattern": {"dfnID":"star-pattern","dfnText":"star pattern","external":false,"refSections":[{"refs":[{"id":"ref-for-star-pattern"}],"title":"5. Algorithm specification"},{"refs":[{"id":"ref-for-star-pattern\u2460"},{"id":"ref-for-star-pattern\u2461"}],"title":"5.1. Inputs"},{"refs":[{"id":"ref-for-star-pattern\u2462"},{"id":"ref-for-star-pattern\u2463"},{"id":"ref-for-star-pattern\u2464"},{"id":"ref-for-star-pattern\u2465"},{"id":"ref-for-star-pattern\u2466"},{"id":"ref-for-star-pattern\u2467"}],"title":"5.2. Preliminaries"},{"refs":[{"id":"ref-for-star-pattern\u2468"},{"id":"ref-for-star-pattern\u2460\u24ea"},{"id":"ref-for-star-pattern\u2460\u2460"}],"title":"5.3. Logical steps"},{"refs":[{"id":"ref-for-star-pattern\u2460\u2461"},{"id":"ref-for-star-pattern\u2460\u2462"}],"title":"5.4.1. Handling constructs outside the profile"}],"url":"#star-pattern"},
-"star-pattern-dependency": {"dfnID":"star-pattern-dependency","dfnText":"star-pattern dependency","external":false,"refSections":[{"refs":[{"id":"ref-for-star-pattern-dependency"},{"id":"ref-for-star-pattern-dependency\u2460"}],"title":"5.1. Inputs"},{"refs":[{"id":"ref-for-star-pattern-dependency\u2461"},{"id":"ref-for-star-pattern-dependency\u2462"},{"id":"ref-for-star-pattern-dependency\u2463"}],"title":"5.2. Preliminaries"},{"refs":[{"id":"ref-for-star-pattern-dependency\u2464"},{"id":"ref-for-star-pattern-dependency\u2465"}],"title":"5.3. Logical steps"},{"refs":[{"id":"ref-for-star-pattern-dependency\u2466"}],"title":"6. Discovery result"}],"url":"#star-pattern-dependency"},
+"star-pattern-dependency": {"dfnID":"star-pattern-dependency","dfnText":"star-pattern dependency","external":false,"refSections":[{"refs":[{"id":"ref-for-star-pattern-dependency"},{"id":"ref-for-star-pattern-dependency\u2460"}],"title":"5.1. Inputs"},{"refs":[{"id":"ref-for-star-pattern-dependency\u2461"},{"id":"ref-for-star-pattern-dependency\u2462"},{"id":"ref-for-star-pattern-dependency\u2463"}],"title":"5.2. Preliminaries"},{"refs":[{"id":"ref-for-star-pattern-dependency\u2464"},{"id":"ref-for-star-pattern-dependency\u2465"},{"id":"ref-for-star-pattern-dependency\u2466"}],"title":"5.3. Logical steps"},{"refs":[{"id":"ref-for-star-pattern-dependency\u2467"}],"title":"6. Discovery result"}],"url":"#star-pattern-dependency"},
 "star-shape-subsumption": {"dfnID":"star-shape-subsumption","dfnText":"star-shape subsumption","external":false,"refSections":[],"url":"#star-shape-subsumption"},
 "triple-pattern": {"dfnID":"triple-pattern","dfnText":"triple pattern","external":false,"refSections":[{"refs":[{"id":"ref-for-triple-pattern"}],"title":"5.1. Inputs"},{"refs":[{"id":"ref-for-triple-pattern\u2460"},{"id":"ref-for-triple-pattern\u2461"},{"id":"ref-for-triple-pattern\u2462"},{"id":"ref-for-triple-pattern\u2463"}],"title":"5.2. Preliminaries"},{"refs":[{"id":"ref-for-triple-pattern\u2464"}],"title":"5.3. Logical steps"},{"refs":[{"id":"ref-for-triple-pattern\u2465"}],"title":"5.4.1. Handling constructs outside the profile"}],"url":"#triple-pattern"},
 "unaligned": {"dfnID":"unaligned","dfnText":"unaligned","external":false,"refSections":[{"refs":[{"id":"ref-for-unaligned"}],"title":"5.3. Logical steps"},{"refs":[{"id":"ref-for-unaligned\u2460"}],"title":"6. Discovery result"}],"url":"#unaligned"},
